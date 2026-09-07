@@ -54,7 +54,7 @@ export interface Destination extends Airport {
   popular?: boolean;
   /** The one destination given the wide hero tile on the destination step. */
   featured?: boolean;
-  /** Where the flight itself actually lands, when it differs from `city` (a package/product name rather than a place — e.g. Umrah packages, which all fly to Jeddah). Defaults to `city`. */
+  /** Where the flight itself actually lands, when it differs from `city` (a package/product name rather than a place, e.g. Umrah packages, which all fly to Jeddah). Defaults to `city`. */
   airportCity?: string;
 }
 
@@ -153,7 +153,7 @@ export const DESTINATIONS: Destination[] = [
   },
 ];
 
-/** Umrah package tiers — flown into Jeddah, sold as a fixed package rather than a point-to-point fare. Reuses the `Destination` shape so it drops straight into the existing quote/flight/summary code. */
+/** Umrah package tiers: flown into Jeddah, sold as a fixed package rather than a point-to-point fare. Reuses the `Destination` shape so it drops straight into the existing quote/flight/summary code. */
 export interface UmrahPackage extends Destination {
   nights: number;
   hotelDistance: string;
@@ -173,7 +173,7 @@ export const UMRAH_PACKAGES: UmrahPackage[] = [
     baseFareGBP: 1499, popular: true, featured: true, region: "Middle East", airportCity: "Jeddah",
     nights: 10, hotelDistance: "400m from the Haram",
     tagline: "The one most families choose",
-    blurb: "A shorter, closer trip — hotels within easy walking distance of Masjid al-Haram and Masjid an-Nabawi.",
+    blurb: "A shorter, closer trip: hotels within easy walking distance of Masjid al-Haram and Masjid an-Nabawi.",
     image: stock("photo-1591604129939-f1efa4d9f7fa"),
   },
   {

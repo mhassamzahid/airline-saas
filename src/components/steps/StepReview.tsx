@@ -24,7 +24,7 @@ import { headcount } from "@/lib/quote";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/** Reserved by Ofcom for fictitious use (film/TV/drama) — never a real, dialable number. */
+/** Reserved by Ofcom for fictitious use (film/TV/drama); never a real, dialable number. */
 const HALCYON_WHATSAPP_NUMBER = "442079460100";
 
 function whatsAppText(args: {
@@ -152,7 +152,7 @@ function WhatsAppHandoff() {
       <CheckCircle size={30} weight="fill" className="text-success" />
       <h1 className="mt-3 text-[26px] font-semibold text-ink">We&apos;ve opened WhatsApp for you</h1>
       <p className="mt-2 max-w-[46ch] text-[15px] text-body">
-        Your trip details are already in the message — just hit send. If nothing
+        Your trip details are already in the message. Just hit send. If nothing
         opened, use the button below.
       </p>
 
@@ -233,7 +233,7 @@ export function StepReview() {
   return (
     <StepFrame
       title="Review and talk to us"
-      description="Check the trip, add your name, and continue on WhatsApp — we'll hold this price while we talk."
+      description="Check the trip, add your name, and continue on WhatsApp. We'll hold this price while we talk."
       hideFooter
     >
       <div className="space-y-6">
@@ -305,7 +305,7 @@ export function StepReview() {
             <Field
               label="Email"
               error={emailError}
-              hint="Optional — for a written confirmation too"
+              hint="Optional: for a written confirmation too"
               className="sm:col-span-2"
             >
               {(id) => (
@@ -362,7 +362,7 @@ export function StepReview() {
           </Button>
         </div>
         <p className="text-center text-[12px] text-muted sm:text-right">
-          Nothing is charged here — we&apos;ll agree everything over WhatsApp. This is a
+          Nothing is charged here. We&apos;ll agree everything over WhatsApp. This is a
           prototype, so the chat won&apos;t actually connect to anyone.
         </p>
       </div>

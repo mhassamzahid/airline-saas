@@ -3,7 +3,7 @@ import { DestinationsBrowser } from "@/components/site/DestinationsBrowser";
 
 export const metadata = {
   title: "International & Pakistan Tours",
-  description: "Every Halcyon route, filterable by region — including Pakistan — and price. Browse before you enquire.",
+  description: "Every Halcyon route, filterable by region (including Pakistan) and price. Browse before you enquire.",
 };
 
 export default function ToursPage() {

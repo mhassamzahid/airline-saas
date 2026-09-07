@@ -14,7 +14,7 @@ interface ServicePageProps {
 }
 
 /**
- * Archetype D: a static service page — description, process, inquiry CTA.
+ * Archetype D: a static service page (description, process, inquiry CTA).
  * One shell, reused for every secondary offering, so a new service page is
  * new content dropped into an existing pattern rather than a one-off build.
  */

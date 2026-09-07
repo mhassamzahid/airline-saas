@@ -12,7 +12,7 @@ export interface HajjPackage {
 }
 
 /**
- * Fixed, quota'd, season-bound — a browsed listing, not a filter, per
+ * Fixed, quota'd, season-bound: a browsed listing, not a filter, per
  * Archetype B. Each package has its own real capacity and application
  * deadline shown up front, since Hajj allocation is genuinely regulated.
  */
@@ -22,7 +22,7 @@ export const HAJJ_PACKAGES: HajjPackage[] = [
     name: "Economy Hajj",
     strap: "The full rites, without the premium",
     blurb:
-      "Shared-room accommodation in Makkah and Madinah, coach transfers between the holy sites, and a guided group leader for every ritual — Mina, Arafat, Muzdalifah and the stoning at Jamarat.",
+      "Shared-room accommodation in Makkah and Madinah, coach transfers between the holy sites, and a guided group leader for every ritual: Mina, Arafat, Muzdalifah and the stoning at Jamarat.",
     image: stock("photo-1650446647974-451d05d2136d", 1200, 800),
     quota: "120 places",
     applicationDeadline: "6 months before the season",
@@ -70,7 +70,7 @@ export const HAJJ_PACKAGES: HajjPackage[] = [
     name: "Group & community Hajj",
     strap: "For mosques, families and community groups travelling together",
     blurb:
-      "The same rites and standards as our Standard package, booked and paid for as one group with a single named coordinator — built for a mosque committee or an extended family travelling together.",
+      "The same rites and standards as our Standard package, booked and paid for as one group with a single named coordinator, built for a mosque committee or an extended family travelling together.",
     image: stock("photo-1513072064285-240f87fa81e8", 1200, 800),
     quota: "20+ places per group",
     applicationDeadline: "8 months before the season",

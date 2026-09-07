@@ -23,7 +23,7 @@ const CATEGORIES = [
   {
     href: "/umrah",
     label: "Umrah",
-    body: "Package, dates, cabin and extras — a few steps, price in view the whole way.",
+    body: "Package, dates, cabin and extras: a few steps, price in view the whole way.",
     image: stock("photo-1513072064285-240f87fa81e8", 700, 860),
   },
   {
@@ -35,7 +35,7 @@ const CATEGORIES = [
   {
     href: "/tours",
     label: "International & Pakistan Tours",
-    body: "Ten nonstop routes, filterable by region and price — including Lahore, Karachi and Islamabad.",
+    body: "Ten nonstop routes, filterable by region and price (including Lahore, Karachi and Islamabad).",
     image: stock("photo-1603491656337-3b491147917c", 700, 860),
   },
 ];
@@ -56,7 +56,7 @@ const TESTIMONIALS = [
   },
   {
     quote:
-      "Applied for our Hajj place through the Group & Community package — one coordinator, one invoice, twenty-six of us kept together the whole trip.",
+      "Applied for our Hajj place through the Group & Community package, one coordinator, one invoice, twenty-six of us kept together the whole trip.",
     name: "Yusuf M.",
     detail: "Group & community Hajj",
   },
@@ -79,11 +79,11 @@ const FAQS = [
   },
   {
     q: "Can you help with my visa?",
-    a: "Yes — Visa Consultation checks your documents, tracks your application, and flags anything missing before it becomes a problem at the airport.",
+    a: "Yes, Visa Consultation checks your documents, tracks your application, and flags anything missing before it becomes a problem at the airport.",
   },
   {
     q: "Do you fly to Pakistan?",
-    a: "Yes, nonstop to Lahore, Karachi and Islamabad from our UK bases — browse them on International & Pakistan Tours alongside our other routes.",
+    a: "Yes, nonstop to Lahore, Karachi and Islamabad from our UK bases. Browse them on International & Pakistan Tours alongside our other routes.",
   },
 ];
 
@@ -94,15 +94,15 @@ export default function HomePage() {
       <section className="mx-auto max-w-[1180px] px-5 pb-14 pt-14 sm:px-8 sm:pb-16 sm:pt-20">
         <p className="overline mb-4">Halcyon</p>
         <h1 className="max-w-[20ch] text-[38px] leading-[1.05] text-ink sm:text-[54px]">
-          Umrah, Hajj, and tours — one trusted place.
+          Umrah, Hajj, and tours: one trusted place.
         </h1>
         <p className="mt-4 max-w-[56ch] text-[16px] leading-relaxed text-body">
           Build an Umrah package yourself, secure a Hajj place for the season,
-          or browse international and Pakistan tours — then track the price
+          or browse international and Pakistan tours, then track the price
           the whole way through.
         </p>
 
-        {/* Category cards — each leads straight into its own entry point */}
+        {/* Category cards: each leads straight into its own entry point */}
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
           {CATEGORIES.map((c) => (
             <Link
@@ -131,7 +131,7 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* Quick-filter — the fast path into an Umrah package for a visitor who already knows their dates */}
+        {/* Quick-filter: the fast path into an Umrah package for a visitor who already knows their dates */}
         <div className="mt-6">
           <QuickFilterWidget />
         </div>
@@ -153,7 +153,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Highlights — secondary nav layer into the Archetype-D pages + manage */}
+      {/* Highlights: secondary nav layer into the Archetype-D pages + manage */}
       <section className="mx-auto max-w-[1180px] px-5 py-14 sm:px-8 sm:py-16">
         <h2 className="text-[22px] text-ink">Alongside your trip</h2>
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">

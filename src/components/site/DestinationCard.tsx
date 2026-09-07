@@ -4,7 +4,7 @@ import { Photo } from "@/components/ui/Photo";
 import { formatGBP } from "@/lib/utils";
 
 /**
- * A plain link into a destination's detail page — visually related to the
+ * A plain link into a destination's detail page; visually related to the
  * booking wizard's selectable PhotoCard (same overlay language) but this one
  * navigates rather than selects, so it's a Link, not a styled radio input.
  */

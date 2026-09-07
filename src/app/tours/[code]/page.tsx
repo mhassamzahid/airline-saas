@@ -80,7 +80,7 @@ export default async function DestinationDetailPage({
                     <Clock size={14} /> Flight time
                   </dt>
                   <dd data-numeric className="mt-1 text-[18px] font-semibold text-ink">
-                    {flightTime ? formatDuration(flightTime) : "—"}
+                    {flightTime ? formatDuration(flightTime) : "–"}
                   </dd>
                 </div>
                 <div>

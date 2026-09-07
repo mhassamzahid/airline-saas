@@ -5,7 +5,7 @@ import { stock } from "@/lib/img";
 
 export const metadata = {
   title: "Other Services",
-  description: "Smaller offerings alongside Umrah, Hajj and tours — travel insurance, meet & greet, Qurbani arrangement and more.",
+  description: "Smaller offerings alongside Umrah, Hajj and tours: travel insurance, meet & greet, Qurbani arrangement and more.",
 };
 
 const OFFERINGS = [
@@ -32,7 +32,7 @@ const OFFERINGS = [
   {
     icon: BookOpen,
     title: "Umrah guide booklet",
-    body: "A printed step-by-step guide to the rites, sent ahead of departure — useful for first-time pilgrims.",
+    body: "A printed step-by-step guide to the rites, sent ahead of departure, useful for first-time pilgrims.",
   },
 ];
 
@@ -41,7 +41,7 @@ export default function OtherServicesPage() {
     <ServicePage
       eyebrow="Halcyon services"
       title="Other services"
-      lede="Smaller offerings that round out an Umrah, Hajj or tour booking. None of these need a full booking flow — just tell us what you need."
+      lede="Smaller offerings that round out an Umrah, Hajj or tour booking. None of these need a full booking flow: just tell us what you need."
       heroImage={{
         src: stock("photo-1600880292203-757bb62b4baf", 900, 1125),
         alt: "Two colleagues at a desk, working through a service request",

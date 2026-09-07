@@ -34,7 +34,7 @@ export function StepAddons() {
               <div>
                 <p className="text-[15px] font-medium text-ink">Extra bags, 23kg each</p>
                 <p data-numeric className="text-[13px] text-muted">
-                  {formatGBP(BAG_PRICE_GBP)} per bag — handy for Zamzam water on the way home
+                  {formatGBP(BAG_PRICE_GBP)} per bag, handy for Zamzam water on the way home
                 </p>
               </div>
             </div>

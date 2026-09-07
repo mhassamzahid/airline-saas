@@ -26,7 +26,7 @@ interface PhotoRotatorProps {
 
 /**
  * The hero photo, but it's a slow-crossfading preview of the actual destinations
- * rather than one static mood shot — clicking it selects whichever city is showing.
+ * rather than one static mood shot; clicking it selects whichever city is showing.
  * Pauses on hover/focus; stops rotating entirely under reduced motion (shows the
  * first item, static).
  */

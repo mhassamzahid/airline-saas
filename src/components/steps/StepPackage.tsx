@@ -42,7 +42,7 @@ export function StepPackage() {
       {/* Full-bleed hero: one atmospheric photo behind the whole header band,
           headline set in light type over a bottom scrim, the From + trip-type
           controls floating on a frosted panel. "Full-bleed" here means it fills
-          the step's own content column edge to edge — the wizard's outer shell
+          the step's own content column edge to edge; the wizard's outer shell
           stays contained (max-w-[1180px]) rather than breaking to the true
           viewport edge, which would need restructuring BookingShell itself. */}
       <div className="relative min-h-[440px] overflow-hidden rounded-[10px] border border-hairline sm:min-h-[520px] lg:min-h-[580px]">
@@ -75,7 +75,7 @@ export function StepPackage() {
           </motion.h1>
           <motion.p variants={item} className="mt-3 max-w-[46ch] text-[16px] text-on-dark/85">
             Every tier includes flights, hotels in Makkah and Madinah, and visa
-            processing — pick one and we build the trip around it.
+            processing. Pick one and we build the trip around it.
           </motion.p>
 
           <motion.div

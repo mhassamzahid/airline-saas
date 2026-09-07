@@ -4,7 +4,7 @@ import { stock } from "@/lib/img";
 
 export const metadata = {
   title: "Visa Consultation",
-  description: "Help with Umrah, Hajj and tour visas — document checklists, application tracking, and a specialist you can ask.",
+  description: "Help with Umrah, Hajj and tour visas: document checklists, application tracking, and a specialist you can ask.",
 };
 
 export default function VisaConsultationPage() {

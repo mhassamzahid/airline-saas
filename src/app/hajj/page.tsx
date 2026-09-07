@@ -6,7 +6,7 @@ import { HAJJ_PACKAGES } from "@/data/hajj";
 
 export const metadata = {
   title: "Hajj",
-  description: "Fixed, quota'd Hajj packages for the season — browse what's included and request a place.",
+  description: "Fixed, quota'd Hajj packages for the season. Browse what's included and request a place.",
 };
 
 export default function HajjPage() {
@@ -15,7 +15,7 @@ export default function HajjPage() {
       <PageIntro
         eyebrow="Hajj"
         title="A place for the season"
-        lede="Hajj allocation is genuinely limited, so it isn't a filter — it's a short list of fixed packages, each with its own quota and application deadline. Open one to see what's included and request a place."
+        lede="Hajj allocation is genuinely limited, so it isn't a filter: it's a short list of fixed packages, each with its own quota and application deadline. Open one to see what's included and request a place."
         className="mb-10"
       />
 

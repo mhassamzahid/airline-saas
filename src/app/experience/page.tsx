@@ -55,7 +55,7 @@ export default function ExperiencePage() {
         </div>
       </PageContainer>
 
-      {/* Cabins — editorial list */}
+      {/* Cabins: editorial list */}
       <section className="border-t border-hairline bg-canvas">
         <PageContainer className="py-14 sm:py-16">
           <h2 className="text-[24px] text-ink">Four ways to travel</h2>
@@ -94,7 +94,7 @@ export default function ExperiencePage() {
         </PageContainer>
       </section>
 
-      {/* What's different — bento */}
+      {/* What's different: bento */}
       <PageContainer className="py-14 sm:py-16">
         <h2 className="text-[24px] text-ink">What we build around</h2>
         <div className="mt-8 grid gap-3 md:grid-cols-3 md:grid-rows-2">
@@ -186,7 +186,7 @@ export default function ExperiencePage() {
         </PageContainer>
       </section>
 
-      {/* Route snapshot — a teaser; the full filterable list lives at /destinations */}
+      {/* Route snapshot: a teaser; the full filterable list lives at /tours */}
       <PageContainer className="py-14 sm:py-16">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>

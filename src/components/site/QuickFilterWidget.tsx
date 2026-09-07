@@ -8,7 +8,7 @@ import { Segmented } from "@/components/ui/Segmented";
 import { Button } from "@/components/ui/Button";
 import type { TripType } from "@/types";
 
-/** Jumps straight into the Umrah builder pre-filled, skipping the section page — the homepage's fast path for a visitor who already knows which package they want. */
+/** Jumps straight into the Umrah builder pre-filled, skipping the section page: the homepage's fast path for a visitor who already knows which package they want. */
 export function QuickFilterWidget() {
   const router = useRouter();
   const [from, setFrom] = useState(DEFAULT_ORIGIN.code);

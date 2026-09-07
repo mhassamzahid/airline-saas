@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { makeBookingRef } from "@/lib/utils";
 
 interface InquiryFormProps {
-  /** What this inquiry is about — shown in the heading and the confirmation. */
+  /** What this inquiry is about; shown in the heading and the confirmation. */
   subject: string;
   /** e.g. "6 business days". Omit to skip the reply-time line. */
   leadTime?: string;
@@ -19,7 +19,7 @@ interface InquiryFormProps {
 /**
  * The shared terminal action for Archetypes B/C/D: a mock-submitted inquiry,
  * confirmed with the same `makeBookingRef()` reference the booking wizard's
- * fare hold uses — one funnel, whichever archetype got you here.
+ * fare hold uses: one funnel, whichever archetype got you here.
  */
 export function InquiryForm({ subject, leadTime, askGroupSize = false, className }: InquiryFormProps) {
   const [name, setName] = useState("");
@@ -42,7 +42,7 @@ export function InquiryForm({ subject, leadTime, askGroupSize = false, className
         <p className="mt-1.5 max-w-[46ch] text-[14px] text-body">
           Reference <span data-numeric className="font-medium text-ink">{ref}</span>.
           {leadTime
-            ? ` Our team will reply to ${email || "your email"} within ${leadTime} — usually much sooner.`
+            ? ` Our team will reply to ${email || "your email"} within ${leadTime}, usually much sooner.`
             : ` We'll reply to ${email || "your email"} shortly.`}
         </p>
       </div>
@@ -90,7 +90,7 @@ export function InquiryForm({ subject, leadTime, askGroupSize = false, className
             )}
           </Field>
         )}
-        <Field label="Anything else" hint="Optional — add anything you already know">
+        <Field label="Anything else" hint="Optional: add anything you already know">
           {(id) => (
             <textarea
               id={id}
