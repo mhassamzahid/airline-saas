@@ -14,7 +14,7 @@ import { FLEET_STATS } from "@/data/fleet";
 import { stock } from "@/lib/img";
 
 export const metadata = {
-  title: "Umrah, Hajj and tours",
+  title: "Halcyon: Umrah, Hajj, and tours",
   description:
     "Build an Umrah package yourself, secure a Hajj place for the season, or browse international and Pakistan tours. One independent long-haul airline, three ways to book it.",
 };
