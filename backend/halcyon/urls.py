@@ -11,7 +11,7 @@ from wagtail.api.v2.views import PagesAPIViewSet
 from wagtail.models import Site
 
 from search import views as search_views
-from home.models import FooterSettings, SiteSettings
+from home.models import FooterSettings, HeaderSettings, SiteSettings
 
 # Read-only content API for the Next.js frontend to consume later.
 # Listings (CSV/XLSX-backed) endpoints are a separate, not-yet-built piece --
@@ -25,7 +25,34 @@ def footer_settings_api(request):
     # by PagesAPIViewSet above -- exposed here as its own small read-only view.
     site = Site.find_for_request(request)
     footer = FooterSettings.for_site(site)
-    return JsonResponse({"tagline": footer.tagline, "legal_line": footer.legal_line})
+
+    columns = [
+        {
+            "title": col.value["title"],
+            "links": [
+                {"label": link["label"], "href": link["href"]} for link in col.value["links"]
+            ],
+        }
+        for col in footer.columns
+    ]
+
+    return JsonResponse({
+        "tagline": footer.tagline,
+        "legal_line": footer.legal_line,
+        "columns": columns,
+    })
+
+
+def header_settings_api(request):
+    site = Site.find_for_request(request)
+    h = HeaderSettings.for_site(site)
+    return JsonResponse({
+        "nav_links": [
+            {"label": link.value["label"], "href": link.value["href"]}
+            for link in h.nav_links
+        ],
+        "cta": {"label": h.cta_label, "href": h.cta_href},
+    })
 
 
 def site_settings_api(request):
@@ -51,6 +78,7 @@ urlpatterns = [
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("api/v2/", api_router.urls),
+    path("api/v2/header-settings/", header_settings_api),
     path("api/v2/footer-settings/", footer_settings_api),
     path("api/v2/site-settings/", site_settings_api),
     path("search/", search_views.search, name="search"),

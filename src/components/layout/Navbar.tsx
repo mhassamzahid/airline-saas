@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { List, X } from "@phosphor-icons/react";
 import { Wordmark } from "@/components/ui/Wordmark";
 
-const LINKS = [
+const FALLBACK_LINKS = [
   { label: "Umrah", href: "/umrah" },
   { label: "Hajj", href: "/hajj" },
   { label: "Tours", href: "/tours" },
@@ -15,14 +15,24 @@ const LINKS = [
   { label: "Help", href: "/help" },
 ];
 
+type NavLink = { label: string; href: string };
+
 export function Navbar({
   siteTitle = "Halcyon",
   logoUrl = null,
+  navLinks,
+  cta,
 }: {
   siteTitle?: string;
   logoUrl?: string | null;
+  navLinks?: NavLink[];
+  cta?: { label: string; href: string };
 }) {
   const [open, setOpen] = useState(false);
+
+  const LINKS = navLinks && navLinks.length > 0 ? navLinks : FALLBACK_LINKS;
+  const ctaLabel = cta?.label || "Sign in";
+  const ctaHref = cta?.href || "/signin";
 
   return (
     <header className="sticky top-0 z-40 border-b border-hairline bg-canvas-soft/85 backdrop-blur-md">
@@ -45,10 +55,10 @@ export function Navbar({
 
         <div className="flex items-center gap-1">
           <Link
-            href="/signin"
+            href={ctaHref}
             className="rounded-[10px] px-3 py-2 text-[14px] font-medium text-ink transition-colors hover:bg-canvas"
           >
-            Sign in
+            {ctaLabel}
           </Link>
           <button
             onClick={() => setOpen(true)}

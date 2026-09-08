@@ -1,0 +1,22 @@
+{% extends "wagtailcore/shared/block_preview.html" %}
+{% load static %}
+
+{% comment %}
+Block-picker preview: a screenshot of the real component rendered on the
+Next.js site. Regenerate the images with `npm run gen:block-previews`.
+{% endcomment %}
+
+{% block css %}
+<style>
+  body { margin: 0; background: #f7f6f3; }
+  img { display: block; width: 100%; height: auto; }
+</style>
+{% endblock %}
+
+{% block content %}
+  {% if preview_image %}
+    <img src="{% static preview_image %}" alt="">
+  {% else %}
+    <div style="padding: 24px; font-family: sans-serif; color: #868d92;">No preview image</div>
+  {% endif %}
+{% endblock %}

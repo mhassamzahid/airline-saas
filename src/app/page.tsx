@@ -125,6 +125,10 @@ export default async function HomePage() {
 
   const categories =
     cms?.body.find((b) => b.type === "category_cards")?.value ?? FALLBACK_CATEGORIES;
+  const cmsStats = cms?.body.find((b) => b.type === "stats")?.value;
+  const stats = cmsStats
+    ? cmsStats.map((s) => ({ label: s.label, value: s.figure }))
+    : FLEET_STATS;
   const highlights =
     cms?.body.find((b) => b.type === "highlights")?.value ?? FALLBACK_HIGHLIGHTS;
   const testimonials =
@@ -186,7 +190,7 @@ export default async function HomePage() {
       <section className="border-y border-hairline bg-canvas-soft">
         <div className="mx-auto max-w-[1180px] px-5 py-8 sm:px-8">
           <dl className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
-            {FLEET_STATS.map((s) => (
+            {stats.map((s) => (
               <div key={s.label}>
                 <dt className="text-[12px] text-muted">{s.label}</dt>
                 <dd data-numeric className="mt-1 text-[24px] font-semibold text-ink">

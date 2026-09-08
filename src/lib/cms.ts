@@ -40,6 +40,11 @@ export interface CmsFaq {
   answer: string;
 }
 
+export interface CmsStat {
+  label: string;
+  figure: string;
+}
+
 interface CmsListResponse<T> {
   items: T[];
 }
@@ -50,6 +55,7 @@ export interface CmsHomePage {
   hero_subheading: string;
   body: (
     | { type: "category_cards"; value: CmsIconTextLink[] }
+    | { type: "stats"; value: CmsStat[] }
     | { type: "highlights"; value: CmsIconTextLink[] }
     | { type: "testimonials"; value: CmsTestimonial[] }
     | { type: "faqs"; value: CmsFaq[] }
@@ -99,9 +105,87 @@ export async function getHelpPage(): Promise<CmsHelpPage | null> {
   return data?.items[0] ?? null;
 }
 
+// ── Flexible (page-builder) pages ────────────────────────────
+
+export interface CmsImageRef {
+  id: number;
+  title: string;
+  meta?: { download_url?: string };
+}
+
+export interface CmsLink {
+  label: string;
+  href: string;
+}
+
+export type FlexBlock =
+  | { type: "hero"; value: { eyebrow: string; heading: string; subheading: string; image: CmsImageRef | null; cta: CmsLink | null } }
+  | { type: "rich_text"; value: { text: string } }
+  | { type: "image"; value: { image: CmsImageRef | null; caption: string } }
+  | { type: "feature_grid"; value: { heading: string; items: CmsIconTextLink[] } }
+  | { type: "cta_band"; value: { heading: string; body: string; cta: CmsLink } }
+  | { type: "faq"; value: { heading: string; items: CmsFaq[] } }
+  | { type: "stats"; value: { heading: string; items: CmsStat[] } }
+  | { type: "testimonials"; value: { heading: string; items: CmsTestimonial[] } };
+
+export interface CmsFlexiblePage {
+  id: number;
+  title: string;
+  meta: { type: string; html_url: string; seo_title?: string; search_description?: string };
+  body: FlexBlock[];
+}
+
+/** Resolves a builder page by its full path (the segments of the catch-all
+ * route). Matches on the last slug, then confirms the full URL path, so pages
+ * with the same slug in different branches of the tree don't collide. */
+export async function getFlexiblePage(pathSegments: string[]): Promise<CmsFlexiblePage | null> {
+  const slug = pathSegments[pathSegments.length - 1];
+  if (!slug) return null;
+  const wantPath = `/${pathSegments.join("/")}/`;
+  const data = await fetchCms<CmsListResponse<CmsFlexiblePage>>(
+    `/pages/?type=flexpages.FlexiblePage&slug=${encodeURIComponent(slug)}&fields=*`,
+  );
+  if (!data) return null;
+  return (
+    data.items.find((p) => {
+      try {
+        return new URL(p.meta.html_url).pathname === wantPath;
+      } catch {
+        return false;
+      }
+    }) ?? null
+  );
+}
+
+export function cmsImageUrl(image: CmsImageRef | null): string | null {
+  const rel = image?.meta?.download_url;
+  if (!rel) return null;
+  return rel.startsWith("http") ? rel : `${CMS_API_URL.replace(/\/api\/v2$/, "")}${rel}`;
+}
+
+export interface CmsNavLink {
+  label: string;
+  href: string;
+}
+
+export interface CmsHeaderSettings {
+  nav_links: CmsNavLink[];
+  cta: { label: string; href: string };
+}
+
+export async function getHeaderSettings(): Promise<CmsHeaderSettings | null> {
+  return fetchCms<CmsHeaderSettings>("/header-settings/");
+}
+
+export interface CmsFooterColumn {
+  title: string;
+  links: { label: string; href: string }[];
+}
+
 export interface CmsFooterSettings {
   tagline: string;
   legal_line: string;
+  columns: CmsFooterColumn[];
 }
 
 export async function getFooterSettings(): Promise<CmsFooterSettings | null> {

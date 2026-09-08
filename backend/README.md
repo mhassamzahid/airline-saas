@@ -88,8 +88,10 @@ Commit the generated migration file(s) -- that's what lets another machine
 | `home` | `HomePage` | Hero copy + StreamField sections: category cards, highlights, testimonials, FAQ |
 | `home` | `SiteSettings` (a Wagtail *Setting*) | Site title, uploaded logo + favicon, accent theme (Rust/Ocean/Forest/Midnight), light/dark/system colour mode |
 | `home` | `FooterSettings` (a Wagtail *Setting*, not a page) | Footer tagline and legal line |
+| `home` | `HeaderSettings` (a Wagtail *Setting*) | Extra nav links and the header CTA |
 | `services` | `ServicePage` (one type, three instances) | Visa Consultation, Air Ticketing, Other Services -- each a StreamField of `checklist` / `steps` / `tile_grid` / `paragraph` blocks |
 | `support` | `HelpPage` | Contact channels, FAQ, disruption-strip steps |
+| `flexpages` | `FlexiblePage` | Page builder: pick from Hero / Rich text / Image / Feature grid / CTA band / FAQ / Stats / Testimonials blocks. The page's URL is its slug prefixed by its parents in the tree, so nest it under a `pages` parent for `/pages/<slug>` or under Home for `/<slug>`. |
 
 The settings objects are exposed to the frontend at `/api/v2/site-settings/`
 and `/api/v2/footer-settings/` (plain JSON views -- Wagtail Settings aren't
@@ -101,8 +103,20 @@ served from Django's `/media/` in dev -- production would need real media
 hosting (S3/CDN).
 
 Shared StreamField block definitions (`FAQBlock`, `StepsBlock`,
-`ChecklistBlock`, `IconTextLinkBlock`) live in `halcyon/blocks.py` since more
-than one page type reuses them.
+`ChecklistBlock`, `IconTextLinkBlock`, and the page-builder blocks) live in
+`halcyon/blocks.py` since more than one page type reuses them.
+
+### Page-builder block previews
+
+The block picker on a `FlexiblePage` shows a real screenshot of each component
+as it renders on the site, plus starter copy pre-filled into every new block
+(the `*_SAMPLE` dicts in `halcyon/blocks.py`).
+
+The screenshots live in `flexpages/static/flexpages/previews/*.png`. To
+regenerate them after a design change: run the Next.js site, then from the repo
+root run `npm run gen:block-previews` (needs `npx playwright install chromium`
+once). Set `PREVIEW_BASE_URL` if the site isn't on `http://localhost:3000`.
+In production, run `python manage.py collectstatic` so the admin can serve them.
 
 Every page type declares `api_fields`, so its content (not just the title) is
 included at `/api/v2/pages/<id>/`.

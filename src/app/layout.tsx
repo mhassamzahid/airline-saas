@@ -4,7 +4,7 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { getSiteSettings } from "@/lib/cms";
+import { getSiteSettings, getHeaderSettings } from "@/lib/cms";
 
 const LIGHT_BG = "#f7f6f3";
 const DARK_BG = "#1e2123";
@@ -39,7 +39,10 @@ export async function generateViewport(): Promise<Viewport> {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const { site_title, theme, color_mode, logo_url } = await getSiteSettings();
+  const [{ site_title, theme, color_mode, logo_url }, header] = await Promise.all([
+    getSiteSettings(),
+    getHeaderSettings(),
+  ]);
 
   // "system" -> no data-mode attribute, so globals.css falls through to the
   // prefers-color-scheme media query.
@@ -54,7 +57,12 @@ export default async function RootLayout({
     >
       <body>
         <div className="flex min-h-[100dvh] flex-col">
-          <Navbar siteTitle={site_title} logoUrl={logo_url} />
+          <Navbar
+            siteTitle={site_title}
+            logoUrl={logo_url}
+            navLinks={header?.nav_links}
+            cta={header?.cta}
+          />
           <main className="flex-1">{children}</main>
           <Footer siteTitle={site_title} logoUrl={logo_url} />
         </div>
