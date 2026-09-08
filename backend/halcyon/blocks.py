@@ -117,6 +117,20 @@ RICH_TEXT_SAMPLE = {
     ),
 }
 IMAGE_SAMPLE = {"caption": "A caption sits under the image."}
+MARKDOWN_SAMPLE = {
+    "body": (
+        "## Privacy Policy\n\n"
+        "_Last updated 1 January 2026._\n\n"
+        "This policy explains what we collect when you book a trip with us, how "
+        "we use it, and the choices you have.\n\n"
+        "### What we collect\n\n"
+        "- Contact details you give us when enquiring or booking\n"
+        "- Passport and travel details needed to issue tickets and visas\n"
+        "- Payment information, handled by our payment provider\n\n"
+        "### How to reach us\n\n"
+        "Email **privacy@example.com** with any question about your data."
+    ),
+}
 FEATURE_GRID_SAMPLE = {
     "heading": "What's included",
     "items": [
@@ -206,6 +220,23 @@ class RichTextSectionBlock(ScreenshotPreviewBlock):
         icon = "doc-full"
         label = "Rich text"
         preview_value = RICH_TEXT_SAMPLE
+
+
+class MarkdownBlock(ScreenshotPreviewBlock):
+    preview_image = "flexpages/previews/markdown.png"
+
+    body = blocks.TextBlock(
+        default=MARKDOWN_SAMPLE["body"],
+        help_text=(
+            "Written in Markdown -- headings (##), lists, links, **bold**. "
+            "Best for long policy or terms pages."
+        ),
+    )
+
+    class Meta:
+        icon = "doc-empty"
+        label = "Markdown"
+        preview_value = MARKDOWN_SAMPLE
 
 
 class ImageSectionBlock(ScreenshotPreviewBlock):

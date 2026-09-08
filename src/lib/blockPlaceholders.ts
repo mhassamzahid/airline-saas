@@ -35,6 +35,10 @@ export const BLOCK_PLACEHOLDERS: { [K in FlexBlock["type"]]: BlockValue<K> } = {
     text:
       "<h2>What to expect</h2><p>A short introduction to the section, with room for a <a href=\"#\">link</a> and a couple of points worth calling out:</p><ul><li>The first thing travellers ask about</li><li>The second thing travellers ask about</li></ul>",
   },
+  markdown: {
+    body:
+      "## Privacy Policy\n\n_Last updated 1 January 2026._\n\nThis policy explains what we collect when you book a trip with us, how we use it, and the choices you have.\n\n### What we collect\n\n- Contact details you give us when enquiring or booking\n- Passport and travel details needed to issue tickets and visas\n- Payment information, handled by our payment provider\n\n### How to reach us\n\nEmail **privacy@example.com** with any question about your data.",
+  },
   image: {
     image: SAMPLE_IMAGE,
     caption: "A caption sits under the image.",

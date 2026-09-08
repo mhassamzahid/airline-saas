@@ -121,6 +121,7 @@ export interface CmsLink {
 export type FlexBlock =
   | { type: "hero"; value: { eyebrow: string; heading: string; subheading: string; image: CmsImageRef | null; cta: CmsLink | null } }
   | { type: "rich_text"; value: { text: string } }
+  | { type: "markdown"; value: { body: string } }
   | { type: "image"; value: { image: CmsImageRef | null; caption: string } }
   | { type: "feature_grid"; value: { heading: string; items: CmsIconTextLink[] } }
   | { type: "cta_band"; value: { heading: string; body: string; cta: CmsLink } }

@@ -6,6 +6,7 @@ from wagtail.api import APIField
 from halcyon.blocks import (
     HeroBlock,
     RichTextSectionBlock,
+    MarkdownBlock,
     ImageSectionBlock,
     FeatureGridBlock,
     CTABandBlock,
@@ -25,6 +26,7 @@ class FlexiblePage(Page):
         [
             ("hero", HeroBlock()),
             ("rich_text", RichTextSectionBlock()),
+            ("markdown", MarkdownBlock()),
             ("image", ImageSectionBlock()),
             ("feature_grid", FeatureGridBlock()),
             ("cta_band", CTABandBlock()),

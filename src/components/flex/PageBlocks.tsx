@@ -1,9 +1,14 @@
 import Link from "next/link";
+import { marked } from "marked";
 import { ArrowRight, CaretDown, Quotes } from "@phosphor-icons/react/dist/ssr";
 import { Photo } from "@/components/ui/Photo";
 import { resolveIcon } from "@/lib/icons";
 import { cmsImageUrl, type FlexBlock, type CmsLink } from "@/lib/cms";
-import { sanitizeRichText } from "@/lib/sanitize";
+import { sanitizeRichText, sanitizeMarkdown } from "@/lib/sanitize";
+
+/** Long-form prose styling shared by the rich-text and markdown blocks. */
+const PROSE_CLASS =
+  "prose-halcyon max-w-[68ch] text-[16px] leading-relaxed text-body [&_a]:font-medium [&_a]:text-rust-700 [&_a:hover]:text-rust-600 [&_h1]:mb-3 [&_h1]:mt-8 [&_h1]:text-[28px] [&_h1]:font-semibold [&_h1]:text-ink [&_h2]:mb-2 [&_h2]:mt-8 [&_h2]:text-[24px] [&_h2]:text-ink [&_h3]:mb-1.5 [&_h3]:mt-6 [&_h3]:text-[18px] [&_h3]:font-semibold [&_h3]:text-ink [&_h4]:mb-1 [&_h4]:mt-5 [&_h4]:text-[16px] [&_h4]:font-semibold [&_h4]:text-ink [&_li]:my-1 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-3 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:pl-5 [&_blockquote]:border-l-2 [&_blockquote]:border-rust-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-canvas-soft [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-[13px] [&_table]:my-4 [&_table]:w-full [&_table]:text-[14px] [&_th]:border-b [&_th]:border-hairline-firm [&_th]:py-2 [&_th]:text-left [&_td]:border-b [&_td]:border-hairline [&_td]:py-2";
 
 function CtaButton({ cta, tone = "solid" }: { cta: CmsLink; tone?: "solid" | "on-dark" }) {
   return (
@@ -66,9 +71,20 @@ function RichTextBlock({ value }: Extract<FlexBlock, { type: "rich_text" }>) {
     <section className="py-12 sm:py-16">
       <Container>
         <div
-          className="prose-halcyon max-w-[68ch] text-[16px] leading-relaxed text-body [&_a]:font-medium [&_a]:text-rust-700 [&_a:hover]:text-rust-600 [&_h2]:mb-2 [&_h2]:mt-8 [&_h2]:text-[24px] [&_h2]:text-ink [&_h3]:mb-1.5 [&_h3]:mt-6 [&_h3]:text-[18px] [&_h3]:font-semibold [&_h3]:text-ink [&_li]:my-1 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-3 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:pl-5 [&_blockquote]:border-l-2 [&_blockquote]:border-rust-500 [&_blockquote]:pl-4 [&_blockquote]:italic"
+          className={PROSE_CLASS}
           dangerouslySetInnerHTML={{ __html: sanitizeRichText(value.text) }}
         />
+      </Container>
+    </section>
+  );
+}
+
+function MarkdownBlock({ value }: Extract<FlexBlock, { type: "markdown" }>) {
+  const html = sanitizeMarkdown(marked.parse(value.body, { async: false }));
+  return (
+    <section className="py-12 sm:py-16">
+      <Container>
+        <div className={PROSE_CLASS} dangerouslySetInnerHTML={{ __html: html }} />
       </Container>
     </section>
   );
@@ -199,6 +215,8 @@ export function PageBlocks({ blocks }: { blocks: FlexBlock[] }) {
             return <HeroBlock key={i} {...block} />;
           case "rich_text":
             return <RichTextBlock key={i} {...block} />;
+          case "markdown":
+            return <MarkdownBlock key={i} {...block} />;
           case "image":
             return <ImageBlock key={i} {...block} />;
           case "feature_grid":
