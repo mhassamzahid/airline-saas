@@ -4,14 +4,20 @@ import { Photo } from "@/components/ui/Photo";
 import { QuickFilterWidget } from "@/components/site/QuickFilterWidget";
 import { FLEET_STATS } from "@/data/fleet";
 import { stock } from "@/lib/img";
-import { getHomePage, type CmsIconTextLink, type CmsTestimonial, type CmsFaq } from "@/lib/cms";
+import { getHomePage, getSiteSettings, type CmsIconTextLink, type CmsTestimonial, type CmsFaq } from "@/lib/cms";
 import { resolveIcon } from "@/lib/icons";
 
-export const metadata = {
-  title: "Halcyon: Umrah, Hajj, and tours",
-  description:
-    "Build an Umrah package yourself, secure a Hajj place for the season, or browse international and Pakistan tours. One independent long-haul airline, three ways to book it.",
-};
+// The homepage sets an absolute title (rather than relying on the root
+// layout's "%s · {site title}" template) since "{site title}: Umrah, Hajj,
+// and tours" reads as one composed headline, not a page name plus a suffix.
+export async function generateMetadata() {
+  const { site_title } = await getSiteSettings();
+  return {
+    title: `${site_title}: Umrah, Hajj, and tours`,
+    description:
+      "Build an Umrah package yourself, secure a Hajj place for the season, or browse international and Pakistan tours. One independent long-haul airline, three ways to book it.",
+  };
+}
 
 // The CMS doesn't have real images uploaded for these yet, so category
 // cards always use this local stock photo keyed by href rather than

@@ -11,7 +11,7 @@ from wagtail.api.v2.views import PagesAPIViewSet
 from wagtail.models import Site
 
 from search import views as search_views
-from home.models import FooterSettings
+from home.models import FooterSettings, SiteSettings
 
 # Read-only content API for the Next.js frontend to consume later.
 # Listings (CSV/XLSX-backed) endpoints are a separate, not-yet-built piece --
@@ -28,12 +28,31 @@ def footer_settings_api(request):
     return JsonResponse({"tagline": footer.tagline, "legal_line": footer.legal_line})
 
 
+def site_settings_api(request):
+    site = Site.find_for_request(request)
+    s = SiteSettings.for_site(site)
+
+    def image_url(image, spec):
+        if not image:
+            return None
+        return request.build_absolute_uri(image.get_rendition(spec).url)
+
+    return JsonResponse({
+        "site_title": s.site_title,
+        "theme": s.theme,
+        "color_mode": s.color_mode,
+        "logo_url": image_url(s.logo, "max-320x96"),
+        "favicon_url": image_url(s.favicon, "fill-64x64"),
+    })
+
+
 urlpatterns = [
     path("django-admin/", admin.site.urls),
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("api/v2/", api_router.urls),
     path("api/v2/footer-settings/", footer_settings_api),
+    path("api/v2/site-settings/", site_settings_api),
     path("search/", search_views.search, name="search"),
 ]
 

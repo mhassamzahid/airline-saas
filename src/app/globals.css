@@ -50,6 +50,155 @@
   --ease-halcyon: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* ─────────────────────────────────────────────────────────────
+   Theme presets -- set via <html data-theme="..."> (see layout.tsx,
+   sourced from the CMS's SiteSettings.theme). Each preset only rebinds
+   the brand accent (still called --color-rust-* -- the name is legacy,
+   the value isn't) and the dark surface; the neutral paper base, and the
+   semantic success/warning/danger colors, stay constant across themes so
+   contrast and hierarchy don't need re-tuning per theme. "rust" is the
+   default and matches the @theme block above, so it needs no override.
+   ───────────────────────────────────────────────────────────── */
+
+[data-theme="ocean"] {
+  --color-rust-700: #0d5c66;
+  --color-rust-600: #147a86;
+  --color-rust-500: #2fa3ad;
+  --color-rust-100: #dcf0f0;
+
+  --color-dark: #0b1c24;
+  --color-on-dark: #e9f2f2;
+  --color-on-dark-mut: #8aa8ac;
+}
+
+[data-theme="forest"] {
+  --color-rust-700: #1f5c3a;
+  --color-rust-600: #2c7a4c;
+  --color-rust-500: #4fa06c;
+  --color-rust-100: #dcecdf;
+
+  --color-dark: #101d15;
+  --color-on-dark: #eaf1ec;
+  --color-on-dark-mut: #8ba695;
+}
+
+[data-theme="midnight"] {
+  --color-rust-700: #1e40af;
+  --color-rust-600: #2f57d6;
+  --color-rust-500: #5b7fe8;
+  --color-rust-100: #e2e8fb;
+
+  --color-dark: #101114;
+  --color-on-dark: #eef0f5;
+  --color-on-dark-mut: #9195a3;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Dark mode -- set via <html data-mode="dark">, or applied from the
+   visitor's OS setting when SiteSettings.color_mode is "system" (in
+   which case layout.tsx sets no data-mode attribute at all, and the
+   :not([data-mode="light"]) media query below takes over).
+
+   Two things shift: (1) the neutral surface/text scale inverts (block
+   keyed on mode only -- independent of accent theme); (2) each accent
+   theme steps one shade lighter so it stays legible on the dark canvas.
+   Known trade-off: the shared --color-rust-* token is used both as a
+   button fill (with white text) and as inline accent text/icons; a
+   single value can't be ideal for both against a dark page, so the
+   lighter dark-mode value favours inline text legibility and the solid
+   CTA button's white-on-accent contrast lands around 3.5-4:1 rather
+   than a full 4.5:1. A separate "accent text" token would fix it.
+   ───────────────────────────────────────────────────────────── */
+
+:root[data-mode="dark"] {
+  color-scheme: dark;
+  --color-ink: #f2f1ef;
+  --color-body: #c6c8c7;
+  --color-muted: #8f9294;
+  --color-faint: #63676a;
+  --color-canvas: #17191b;
+  --color-canvas-soft: #1e2123;
+  --color-canvas-sink: #26292c;
+  --color-hairline: #2f3336;
+  --color-hairline-firm: #3c4043;
+  --color-success: #35c95b;
+  --color-success-bg: #15301f;
+  --color-warning: #e0a836;
+  --color-warning-bg: #2f2409;
+  --color-danger: #f0564a;
+  --color-danger-bg: #351714;
+}
+
+[data-theme="rust"][data-mode="dark"] {
+  --color-rust-700: #c44f1c;
+  --color-rust-600: #dd6531;
+  --color-rust-500: #e8875f;
+  --color-rust-100: #2b160c;
+}
+[data-theme="ocean"][data-mode="dark"] {
+  --color-rust-700: #147a86;
+  --color-rust-600: #2fa3ad;
+  --color-rust-500: #5cbcc4;
+  --color-rust-100: #0f2427;
+}
+[data-theme="forest"][data-mode="dark"] {
+  --color-rust-700: #2c7a4c;
+  --color-rust-600: #4fa06c;
+  --color-rust-500: #78bb92;
+  --color-rust-100: #122318;
+}
+[data-theme="midnight"][data-mode="dark"] {
+  --color-rust-700: #2f57d6;
+  --color-rust-600: #5b7fe8;
+  --color-rust-500: #8aa5ee;
+  --color-rust-100: #161b2e;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-mode="light"]) {
+    color-scheme: dark;
+    --color-ink: #f2f1ef;
+    --color-body: #c6c8c7;
+    --color-muted: #8f9294;
+    --color-faint: #63676a;
+    --color-canvas: #17191b;
+    --color-canvas-soft: #1e2123;
+    --color-canvas-sink: #26292c;
+    --color-hairline: #2f3336;
+    --color-hairline-firm: #3c4043;
+    --color-success: #35c95b;
+    --color-success-bg: #15301f;
+    --color-warning: #e0a836;
+    --color-warning-bg: #2f2409;
+    --color-danger: #f0564a;
+    --color-danger-bg: #351714;
+  }
+  [data-theme="rust"]:not([data-mode="light"]) {
+    --color-rust-700: #c44f1c;
+    --color-rust-600: #dd6531;
+    --color-rust-500: #e8875f;
+    --color-rust-100: #2b160c;
+  }
+  [data-theme="ocean"]:not([data-mode="light"]) {
+    --color-rust-700: #147a86;
+    --color-rust-600: #2fa3ad;
+    --color-rust-500: #5cbcc4;
+    --color-rust-100: #0f2427;
+  }
+  [data-theme="forest"]:not([data-mode="light"]) {
+    --color-rust-700: #2c7a4c;
+    --color-rust-600: #4fa06c;
+    --color-rust-500: #78bb92;
+    --color-rust-100: #122318;
+  }
+  [data-theme="midnight"]:not([data-mode="light"]) {
+    --color-rust-700: #2f57d6;
+    --color-rust-600: #5b7fe8;
+    --color-rust-500: #8aa5ee;
+    --color-rust-100: #161b2e;
+  }
+}
+
 @layer base {
   * {
     box-sizing: border-box;

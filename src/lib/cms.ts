@@ -107,3 +107,54 @@ export interface CmsFooterSettings {
 export async function getFooterSettings(): Promise<CmsFooterSettings | null> {
   return fetchCms<CmsFooterSettings>("/footer-settings/");
 }
+
+// Keep in sync with THEME_CHOICES / COLOR_MODE_CHOICES in
+// backend/home/models.py and the [data-theme=...] / [data-mode=...] blocks
+// in src/app/globals.css.
+export const SITE_THEMES = ["rust", "ocean", "forest", "midnight"] as const;
+export type SiteTheme = (typeof SITE_THEMES)[number];
+
+export const COLOR_MODES = ["light", "dark", "system"] as const;
+export type ColorMode = (typeof COLOR_MODES)[number];
+
+export interface CmsSiteSettings {
+  site_title: string;
+  theme: SiteTheme;
+  color_mode: ColorMode;
+  logo_url: string | null;
+  favicon_url: string | null;
+}
+
+const DEFAULT_SITE_SETTINGS: CmsSiteSettings = {
+  site_title: "Halcyon",
+  theme: "rust",
+  color_mode: "light",
+  logo_url: null,
+  favicon_url: null,
+};
+
+interface RawSiteSettings {
+  site_title: string;
+  theme: string;
+  color_mode: string;
+  logo_url: string | null;
+  favicon_url: string | null;
+}
+
+export async function getSiteSettings(): Promise<CmsSiteSettings> {
+  const data = await fetchCms<RawSiteSettings>("/site-settings/");
+  if (!data) return DEFAULT_SITE_SETTINGS;
+  const theme = (SITE_THEMES as readonly string[]).includes(data.theme)
+    ? (data.theme as SiteTheme)
+    : DEFAULT_SITE_SETTINGS.theme;
+  const color_mode = (COLOR_MODES as readonly string[]).includes(data.color_mode)
+    ? (data.color_mode as ColorMode)
+    : DEFAULT_SITE_SETTINGS.color_mode;
+  return {
+    site_title: data.site_title || DEFAULT_SITE_SETTINGS.site_title,
+    theme,
+    color_mode,
+    logo_url: data.logo_url ?? null,
+    favicon_url: data.favicon_url ?? null,
+  };
+}

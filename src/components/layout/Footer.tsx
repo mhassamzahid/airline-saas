@@ -45,7 +45,13 @@ const FALLBACK_TAGLINE =
   "An independent long-haul airline flying from London Gatwick, Manchester and Edinburgh. Quiet cabins, honest fares, and a plan you can see the whole way through.";
 const FALLBACK_LEGAL_LINE = "Halcyon Airways Ltd. This is a design prototype, not a real airline.";
 
-export async function Footer() {
+export async function Footer({
+  siteTitle = "Halcyon",
+  logoUrl = null,
+}: {
+  siteTitle?: string;
+  logoUrl?: string | null;
+}) {
   const cms = await getFooterSettings();
   const tagline = cms?.tagline || FALLBACK_TAGLINE;
   const legalLine = cms?.legal_line || FALLBACK_LEGAL_LINE;
@@ -55,7 +61,7 @@ export async function Footer() {
       <div className="mx-auto max-w-[1180px] px-5 py-16 sm:px-8">
         <div className="grid gap-12 md:grid-cols-[1.2fr_2fr]">
           <div>
-            <Wordmark tone="light" />
+            <Wordmark tone="light" text={siteTitle} logoUrl={logoUrl} />
             <p className="mt-4 max-w-[34ch] text-[14px] leading-relaxed text-on-dark-mut">
               {tagline}
             </p>

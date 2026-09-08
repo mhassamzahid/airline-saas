@@ -15,14 +15,20 @@ const LINKS = [
   { label: "Help", href: "/help" },
 ];
 
-export function Navbar() {
+export function Navbar({
+  siteTitle = "Halcyon",
+  logoUrl = null,
+}: {
+  siteTitle?: string;
+  logoUrl?: string | null;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 border-b border-hairline bg-canvas-soft/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-[1180px] items-center justify-between px-5 sm:px-8">
-        <Link href="/" aria-label="Halcyon home">
-          <Wordmark />
+        <Link href="/" aria-label={`${siteTitle} home`}>
+          <Wordmark text={siteTitle} logoUrl={logoUrl} />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
@@ -76,7 +82,7 @@ export function Navbar() {
                 >
                   <div className="flex items-center justify-between px-2 py-1">
                     <Dialog.Title className="sr-only">Menu</Dialog.Title>
-                    <Wordmark />
+                    <Wordmark text={siteTitle} logoUrl={logoUrl} />
                     <Dialog.Close
                       aria-label="Close menu"
                       className="grid h-9 w-9 place-items-center rounded-[10px] text-muted hover:bg-canvas-soft hover:text-ink"

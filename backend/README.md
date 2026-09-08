@@ -86,9 +86,19 @@ Commit the generated migration file(s) -- that's what lets another machine
 | App | Page type(s) | Covers |
 |---|---|---|
 | `home` | `HomePage` | Hero copy + StreamField sections: category cards, highlights, testimonials, FAQ |
+| `home` | `SiteSettings` (a Wagtail *Setting*) | Site title, uploaded logo + favicon, accent theme (Rust/Ocean/Forest/Midnight), light/dark/system colour mode |
 | `home` | `FooterSettings` (a Wagtail *Setting*, not a page) | Footer tagline and legal line |
 | `services` | `ServicePage` (one type, three instances) | Visa Consultation, Air Ticketing, Other Services -- each a StreamField of `checklist` / `steps` / `tile_grid` / `paragraph` blocks |
 | `support` | `HelpPage` | Contact channels, FAQ, disruption-strip steps |
+
+The settings objects are exposed to the frontend at `/api/v2/site-settings/`
+and `/api/v2/footer-settings/` (plain JSON views -- Wagtail Settings aren't
+Pages, so they're not covered by the `/api/v2/pages/` router). Themes and the
+light/dark mode are CSS-variable presets defined in
+`src/app/globals.css`; the API just returns the key, the frontend applies it
+via `<html data-theme=... data-mode=...>`. Uploaded logo/favicon images are
+served from Django's `/media/` in dev -- production would need real media
+hosting (S3/CDN).
 
 Shared StreamField block definitions (`FAQBlock`, `StepsBlock`,
 `ChecklistBlock`, `IconTextLinkBlock`) live in `halcyon/blocks.py` since more
@@ -102,4 +112,5 @@ included at `/api/v2/pages/<id>/`.
 All five pages (Home, Visa Consultation, Air Ticketing, Other Services, Help)
 are already populated with the same copy currently hardcoded in the Next.js
 site, so the admin isn't empty on first login. Edit it through
-`/admin/pages/`, or `/admin/settings/home/footersettings/` for the footer.
+`/admin/pages/`, or `/admin/settings/` for site title / logo / theme / mode
+(`SiteSettings`) and the footer text (`FooterSettings`).
