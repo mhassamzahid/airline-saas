@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/ui/Wordmark";
+import { getFooterSettings } from "@/lib/cms";
 
 const COLUMNS = [
   {
@@ -40,7 +41,15 @@ const COLUMNS = [
   },
 ];
 
-export function Footer() {
+const FALLBACK_TAGLINE =
+  "An independent long-haul airline flying from London Gatwick, Manchester and Edinburgh. Quiet cabins, honest fares, and a plan you can see the whole way through.";
+const FALLBACK_LEGAL_LINE = "Halcyon Airways Ltd. This is a design prototype, not a real airline.";
+
+export async function Footer() {
+  const cms = await getFooterSettings();
+  const tagline = cms?.tagline || FALLBACK_TAGLINE;
+  const legalLine = cms?.legal_line || FALLBACK_LEGAL_LINE;
+
   return (
     <footer className="mt-24 bg-dark text-on-dark">
       <div className="mx-auto max-w-[1180px] px-5 py-16 sm:px-8">
@@ -48,9 +57,7 @@ export function Footer() {
           <div>
             <Wordmark tone="light" />
             <p className="mt-4 max-w-[34ch] text-[14px] leading-relaxed text-on-dark-mut">
-              An independent long-haul airline flying from London Gatwick,
-              Manchester and Edinburgh. Quiet cabins, honest fares, and a plan
-              you can see the whole way through.
+              {tagline}
             </p>
           </div>
 
@@ -76,7 +83,7 @@ export function Footer() {
         </div>
 
         <div className="mt-14 flex flex-col gap-3 border-t border-white/10 pt-6 text-[12px] text-on-dark-mut sm:flex-row sm:items-center sm:justify-between">
-          <p>Halcyon Airways Ltd. This is a design prototype, not a real airline.</p>
+          <p>{legalLine}</p>
           <div className="flex gap-4">
             <Link href="/help" className="hover:text-on-dark">Privacy</Link>
             <Link href="/help" className="hover:text-on-dark">Cookies</Link>

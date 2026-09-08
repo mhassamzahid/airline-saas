@@ -23,3 +23,12 @@ yarn-error.log*
 .idea/
 
 .claude/settings.local.json
+
+# backend (Django + Wagtail)
+backend/.venv/
+backend/__pycache__/
+**/__pycache__/
+*.pyc
+backend/db.sqlite3
+backend/media/
+backend/static/

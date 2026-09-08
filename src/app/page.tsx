@@ -1,17 +1,11 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  CaretDown,
-  IdentificationCard,
-  Ticket,
-  Wrench,
-  ClipboardText,
-  Quotes,
-} from "@phosphor-icons/react/dist/ssr";
+import { ArrowRight, CaretDown, Quotes } from "@phosphor-icons/react/dist/ssr";
 import { Photo } from "@/components/ui/Photo";
 import { QuickFilterWidget } from "@/components/site/QuickFilterWidget";
 import { FLEET_STATS } from "@/data/fleet";
 import { stock } from "@/lib/img";
+import { getHomePage, type CmsIconTextLink, type CmsTestimonial, type CmsFaq } from "@/lib/cms";
+import { resolveIcon } from "@/lib/icons";
 
 export const metadata = {
   title: "Halcyon: Umrah, Hajj, and tours",
@@ -19,35 +13,57 @@ export const metadata = {
     "Build an Umrah package yourself, secure a Hajj place for the season, or browse international and Pakistan tours. One independent long-haul airline, three ways to book it.",
 };
 
-const CATEGORIES = [
+// The CMS doesn't have real images uploaded for these yet, so category
+// cards always use this local stock photo keyed by href rather than
+// whatever (currently empty) image field comes back from Wagtail.
+const CATEGORY_IMAGE_BY_HREF: Record<string, string> = {
+  "/umrah": stock("photo-1513072064285-240f87fa81e8", 700, 860),
+  "/hajj": stock("photo-1554794470-42d3cd193ecc", 700, 860),
+  "/tours": stock("photo-1603491656337-3b491147917c", 700, 860),
+};
+
+const FALLBACK_HERO = {
+  eyebrow: "Halcyon",
+  heading: "Umrah, Hajj, and tours: one trusted place.",
+  subheading:
+    "Build an Umrah package yourself, secure a Hajj place for the season, or browse international and Pakistan tours, then track the price the whole way through.",
+};
+
+const FALLBACK_CATEGORIES: CmsIconTextLink[] = [
   {
     href: "/umrah",
     label: "Umrah",
     body: "Package, dates, cabin and extras: a few steps, price in view the whole way.",
-    image: stock("photo-1513072064285-240f87fa81e8", 700, 860),
+    icon_name: "",
+    image: null,
+    action_label: "",
   },
   {
     href: "/hajj",
     label: "Hajj",
     body: "Fixed, quota'd packages for the season. Browse what's included and request a place.",
-    image: stock("photo-1554794470-42d3cd193ecc", 700, 860),
+    icon_name: "",
+    image: null,
+    action_label: "",
   },
   {
     href: "/tours",
     label: "International & Pakistan Tours",
     body: "Ten nonstop routes, filterable by region and price (including Lahore, Karachi and Islamabad).",
-    image: stock("photo-1603491656337-3b491147917c", 700, 860),
+    icon_name: "",
+    image: null,
+    action_label: "",
   },
 ];
 
-const HIGHLIGHTS = [
-  { href: "/visa-consultation", icon: IdentificationCard, label: "Visa Consultation", body: "Document checks & tracking" },
-  { href: "/air-ticketing", icon: Ticket, label: "Air Ticketing", body: "Changes to a ticket you hold" },
-  { href: "/other-services", icon: Wrench, label: "Other Services", body: "Insurance, meet & greet, more" },
-  { href: "/manage", icon: ClipboardText, label: "Manage your trip", body: "Seats, bags, changes" },
+const FALLBACK_HIGHLIGHTS: CmsIconTextLink[] = [
+  { href: "/visa-consultation", icon_name: "IdentificationCard", label: "Visa Consultation", body: "Document checks & tracking", image: null, action_label: "" },
+  { href: "/air-ticketing", icon_name: "Ticket", label: "Air Ticketing", body: "Changes to a ticket you hold", image: null, action_label: "" },
+  { href: "/other-services", icon_name: "Wrench", label: "Other Services", body: "Insurance, meet & greet, more", image: null, action_label: "" },
+  { href: "/manage", icon_name: "ClipboardText", label: "Manage your trip", body: "Seats, bags, changes", image: null, action_label: "" },
 ];
 
-const TESTIMONIALS = [
+const FALLBACK_TESTIMONIALS: CmsTestimonial[] = [
   {
     quote:
       "The package price didn't move between building it and paying for it. First time that's happened with an Umrah booking for us.",
@@ -68,49 +84,69 @@ const TESTIMONIALS = [
   },
 ];
 
-const FAQS = [
+const FALLBACK_FAQS: CmsFaq[] = [
   {
-    q: "What's included in an Umrah package?",
-    a: "Every tier includes flights to Jeddah, hotels in both Makkah and Madinah, and visa processing. Higher tiers add closer hotels, fewer nights, and more personal support.",
+    question: "What's included in an Umrah package?",
+    answer:
+      "Every tier includes flights to Jeddah, hotels in both Makkah and Madinah, and visa processing. Higher tiers add closer hotels, fewer nights, and more personal support.",
   },
   {
-    q: "How do I apply for a Hajj place?",
-    a: "Open the package closest to your group size on the Hajj page and send an inquiry. Places are quota'd by season, so earlier applications have more choice.",
+    question: "How do I apply for a Hajj place?",
+    answer:
+      "Open the package closest to your group size on the Hajj page and send an inquiry. Places are quota'd by season, so earlier applications have more choice.",
   },
   {
-    q: "Can you help with my visa?",
-    a: "Yes, Visa Consultation checks your documents, tracks your application, and flags anything missing before it becomes a problem at the airport.",
+    question: "Can you help with my visa?",
+    answer:
+      "Yes, Visa Consultation checks your documents, tracks your application, and flags anything missing before it becomes a problem at the airport.",
   },
   {
-    q: "Do you fly to Pakistan?",
-    a: "Yes, nonstop to Lahore, Karachi and Islamabad from our UK bases. Browse them on International & Pakistan Tours alongside our other routes.",
+    question: "Do you fly to Pakistan?",
+    answer:
+      "Yes, nonstop to Lahore, Karachi and Islamabad from our UK bases. Browse them on International & Pakistan Tours alongside our other routes.",
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const cms = await getHomePage();
+
+  const hero = cms
+    ? { eyebrow: cms.hero_eyebrow, heading: cms.hero_heading, subheading: cms.hero_subheading }
+    : FALLBACK_HERO;
+
+  const categories =
+    cms?.body.find((b) => b.type === "category_cards")?.value ?? FALLBACK_CATEGORIES;
+  const highlights =
+    cms?.body.find((b) => b.type === "highlights")?.value ?? FALLBACK_HIGHLIGHTS;
+  const testimonials =
+    cms?.body.find((b) => b.type === "testimonials")?.value ?? FALLBACK_TESTIMONIALS;
+  const faqs = cms?.body.find((b) => b.type === "faqs")?.value ?? FALLBACK_FAQS;
+
   return (
     <>
       {/* Hero */}
       <section className="mx-auto max-w-[1180px] px-5 pb-14 pt-14 sm:px-8 sm:pb-16 sm:pt-20">
-        <p className="overline mb-4">Halcyon</p>
+        <p className="overline mb-4">{hero.eyebrow}</p>
         <h1 className="max-w-[20ch] text-[38px] leading-[1.05] text-ink sm:text-[54px]">
-          Umrah, Hajj, and tours: one trusted place.
+          {hero.heading}
         </h1>
         <p className="mt-4 max-w-[56ch] text-[16px] leading-relaxed text-body">
-          Build an Umrah package yourself, secure a Hajj place for the season,
-          or browse international and Pakistan tours, then track the price
-          the whole way through.
+          {hero.subheading}
         </p>
 
         {/* Category cards: each leads straight into its own entry point */}
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          {CATEGORIES.map((c) => (
+          {categories.map((c) => (
             <Link
               key={c.href}
               href={c.href}
               className="group relative block overflow-hidden rounded-[12px] border border-hairline bg-canvas transition-all hover:-translate-y-1 hover:h-shadow-md"
             >
-              <Photo src={c.image} alt="" className="aspect-[4/5] w-full">
+              <Photo
+                src={CATEGORY_IMAGE_BY_HREF[c.href] ?? Object.values(CATEGORY_IMAGE_BY_HREF)[0]}
+                alt=""
+                className="aspect-[4/5] w-full"
+              >
                 <div
                   className="photo-caption absolute inset-0"
                   style={{
@@ -157,17 +193,22 @@ export default function HomePage() {
       <section className="mx-auto max-w-[1180px] px-5 py-14 sm:px-8 sm:py-16">
         <h2 className="text-[22px] text-ink">Alongside your trip</h2>
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {HIGHLIGHTS.map((h) => (
-            <Link
-              key={h.href}
-              href={h.href}
-              className="group flex flex-col gap-2.5 rounded-[10px] border border-hairline bg-canvas p-4 transition-all hover:-translate-y-0.5 hover:h-shadow-md"
-            >
-              <h.icon size={20} className="text-rust-700" weight="fill" />
-              <span className="text-[14px] font-medium text-ink">{h.label}</span>
-              <span className="text-[12px] text-muted">{h.body}</span>
-            </Link>
-          ))}
+          {highlights.map((h) => {
+            const HighlightIcon = resolveIcon(h.icon_name);
+            return (
+              <Link
+                key={h.href}
+                href={h.href}
+                className="group flex flex-col gap-2.5 rounded-[10px] border border-hairline bg-canvas p-4 transition-all hover:-translate-y-0.5 hover:h-shadow-md"
+              >
+                {HighlightIcon && (
+                  <HighlightIcon size={20} className="text-rust-700" weight="fill" />
+                )}
+                <span className="text-[14px] font-medium text-ink">{h.label}</span>
+                <span className="text-[12px] text-muted">{h.body}</span>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
@@ -176,7 +217,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-[1180px] px-5 py-14 sm:px-8 sm:py-16">
           <h2 className="text-[22px] text-ink">What travelling with us is like</h2>
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {TESTIMONIALS.map((t) => (
+            {testimonials.map((t) => (
               <figure
                 key={t.name}
                 className="flex flex-col rounded-[10px] border border-hairline bg-canvas p-5"
@@ -208,16 +249,18 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="mt-6 divide-y divide-hairline border-y border-hairline">
-          {FAQS.map((f) => (
-            <details key={f.q} className="group py-1">
+          {faqs.map((f) => (
+            <details key={f.question} className="group py-1">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[15px] font-medium text-ink [&::-webkit-details-marker]:hidden">
-                {f.q}
+                {f.question}
                 <CaretDown
                   size={16}
                   className="shrink-0 text-muted transition-transform group-open:rotate-180"
                 />
               </summary>
-              <p className="max-w-[68ch] pb-4 text-[14px] leading-relaxed text-body">{f.a}</p>
+              <p className="max-w-[68ch] pb-4 text-[14px] leading-relaxed text-body">
+                {f.answer}
+              </p>
             </details>
           ))}
         </div>
