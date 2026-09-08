@@ -46,7 +46,7 @@ export const HAJJ_PACKAGES: HajjPackage[] = [
       "Everything in Economy Hajj",
       "Twin-share hotels, closer to the Haram in Makkah",
       "Smaller group size, capped at 80 pilgrims",
-      "A dedicated Halcyon guide for the full trip",
+      "A dedicated guide for the full trip",
     ],
   },
   {

@@ -2,48 +2,51 @@ import Link from "next/link";
 import { Wordmark } from "@/components/ui/Wordmark";
 import { getFooterSettings } from "@/lib/cms";
 
-const COLUMNS = [
-  {
-    title: "Travel",
-    links: [
-      { label: "Build an Umrah package", href: "/umrah" },
-      { label: "Hajj", href: "/hajj" },
-      { label: "International & Pakistan Tours", href: "/tours" },
-      { label: "The fleet", href: "/experience" },
-    ],
-  },
-  {
-    title: "Services",
-    links: [
-      { label: "Visa Consultation", href: "/visa-consultation" },
-      { label: "Air Ticketing", href: "/air-ticketing" },
-      { label: "Other Services", href: "/other-services" },
-      { label: "Manage your trip", href: "/manage" },
-    ],
-  },
-  {
-    title: "Halcyon",
-    links: [
-      { label: "The experience", href: "/experience" },
-      { label: "Sustainability", href: "/experience" },
-      { label: "Newsroom", href: "/help" },
-      { label: "Careers", href: "/help" },
-    ],
-  },
-  {
-    title: "Help",
-    links: [
-      { label: "Contact us", href: "/help" },
-      { label: "Disruption and refunds", href: "/help" },
-      { label: "Manage your trip", href: "/manage" },
-      { label: "Accessibility", href: "/help" },
-    ],
-  },
-];
+// The brand-name column heading follows the CMS site title; everything else
+// is fixed navigation.
+function columns(siteTitle: string) {
+  return [
+    {
+      title: "Travel",
+      links: [
+        { label: "Build an Umrah package", href: "/umrah" },
+        { label: "Hajj", href: "/hajj" },
+        { label: "International & Pakistan Tours", href: "/tours" },
+        { label: "The fleet", href: "/experience" },
+      ],
+    },
+    {
+      title: "Services",
+      links: [
+        { label: "Visa Consultation", href: "/visa-consultation" },
+        { label: "Air Ticketing", href: "/air-ticketing" },
+        { label: "Other Services", href: "/other-services" },
+        { label: "Manage your trip", href: "/manage" },
+      ],
+    },
+    {
+      title: siteTitle,
+      links: [
+        { label: "The experience", href: "/experience" },
+        { label: "Sustainability", href: "/experience" },
+        { label: "Newsroom", href: "/help" },
+        { label: "Careers", href: "/help" },
+      ],
+    },
+    {
+      title: "Help",
+      links: [
+        { label: "Contact us", href: "/help" },
+        { label: "Disruption and refunds", href: "/help" },
+        { label: "Manage your trip", href: "/manage" },
+        { label: "Accessibility", href: "/help" },
+      ],
+    },
+  ];
+}
 
 const FALLBACK_TAGLINE =
   "An independent long-haul airline flying from London Gatwick, Manchester and Edinburgh. Quiet cabins, honest fares, and a plan you can see the whole way through.";
-const FALLBACK_LEGAL_LINE = "Halcyon Airways Ltd. This is a design prototype, not a real airline.";
 
 export async function Footer({
   siteTitle = "Halcyon",
@@ -54,7 +57,10 @@ export async function Footer({
 }) {
   const cms = await getFooterSettings();
   const tagline = cms?.tagline || FALLBACK_TAGLINE;
-  const legalLine = cms?.legal_line || FALLBACK_LEGAL_LINE;
+  // Editor can set a real legal-entity name; otherwise follows the site title.
+  const legalLine =
+    cms?.legal_line || `${siteTitle} is a design prototype, not a real airline.`;
+  const COLUMNS = columns(siteTitle);
 
   return (
     <footer className="mt-24 bg-dark text-on-dark">

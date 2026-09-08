@@ -1,7 +1,7 @@
 import { ServicePage, ServiceSection, ServiceSteps, ServiceChecklist } from "@/components/site/ServicePage";
 import { InquiryForm } from "@/components/site/InquiryForm";
 import { stock } from "@/lib/img";
-import { getServicePage } from "@/lib/cms";
+import { getServicePage, getSiteSettings } from "@/lib/cms";
 
 export const metadata = {
   title: "Air Ticketing",
@@ -9,7 +9,6 @@ export const metadata = {
 };
 
 const FALLBACK = {
-  eyebrow: "Halcyon services",
   lede: "For changes to a ticket you already hold (a date move, a name correction, or a refund) rather than a new booking.",
   checklist: {
     title: "What we handle",
@@ -32,8 +31,11 @@ const FALLBACK = {
 };
 
 export default async function AirTicketingPage() {
-  const cms = await getServicePage("air-ticketing");
-  const eyebrow = cms?.eyebrow || FALLBACK.eyebrow;
+  const [cms, { site_title }] = await Promise.all([
+    getServicePage("air-ticketing"),
+    getSiteSettings(),
+  ]);
+  const eyebrow = cms?.eyebrow || `${site_title} services`;
   const lede = cms?.lede || FALLBACK.lede;
   const checklist = cms?.sections.find((s) => s.type === "checklist")?.value ?? FALLBACK.checklist;
   const steps = cms?.sections.find((s) => s.type === "steps")?.value ?? FALLBACK.steps;

@@ -22,7 +22,10 @@ class TestimonialBlock(blocks.StructBlock):
 
 
 class HomePage(Page):
-    hero_eyebrow = models.CharField(max_length=80, blank=True, default="Halcyon")
+    hero_eyebrow = models.CharField(
+        max_length=80, blank=True,
+        help_text="Small kicker above the hero heading. Leave blank to use the site title.",
+    )
     hero_heading = models.CharField(max_length=200, blank=True)
     hero_subheading = models.TextField(blank=True)
 
@@ -125,7 +128,7 @@ class FooterSettings(BaseSiteSetting):
     legal_line = models.CharField(
         max_length=200,
         blank=True,
-        help_text="e.g. 'Halcyon Airways Ltd. This is a design prototype, not a real airline.'",
+        help_text="Legal-entity / copyright line. Leave blank to fall back to \"<site title> is a design prototype, not a real airline.\"",
     )
 
     panels = [

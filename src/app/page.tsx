@@ -29,7 +29,6 @@ const CATEGORY_IMAGE_BY_HREF: Record<string, string> = {
 };
 
 const FALLBACK_HERO = {
-  eyebrow: "Halcyon",
   heading: "Umrah, Hajj, and tours: one trusted place.",
   subheading:
     "Build an Umrah package yourself, secure a Hajj place for the season, or browse international and Pakistan tours, then track the price the whole way through.",
@@ -114,11 +113,15 @@ const FALLBACK_FAQS: CmsFaq[] = [
 ];
 
 export default async function HomePage() {
-  const cms = await getHomePage();
+  const [cms, { site_title }] = await Promise.all([getHomePage(), getSiteSettings()]);
 
-  const hero = cms
-    ? { eyebrow: cms.hero_eyebrow, heading: cms.hero_heading, subheading: cms.hero_subheading }
-    : FALLBACK_HERO;
+  const hero = {
+    // The eyebrow is just the brand name -- follows the CMS site title unless
+    // an editor typed a custom kicker into the hero_eyebrow field.
+    eyebrow: cms?.hero_eyebrow || site_title,
+    heading: cms?.hero_heading || FALLBACK_HERO.heading,
+    subheading: cms?.hero_subheading || FALLBACK_HERO.subheading,
+  };
 
   const categories =
     cms?.body.find((b) => b.type === "category_cards")?.value ?? FALLBACK_CATEGORIES;

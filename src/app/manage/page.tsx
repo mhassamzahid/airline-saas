@@ -1,13 +1,18 @@
 import { PageContainer, PageIntro } from "@/components/site/PageIntro";
 import { ManageTripForm } from "@/components/site/ManageTripForm";
+import { getSiteSettings } from "@/lib/cms";
 
-export const metadata = {
-  title: "Manage your trip",
-  description:
-    "Retrieve a Halcyon booking to choose seats, add bags, or change your flights.",
-};
+export async function generateMetadata() {
+  const { site_title } = await getSiteSettings();
+  return {
+    title: "Manage your trip",
+    description: `Retrieve a ${site_title} booking to choose seats, add bags, or change your flights.`,
+  };
+}
 
-export default function ManagePage() {
+export default async function ManagePage() {
+  const { site_title } = await getSiteSettings();
+
   return (
     <PageContainer>
       <PageIntro
@@ -16,7 +21,7 @@ export default function ManagePage() {
         lede="Enter your reference and surname to change seats, add baggage, or move a flight. Changes follow your fare conditions."
         className="mb-10"
       />
-      <ManageTripForm />
+      <ManageTripForm siteTitle={site_title} />
     </PageContainer>
   );
 }

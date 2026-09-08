@@ -1,7 +1,7 @@
 import { ServicePage, ServiceSection } from "@/components/site/ServicePage";
 import { InquiryForm } from "@/components/site/InquiryForm";
 import { stock } from "@/lib/img";
-import { getServicePage, type CmsIconTextLink } from "@/lib/cms";
+import { getServicePage, getSiteSettings, type CmsIconTextLink } from "@/lib/cms";
 import { resolveIcon } from "@/lib/icons";
 
 export const metadata = {
@@ -10,7 +10,6 @@ export const metadata = {
 };
 
 const FALLBACK = {
-  eyebrow: "Halcyon services",
   lede: "Smaller offerings that round out an Umrah, Hajj or tour booking. None of these need a full booking flow: just tell us what you need.",
   tileGrid: {
     title: "What's available",
@@ -25,8 +24,11 @@ const FALLBACK = {
 };
 
 export default async function OtherServicesPage() {
-  const cms = await getServicePage("other-services");
-  const eyebrow = cms?.eyebrow || FALLBACK.eyebrow;
+  const [cms, { site_title }] = await Promise.all([
+    getServicePage("other-services"),
+    getSiteSettings(),
+  ]);
+  const eyebrow = cms?.eyebrow || `${site_title} services`;
   const lede = cms?.lede || FALLBACK.lede;
   const tileGrid = cms?.sections.find((s) => s.type === "tile_grid")?.value ?? FALLBACK.tileGrid;
 

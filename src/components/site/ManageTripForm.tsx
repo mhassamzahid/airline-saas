@@ -46,7 +46,7 @@ const REASSURANCE = [
   },
   {
     icon: UsersThree,
-    text: "Companions and Halcyon miles on the booking stay attached through any change.",
+    text: "Companions and reward miles on the booking stay attached through any change.",
   },
 ];
 
@@ -67,7 +67,7 @@ function ActionGrid() {
   );
 }
 
-export function ManageTripForm() {
+export function ManageTripForm({ siteTitle }: { siteTitle?: string }) {
   const [reference, setReference] = useState("");
   const [surname, setSurname] = useState("");
   const [state, setState] = useState<"idle" | "error" | "found">("idle");
@@ -167,6 +167,7 @@ export function ManageTripForm() {
                 passenger={surname.trim() ? surname.trim().toUpperCase() : "LEAD TRAVELLER"}
                 cabin={DEMO_TRIP.cabin}
                 legs={DEMO_TRIP.legs}
+                siteTitle={siteTitle}
                 stub={<ActionGrid />}
               />
             ) : (
@@ -179,6 +180,7 @@ export function ManageTripForm() {
                   passenger="Your name"
                   cabin={DEMO_TRIP.cabin}
                   legs={DEMO_TRIP.legs}
+                  siteTitle={siteTitle}
                 />
                 <p className="mt-3 px-1 text-[12px] text-muted">
                   A retrieved trip looks like this. Try{" "}

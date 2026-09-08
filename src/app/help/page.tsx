@@ -1,14 +1,16 @@
 import Link from "next/link";
 import { CaretDown, ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { PageContainer, PageIntro } from "@/components/site/PageIntro";
-import { getHelpPage, type CmsIconTextLink, type CmsFaq } from "@/lib/cms";
+import { getHelpPage, getSiteSettings, type CmsIconTextLink, type CmsFaq } from "@/lib/cms";
 import { resolveIcon } from "@/lib/icons";
 
-export const metadata = {
-  title: "Help",
-  description:
-    "Contact Halcyon, read the common questions, and find out what happens if your flight is disrupted.",
-};
+export async function generateMetadata() {
+  const { site_title } = await getSiteSettings();
+  return {
+    title: "Help",
+    description: `Contact ${site_title}, read the common questions, and find out what happens if your flight is disrupted.`,
+  };
+}
 
 const FALLBACK_LEDE = "Most things can be sorted from Manage your trip. For everything else, here is how to reach us and what to expect.";
 
@@ -28,7 +30,7 @@ const FALLBACK_CHANNELS: CmsIconTextLink[] = [
   {
     icon_name: "Lifebuoy", image: null, href: "/help",
     label: "At the airport",
-    body: "Halcyon desks at Gatwick South, zone C, from three hours before each departure.",
+    body: "Our desks at Gatwick South, zone C, from three hours before each departure.",
     action_label: "Airport guide",
   },
 ];
@@ -47,12 +49,12 @@ const FALLBACK_FAQS: CmsFaq[] = [
     answer: "Value and Flex fares can choose a standard seat for free at any point after booking. Flex can also take extra-legroom seats at no charge. On Lite, seats are assigned free at check-in, or you can pay to choose earlier.",
   },
   {
-    question: "How do Halcyon miles work?",
+    question: "How do reward miles work?",
     answer: "You earn miles as a percentage of the fare paid: 25% on Lite, 100% on Value, 150% on Flex. Miles never expire while your account is active and can be spent on any seat, with no blackout dates.",
   },
   {
     question: "What happens if my flight is delayed or cancelled?",
-    answer: "We rebook you on the next Halcyon service automatically and message you the details. If the delay is over five hours or overnight, we cover a hotel and meals. For cancellations within our control you can take a full refund instead of a rebooking.",
+    answer: "We rebook you on the next available service automatically and message you the details. If the delay is over five hours or overnight, we cover a hotel and meals. For cancellations within our control you can take a full refund instead of a rebooking.",
   },
   {
     question: "Do you offer assistance for reduced mobility?",

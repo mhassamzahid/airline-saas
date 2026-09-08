@@ -8,12 +8,15 @@ import { Photo } from "@/components/ui/Photo";
 import { RouteArc } from "@/components/ui/RouteArc";
 import { stock } from "@/lib/img";
 import { formatGBP } from "@/lib/utils";
+import { getSiteSettings } from "@/lib/cms";
 
-export const metadata = {
-  title: "The experience",
-  description:
-    "Quiet cabins, food on your schedule, and a fleet chosen for how you feel when you land. What flying Halcyon is actually like.",
-};
+export async function generateMetadata() {
+  const { site_title } = await getSiteSettings();
+  return {
+    title: "The experience",
+    description: `Quiet cabins, food on your schedule, and a fleet chosen for how you feel when you land. What flying ${site_title} is actually like.`,
+  };
+}
 
 export default function ExperiencePage() {
   return (

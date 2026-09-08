@@ -29,7 +29,7 @@ export function SignInForm() {
         <EnvelopeSimple size={26} className="mx-auto text-rust-700" weight="fill" />
         <h2 className="mt-3 text-[17px] font-semibold text-ink">Check your inbox</h2>
         <p className="mt-1.5 text-[14px] text-body">
-          If <span className="text-ink">{email}</span> has a Halcyon account, a sign-in
+          If <span className="text-ink">{email}</span> has an account with us, a sign-in
           link is on its way. It expires in 15 minutes.
         </p>
         <p className="mt-4 text-[12px] text-muted">

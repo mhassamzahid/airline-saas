@@ -20,6 +20,7 @@ interface BoardingPassProps {
   legs: PassLeg[];
   /** Rendered in the tear-off stub, under the perforation (actions for the real pass). */
   stub?: React.ReactNode;
+  siteTitle?: string;
   className?: string;
 }
 
@@ -32,6 +33,7 @@ export function BoardingPass({
   cabin,
   legs,
   stub,
+  siteTitle,
   className,
 }: BoardingPassProps) {
   const sample = status === "sample";
@@ -47,7 +49,7 @@ export function BoardingPass({
       {/* Face */}
       <div className="relative p-5 sm:p-6">
         <div className="flex items-center justify-between">
-          <Wordmark />
+          <Wordmark text={siteTitle} />
           <span
             className={cn(
               "rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em]",

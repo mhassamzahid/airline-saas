@@ -1,7 +1,7 @@
 import { ServicePage, ServiceSection, ServiceSteps, ServiceChecklist } from "@/components/site/ServicePage";
 import { InquiryForm } from "@/components/site/InquiryForm";
 import { stock } from "@/lib/img";
-import { getServicePage } from "@/lib/cms";
+import { getServicePage, getSiteSettings } from "@/lib/cms";
 
 export const metadata = {
   title: "Visa Consultation",
@@ -9,7 +9,6 @@ export const metadata = {
 };
 
 const FALLBACK = {
-  eyebrow: "Halcyon services",
   lede: "Every Umrah, Hajj and tour booking needs the right paperwork in the right order. We check it before it becomes a problem at the airport.",
   checklist: {
     title: "What we help with",
@@ -32,8 +31,11 @@ const FALLBACK = {
 };
 
 export default async function VisaConsultationPage() {
-  const cms = await getServicePage("visa-consultation");
-  const eyebrow = cms?.eyebrow || FALLBACK.eyebrow;
+  const [cms, { site_title }] = await Promise.all([
+    getServicePage("visa-consultation"),
+    getSiteSettings(),
+  ]);
+  const eyebrow = cms?.eyebrow || `${site_title} services`;
   const lede = cms?.lede || FALLBACK.lede;
   const checklist = cms?.sections.find((s) => s.type === "checklist")?.value ?? FALLBACK.checklist;
   const steps = cms?.sections.find((s) => s.type === "steps")?.value ?? FALLBACK.steps;

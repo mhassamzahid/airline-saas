@@ -31,7 +31,10 @@ class ServicePage(Page):
     component structure -- each StreamField block below is one <ServiceSection>.
     """
 
-    eyebrow = models.CharField(max_length=80, blank=True, default="Halcyon services")
+    eyebrow = models.CharField(
+        max_length=80, blank=True,
+        help_text="Small kicker label above the title. Leave blank to use \"<site title> services\".",
+    )
     lede = models.TextField(blank=True)
     hero_image = models.ForeignKey(
         "wagtailimages.Image",

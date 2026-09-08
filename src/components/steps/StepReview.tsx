@@ -39,7 +39,7 @@ function whatsAppText(args: {
   contactName: string;
 }) {
   return [
-    "Hi Halcyon, I'd like to talk about my Umrah booking.",
+    "Hi, I'd like to talk about my Umrah booking.",
     args.destCity && `Package: ${args.destCity}`,
     args.originCity && `Departing: ${args.originCity}`,
     args.departDate && `Depart: ${formatDateLong(args.departDate)}`,
