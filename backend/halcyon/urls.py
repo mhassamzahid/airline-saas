@@ -52,6 +52,8 @@ def header_settings_api(request):
             for link in h.nav_links
         ],
         "cta": {"label": h.cta_label, "href": h.cta_href},
+        "tagline": h.tagline,
+        "phone": h.phone,
     })
 
 

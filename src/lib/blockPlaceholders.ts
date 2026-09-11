@@ -13,14 +13,15 @@ import type { FlexBlock } from "./cms";
 
 type BlockValue<K extends FlexBlock["type"]> = Extract<FlexBlock, { type: K }>["value"];
 
-const SAMPLE_IMAGE = {
-  id: 0,
-  title: "Sample image",
-  meta: {
-    download_url:
-      "https://images.unsplash.com/photo-1650446647974-451d05d2136d?auto=format&fit=crop&w=1200&h=800&q=70",
-  },
-};
+function sampleImage(photoId: string, w = 1200, h = 800) {
+  return {
+    id: 0,
+    title: "Sample image",
+    meta: { download_url: `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=${w}&h=${h}&q=70` },
+  };
+}
+
+const SAMPLE_IMAGE = sampleImage("photo-1650446647974-451d05d2136d");
 
 export const BLOCK_PLACEHOLDERS: { [K in FlexBlock["type"]]: BlockValue<K> } = {
   hero: {
@@ -42,6 +43,21 @@ export const BLOCK_PLACEHOLDERS: { [K in FlexBlock["type"]]: BlockValue<K> } = {
   image: {
     image: SAMPLE_IMAGE,
     caption: "A caption sits under the image.",
+  },
+  gallery: {
+    heading: "A closer look",
+    images: [
+      sampleImage("photo-1650446647974-451d05d2136d", 900, 700),
+      sampleImage("photo-1584186028062-637e3e77318d", 900, 700),
+      sampleImage("photo-1565330770968-0240c0046ce3", 900, 700),
+    ],
+  },
+  media_text: {
+    heading: "Built around how people actually travel",
+    body: "<p>A short paragraph of supporting copy that sits beside the image, explaining the point in a sentence or two.</p>",
+    image: SAMPLE_IMAGE,
+    image_position: "left",
+    cta: { label: "Learn more", href: "/umrah" },
   },
   feature_grid: {
     heading: "What's included",
@@ -72,10 +88,30 @@ export const BLOCK_PLACEHOLDERS: { [K in FlexBlock["type"]]: BlockValue<K> } = {
       },
     ],
   },
+  logo_strip: {
+    heading: "Trusted by travellers booking through",
+    logos: [
+      { image: sampleImage("photo-1650446647974-451d05d2136d", 200, 80), name: "Traveller Weekly" },
+      { image: sampleImage("photo-1584186028062-637e3e77318d", 200, 80), name: "Northbound Times" },
+      { image: sampleImage("photo-1565330770968-0240c0046ce3", 200, 80), name: "Compass Review" },
+      { image: sampleImage("photo-1513072064285-240f87fa81e8", 200, 80), name: "Fifth Meridian" },
+    ],
+  },
+  video: {
+    heading: "",
+    video_url: "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+    caption: "A short look at what to expect.",
+  },
   cta_band: {
     heading: "Ready to start planning?",
     body: "Tell us your dates and group size and we'll come back with options.",
     cta: { label: "Get a quote", href: "/manage" },
+  },
+  inquiry_form: {
+    heading: "Ready to talk to someone?",
+    subject: "your trip",
+    lead_time: "2 business days",
+    ask_group_size: false,
   },
   faq: {
     heading: "Common questions",
@@ -118,6 +154,10 @@ export const BLOCK_PLACEHOLDERS: { [K in FlexBlock["type"]]: BlockValue<K> } = {
         detail: "Ramadan Umrah",
       },
     ],
+  },
+  section_nav: {
+    heading: "On this page",
+    items: ["What we collect", "How to reach us"],
   },
 };
 

@@ -157,11 +157,24 @@ class HeaderSettings(BaseSiteSetting):
         max_length=200, blank=True,
         help_text="Where the button links. Blank falls back to /signin.",
     )
+    tagline = models.CharField(
+        max_length=140, blank=True,
+        help_text=(
+            "Small text on the left of the utility strip above the header. "
+            "Blank falls back to \"Flying from London Gatwick, Manchester and Edinburgh\"."
+        ),
+    )
+    phone = models.CharField(
+        max_length=40, blank=True,
+        help_text="Phone number shown on the right of the utility strip. Blank falls back to +44 20 7946 0192.",
+    )
 
     panels = [
         FieldPanel("nav_links"),
         FieldPanel("cta_label"),
         FieldPanel("cta_href"),
+        FieldPanel("tagline"),
+        FieldPanel("phone"),
     ]
 
 

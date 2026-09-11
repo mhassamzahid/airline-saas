@@ -310,3 +310,138 @@ class TestimonialsSectionBlock(ScreenshotPreviewBlock):
         icon = "openquote"
         label = "Testimonials"
         preview_value = TESTIMONIALS_SAMPLE
+
+
+INQUIRY_FORM_SAMPLE = {
+    "heading": "Ready to talk to someone?",
+    "subject": "your trip",
+    "lead_time": "2 business days",
+    "ask_group_size": False,
+}
+GALLERY_SAMPLE = {"heading": "A closer look"}
+MEDIA_TEXT_SAMPLE = {
+    "heading": "Built around how people actually travel",
+    "body": "<p>A short paragraph of supporting copy that sits beside the image, explaining the point in a sentence or two.</p>",
+    "image_position": "left",
+    "cta": {"label": "Learn more", "href": "/umrah"},
+}
+LOGO_STRIP_SAMPLE = {"heading": "Trusted by travellers booking through"}
+VIDEO_SAMPLE = {
+    "heading": "",
+    "video_url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+    "caption": "A short look at what to expect.",
+}
+SECTION_NAV_SAMPLE = {
+    "heading": "On this page",
+    "items": ["What we collect", "How to reach us"],
+}
+
+
+class InquiryFormBlock(ScreenshotPreviewBlock):
+    preview_image = "flexpages/previews/inquiry_form.png"
+
+    heading = blocks.CharBlock(max_length=120, required=False, default=INQUIRY_FORM_SAMPLE["heading"])
+    subject = blocks.CharBlock(
+        max_length=120,
+        default=INQUIRY_FORM_SAMPLE["subject"],
+        help_text="What the inquiry is about, e.g. 'a Ramadan Umrah package'.",
+    )
+    lead_time = blocks.CharBlock(
+        max_length=60, required=False, default=INQUIRY_FORM_SAMPLE["lead_time"],
+        help_text="e.g. '2 business days'. Leave blank to omit the reply-time line.",
+    )
+    ask_group_size = blocks.BooleanBlock(
+        required=False, default=False,
+        help_text="Show a group-size field (for Hajj / group tours).",
+    )
+
+    class Meta:
+        icon = "form"
+        label = "Inquiry form"
+        preview_value = INQUIRY_FORM_SAMPLE
+
+
+class GalleryBlock(ScreenshotPreviewBlock):
+    preview_image = "flexpages/previews/gallery.png"
+
+    heading = blocks.CharBlock(max_length=120, required=False, default=GALLERY_SAMPLE["heading"])
+    images = blocks.ListBlock(ImageChooserBlock())
+
+    class Meta:
+        icon = "image"
+        label = "Gallery"
+        preview_value = GALLERY_SAMPLE
+
+
+class MediaTextBlock(ScreenshotPreviewBlock):
+    preview_image = "flexpages/previews/media_text.png"
+
+    heading = blocks.CharBlock(max_length=120, required=False, default=MEDIA_TEXT_SAMPLE["heading"])
+    body = blocks.RichTextBlock(
+        features=["bold", "italic", "link", "ol", "ul"],
+        default=MEDIA_TEXT_SAMPLE["body"],
+    )
+    image = ImageChooserBlock()
+    image_position = blocks.ChoiceBlock(
+        choices=[("left", "Image on the left"), ("right", "Image on the right")],
+        default=MEDIA_TEXT_SAMPLE["image_position"],
+    )
+    cta = LinkValueBlock(required=False, default=MEDIA_TEXT_SAMPLE["cta"])
+
+    class Meta:
+        icon = "table"
+        label = "Media + text"
+        preview_value = MEDIA_TEXT_SAMPLE
+
+
+class LogoItemBlock(blocks.StructBlock):
+    image = ImageChooserBlock()
+    name = blocks.CharBlock(max_length=60, required=False, help_text="Used as the image's alt text.")
+
+    class Meta:
+        icon = "image"
+        label = "Logo"
+
+
+class LogoStripBlock(ScreenshotPreviewBlock):
+    preview_image = "flexpages/previews/logo_strip.png"
+
+    heading = blocks.CharBlock(max_length=120, required=False, default=LOGO_STRIP_SAMPLE["heading"])
+    logos = blocks.ListBlock(LogoItemBlock())
+
+    class Meta:
+        icon = "group"
+        label = "Logo strip"
+        preview_value = LOGO_STRIP_SAMPLE
+
+
+class VideoBlock(ScreenshotPreviewBlock):
+    preview_image = "flexpages/previews/video.png"
+
+    heading = blocks.CharBlock(max_length=120, required=False)
+    video_url = blocks.URLBlock(
+        default=VIDEO_SAMPLE["video_url"],
+        help_text="A YouTube or Vimeo URL.",
+    )
+    caption = blocks.CharBlock(max_length=160, required=False, default=VIDEO_SAMPLE["caption"])
+
+    class Meta:
+        icon = "media"
+        label = "Video"
+        preview_value = VIDEO_SAMPLE
+
+
+class SectionNavBlock(ScreenshotPreviewBlock):
+    preview_image = "flexpages/previews/section_nav.png"
+
+    heading = blocks.CharBlock(max_length=120, required=False, default=SECTION_NAV_SAMPLE["heading"])
+    items = blocks.ListBlock(
+        blocks.CharBlock(max_length=80),
+        default=SECTION_NAV_SAMPLE["items"],
+        help_text="Each entry must match a heading's exact text elsewhere on the page -- the link is generated from it.",
+    )
+
+    class Meta:
+        icon = "list-ul"
+        label = "Section links"
+        preview_value = SECTION_NAV_SAMPLE

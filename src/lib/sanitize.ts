@@ -1,4 +1,5 @@
 import sanitizeHtml from "sanitize-html";
+import { slugify } from "./utils";
 
 // Wagtail already whitelists rich-text features server-side; this is a
 // second pass, constrained to exactly the tags the RichTextBlock allows.
@@ -11,8 +12,17 @@ const OPTIONS: sanitizeHtml.IOptions = {
   },
 };
 
+// Gives every h2/h3/h4 an id derived from its text, so the Section links
+// block can point `#anchor` hrefs at headings elsewhere on the page.
+function addHeadingIds(html: string): string {
+  return html.replace(/<(h[234])>(.*?)<\/\1>/gs, (_match, tag: string, inner: string) => {
+    const id = slugify(inner.replace(/<[^>]+>/g, ""));
+    return `<${tag} id="${id}">${inner}</${tag}>`;
+  });
+}
+
 export function sanitizeRichText(html: string): string {
-  return sanitizeHtml(html, OPTIONS);
+  return addHeadingIds(sanitizeHtml(html, OPTIONS));
 }
 
 // Broader set for the Markdown block (policy / terms pages): headings h1-h4,
@@ -35,5 +45,5 @@ const MARKDOWN_OPTIONS: sanitizeHtml.IOptions = {
 };
 
 export function sanitizeMarkdown(html: string): string {
-  return sanitizeHtml(html, MARKDOWN_OPTIONS);
+  return addHeadingIds(sanitizeHtml(html, MARKDOWN_OPTIONS));
 }

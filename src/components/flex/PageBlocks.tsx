@@ -5,10 +5,19 @@ import { Photo } from "@/components/ui/Photo";
 import { resolveIcon } from "@/lib/icons";
 import { cmsImageUrl, type FlexBlock, type CmsLink } from "@/lib/cms";
 import { sanitizeRichText, sanitizeMarkdown } from "@/lib/sanitize";
+import { getEmbedUrl } from "@/lib/video";
+import { slugify } from "@/lib/utils";
+import { InquiryForm } from "@/components/site/InquiryForm";
 
-/** Long-form prose styling shared by the rich-text and markdown blocks. */
+/** Long-form prose styling shared by the rich-text and markdown blocks. Headings
+ * get scroll-margin so an in-page anchor jump (the Section links block) doesn't
+ * land them under the sticky header. */
 const PROSE_CLASS =
-  "prose-halcyon max-w-[68ch] text-[16px] leading-relaxed text-body [&_a]:font-medium [&_a]:text-rust-700 [&_a:hover]:text-rust-600 [&_h1]:mb-3 [&_h1]:mt-8 [&_h1]:text-[28px] [&_h1]:font-semibold [&_h1]:text-ink [&_h2]:mb-2 [&_h2]:mt-8 [&_h2]:text-[24px] [&_h2]:text-ink [&_h3]:mb-1.5 [&_h3]:mt-6 [&_h3]:text-[18px] [&_h3]:font-semibold [&_h3]:text-ink [&_h4]:mb-1 [&_h4]:mt-5 [&_h4]:text-[16px] [&_h4]:font-semibold [&_h4]:text-ink [&_li]:my-1 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-3 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:pl-5 [&_blockquote]:border-l-2 [&_blockquote]:border-rust-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-canvas-soft [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-[13px] [&_table]:my-4 [&_table]:w-full [&_table]:text-[14px] [&_th]:border-b [&_th]:border-hairline-firm [&_th]:py-2 [&_th]:text-left [&_td]:border-b [&_td]:border-hairline [&_td]:py-2";
+  "prose-halcyon max-w-[68ch] text-[16px] leading-relaxed text-body [&_a]:font-medium [&_a]:text-rust-700 [&_a:hover]:text-rust-600 [&_h1]:mb-3 [&_h1]:mt-8 [&_h1]:text-[28px] [&_h1]:font-semibold [&_h1]:text-ink [&_h2]:mb-2 [&_h2]:mt-8 [&_h2]:text-[24px] [&_h2]:text-ink [&_h2]:scroll-mt-20 sm:[&_h2]:scroll-mt-28 [&_h3]:mb-1.5 [&_h3]:mt-6 [&_h3]:text-[18px] [&_h3]:font-semibold [&_h3]:text-ink [&_h3]:scroll-mt-20 sm:[&_h3]:scroll-mt-28 [&_h4]:mb-1 [&_h4]:mt-5 [&_h4]:text-[16px] [&_h4]:font-semibold [&_h4]:text-ink [&_h4]:scroll-mt-20 sm:[&_h4]:scroll-mt-28 [&_li]:my-1 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-3 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:pl-5 [&_blockquote]:border-l-2 [&_blockquote]:border-rust-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-canvas-soft [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-[13px] [&_table]:my-4 [&_table]:w-full [&_table]:text-[14px] [&_th]:border-b [&_th]:border-hairline-firm [&_th]:py-2 [&_th]:text-left [&_td]:border-b [&_td]:border-hairline [&_td]:py-2";
+
+/** Compact prose for the Media + text block -- no headings inside it, so no scroll-margin needed. */
+const COMPACT_PROSE_CLASS =
+  "text-[15px] leading-relaxed text-body [&_a]:font-medium [&_a]:text-rust-700 [&_a:hover]:text-rust-600 [&_p]:my-2 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5";
 
 function CtaButton({ cta, tone = "solid" }: { cta: CmsLink; tone?: "solid" | "on-dark" }) {
   return (
@@ -107,6 +116,61 @@ function ImageBlock({ value }: Extract<FlexBlock, { type: "image" }>) {
   );
 }
 
+function GalleryBlock({ value }: Extract<FlexBlock, { type: "gallery" }>) {
+  const images = value.images
+    .map((image) => ({ image, url: cmsImageUrl(image) }))
+    .filter((x): x is { image: typeof x.image; url: string } => Boolean(x.url));
+  if (images.length === 0) return null;
+  return (
+    <section className="py-12 sm:py-16">
+      <Container>
+        {value.heading && <h2 className="text-[22px] text-ink">{value.heading}</h2>}
+        <div className={`grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 ${value.heading ? "mt-6" : ""}`}>
+          {images.map(({ image, url }, i) => (
+            <Photo
+              key={i}
+              src={url}
+              alt={image.title || ""}
+              className="aspect-[4/3] w-full rounded-[10px] border border-hairline"
+            />
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function MediaTextBlock({ value }: Extract<FlexBlock, { type: "media_text" }>) {
+  const img = cmsImageUrl(value.image);
+  const cta = value.cta?.label ? value.cta : null;
+  const imageFirst = value.image_position !== "right";
+  return (
+    <section className="py-12 sm:py-16">
+      <Container>
+        <div className="grid grid-cols-1 items-center gap-8 sm:grid-cols-2 sm:gap-12">
+          <div className={imageFirst ? "sm:order-1" : "sm:order-2"}>
+            {img && (
+              <Photo src={img} alt="" className="aspect-[4/3] w-full rounded-[10px] border border-hairline" />
+            )}
+          </div>
+          <div className={imageFirst ? "sm:order-2" : "sm:order-1"}>
+            {value.heading && <h2 className="text-[22px] text-ink">{value.heading}</h2>}
+            <div
+              className={`${value.heading ? "mt-3" : ""} ${COMPACT_PROSE_CLASS}`}
+              dangerouslySetInnerHTML={{ __html: sanitizeRichText(value.body) }}
+            />
+            {cta && (
+              <div className="mt-5">
+                <CtaButton cta={cta} />
+              </div>
+            )}
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
 function FeatureGridBlock({ value }: Extract<FlexBlock, { type: "feature_grid" }>) {
   return (
     <section className="py-12 sm:py-16">
@@ -129,6 +193,54 @@ function FeatureGridBlock({ value }: Extract<FlexBlock, { type: "feature_grid" }
   );
 }
 
+function LogoStripBlock({ value }: Extract<FlexBlock, { type: "logo_strip" }>) {
+  const logos = value.logos
+    .map((logo) => ({ ...logo, url: cmsImageUrl(logo.image) }))
+    .filter((x): x is typeof x & { url: string } => Boolean(x.url));
+  if (logos.length === 0) return null;
+  return (
+    <section className="border-y border-hairline bg-canvas-soft py-8">
+      <Container>
+        {value.heading && <p className="text-center text-[12px] text-muted">{value.heading}</p>}
+        <div className={`flex flex-wrap items-center justify-center gap-x-10 gap-y-4 ${value.heading ? "mt-5" : ""}`}>
+          {logos.map((logo, i) => (
+            // eslint-disable-next-line @next/next/no-img-element -- a logo mark, not photography; skip the duotone Photo treatment
+            <img
+              key={i}
+              src={logo.url}
+              alt={logo.name || ""}
+              className="h-7 w-auto object-contain grayscale opacity-70 transition-[filter,opacity] hover:opacity-100 hover:grayscale-0"
+            />
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function VideoBlock({ value }: Extract<FlexBlock, { type: "video" }>) {
+  const src = getEmbedUrl(value.video_url);
+  if (!src) return null;
+  return (
+    <section className="py-12 sm:py-16">
+      <Container>
+        {value.heading && <h2 className="mb-4 text-[22px] text-ink">{value.heading}</h2>}
+        <div className="aspect-video w-full overflow-hidden rounded-[10px] border border-hairline">
+          <iframe
+            src={src}
+            title={value.heading || "Video"}
+            className="h-full w-full"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+        {value.caption && <p className="mt-2 text-[13px] text-muted">{value.caption}</p>}
+      </Container>
+    </section>
+  );
+}
+
 function CtaBandBlock({ value }: Extract<FlexBlock, { type: "cta_band" }>) {
   return (
     <section className="bg-dark text-on-dark">
@@ -140,6 +252,22 @@ function CtaBandBlock({ value }: Extract<FlexBlock, { type: "cta_band" }>) {
           </div>
           {value.cta?.label && <CtaButton cta={value.cta} tone="on-dark" />}
         </div>
+      </Container>
+    </section>
+  );
+}
+
+function InquiryFormBlock({ value }: Extract<FlexBlock, { type: "inquiry_form" }>) {
+  return (
+    <section className="py-12 sm:py-16">
+      <Container>
+        {value.heading && <h2 className="text-[22px] text-ink">{value.heading}</h2>}
+        <InquiryForm
+          subject={value.subject}
+          leadTime={value.lead_time || undefined}
+          askGroupSize={value.ask_group_size}
+          className={value.heading ? "mt-6 max-w-[560px]" : "max-w-[560px]"}
+        />
       </Container>
     </section>
   );
@@ -206,6 +334,28 @@ function TestimonialsBlock({ value }: Extract<FlexBlock, { type: "testimonials" 
   );
 }
 
+function SectionNavBlock({ value }: Extract<FlexBlock, { type: "section_nav" }>) {
+  if (value.items.length === 0) return null;
+  return (
+    <section className="py-6">
+      <Container>
+        <nav className="max-w-[320px] rounded-[10px] border border-hairline bg-canvas p-5">
+          {value.heading && <p className="overline mb-3">{value.heading}</p>}
+          <ul className="space-y-2">
+            {value.items.map((label, i) => (
+              <li key={i}>
+                <a href={`#${slugify(label)}`} className="text-[14px] font-medium text-rust-700 hover:text-rust-600">
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </Container>
+    </section>
+  );
+}
+
 export function PageBlocks({ blocks }: { blocks: FlexBlock[] }) {
   return (
     <>
@@ -219,16 +369,28 @@ export function PageBlocks({ blocks }: { blocks: FlexBlock[] }) {
             return <MarkdownBlock key={i} {...block} />;
           case "image":
             return <ImageBlock key={i} {...block} />;
+          case "gallery":
+            return <GalleryBlock key={i} {...block} />;
+          case "media_text":
+            return <MediaTextBlock key={i} {...block} />;
           case "feature_grid":
             return <FeatureGridBlock key={i} {...block} />;
+          case "logo_strip":
+            return <LogoStripBlock key={i} {...block} />;
+          case "video":
+            return <VideoBlock key={i} {...block} />;
           case "cta_band":
             return <CtaBandBlock key={i} {...block} />;
+          case "inquiry_form":
+            return <InquiryFormBlock key={i} {...block} />;
           case "faq":
             return <FaqBlock key={i} {...block} />;
           case "stats":
             return <StatsBlock key={i} {...block} />;
           case "testimonials":
             return <TestimonialsBlock key={i} {...block} />;
+          case "section_nav":
+            return <SectionNavBlock key={i} {...block} />;
           default:
             return null;
         }

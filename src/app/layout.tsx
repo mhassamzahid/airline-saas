@@ -62,6 +62,8 @@ export default async function RootLayout({
             logoUrl={logo_url}
             navLinks={header?.nav_links}
             cta={header?.cta}
+            tagline={header?.tagline}
+            phone={header?.phone}
           />
           <main className="flex-1">{children}</main>
           <Footer siteTitle={site_title} logoUrl={logo_url} />

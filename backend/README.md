@@ -25,6 +25,7 @@ source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 cp .env.example .env               # then edit .env if you're using Postgres
 python manage.py migrate
+python manage.py seed_nav          # optional: populate header/footer nav for editing
 python manage.py createsuperuser
 ```
 
@@ -128,3 +129,12 @@ are already populated with the same copy currently hardcoded in the Next.js
 site, so the admin isn't empty on first login. Edit it through
 `/admin/pages/`, or `/admin/settings/` for site title / logo / theme / mode
 (`SiteSettings`) and the footer text (`FooterSettings`).
+
+`HeaderSettings.nav_links` and `FooterSettings.columns` ship *empty* by
+design (an empty list means "use the frontend's built-in nav" -- see
+`FALLBACK_LINKS` in `src/components/layout/Navbar.tsx` and `columns()` in
+`src/components/layout/Footer.tsx`), so a fresh DB shows a working site with
+blank settings pages. Run `python manage.py seed_nav` to copy that built-in
+nav into the CMS as editable entries -- it only fills fields that are still
+empty, so it's safe to re-run and won't overwrite anything you've since
+edited.

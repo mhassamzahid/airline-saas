@@ -118,16 +118,27 @@ export interface CmsLink {
   href: string;
 }
 
+export interface CmsLogoItem {
+  image: CmsImageRef | null;
+  name: string;
+}
+
 export type FlexBlock =
   | { type: "hero"; value: { eyebrow: string; heading: string; subheading: string; image: CmsImageRef | null; cta: CmsLink | null } }
   | { type: "rich_text"; value: { text: string } }
   | { type: "markdown"; value: { body: string } }
   | { type: "image"; value: { image: CmsImageRef | null; caption: string } }
+  | { type: "gallery"; value: { heading: string; images: CmsImageRef[] } }
+  | { type: "media_text"; value: { heading: string; body: string; image: CmsImageRef | null; image_position: "left" | "right"; cta: CmsLink | null } }
   | { type: "feature_grid"; value: { heading: string; items: CmsIconTextLink[] } }
+  | { type: "logo_strip"; value: { heading: string; logos: CmsLogoItem[] } }
+  | { type: "video"; value: { heading: string; video_url: string; caption: string } }
   | { type: "cta_band"; value: { heading: string; body: string; cta: CmsLink } }
+  | { type: "inquiry_form"; value: { heading: string; subject: string; lead_time: string; ask_group_size: boolean } }
   | { type: "faq"; value: { heading: string; items: CmsFaq[] } }
   | { type: "stats"; value: { heading: string; items: CmsStat[] } }
-  | { type: "testimonials"; value: { heading: string; items: CmsTestimonial[] } };
+  | { type: "testimonials"; value: { heading: string; items: CmsTestimonial[] } }
+  | { type: "section_nav"; value: { heading: string; items: string[] } };
 
 export interface CmsFlexiblePage {
   id: number;
@@ -172,6 +183,8 @@ export interface CmsNavLink {
 export interface CmsHeaderSettings {
   nav_links: CmsNavLink[];
   cta: { label: string; href: string };
+  tagline: string;
+  phone: string;
 }
 
 export async function getHeaderSettings(): Promise<CmsHeaderSettings | null> {
