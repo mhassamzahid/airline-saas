@@ -128,13 +128,14 @@ export type FlexBlock =
   | { type: "rich_text"; value: { text: string } }
   | { type: "markdown"; value: { body: string } }
   | { type: "image"; value: { image: CmsImageRef | null; caption: string } }
-  | { type: "gallery"; value: { heading: string; images: CmsImageRef[] } }
+  | { type: "gallery"; value: { heading: string; images: (CmsImageRef | null)[] } }
   | { type: "media_text"; value: { heading: string; body: string; image: CmsImageRef | null; image_position: "left" | "right"; cta: CmsLink | null } }
   | { type: "feature_grid"; value: { heading: string; items: CmsIconTextLink[] } }
   | { type: "logo_strip"; value: { heading: string; logos: CmsLogoItem[] } }
   | { type: "video"; value: { heading: string; video_url: string; caption: string } }
   | { type: "cta_band"; value: { heading: string; body: string; cta: CmsLink } }
   | { type: "inquiry_form"; value: { heading: string; subject: string; lead_time: string; ask_group_size: boolean } }
+  | { type: "contact"; value: { heading: string; intro: string; image: CmsImageRef | null } }
   | { type: "faq"; value: { heading: string; items: CmsFaq[] } }
   | { type: "stats"; value: { heading: string; items: CmsStat[] } }
   | { type: "testimonials"; value: { heading: string; items: CmsTestimonial[] } }

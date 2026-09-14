@@ -19,6 +19,7 @@ from halcyon.blocks import (
     LogoStripBlock,
     VideoBlock,
     SectionNavBlock,
+    ContactBlock,
 )
 
 
@@ -41,6 +42,7 @@ class FlexiblePage(Page):
             ("video", VideoBlock()),
             ("cta_band", CTABandBlock()),
             ("inquiry_form", InquiryFormBlock()),
+            ("contact", ContactBlock()),
             ("faq", FAQSectionBlock()),
             ("stats", StatsSectionBlock()),
             ("testimonials", TestimonialsSectionBlock()),

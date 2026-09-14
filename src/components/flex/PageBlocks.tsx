@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { marked } from "marked";
-import { ArrowRight, CaretDown, Quotes } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRight, CaretDown, ImageSquare, Quotes } from "@phosphor-icons/react/dist/ssr";
 import { Photo } from "@/components/ui/Photo";
 import { resolveIcon } from "@/lib/icons";
 import { cmsImageUrl, type FlexBlock, type CmsLink } from "@/lib/cms";
@@ -8,6 +8,21 @@ import { sanitizeRichText, sanitizeMarkdown } from "@/lib/sanitize";
 import { getEmbedUrl } from "@/lib/video";
 import { slugify } from "@/lib/utils";
 import { InquiryForm } from "@/components/site/InquiryForm";
+import { ContactForm } from "@/components/site/ContactForm";
+import { stock } from "@/lib/img";
+
+/**
+ * Fallback photos for blocks whose image is decorative rather than the
+ * block's whole point (Contact, Media + text) -- each gets its own, so a
+ * page with several of these blocks doesn't repeat the same photo. Blocks
+ * where the image *is* the content (Image, Gallery, Logo strip) stay
+ * required in the CMS instead, since a silently-substituted photo there
+ * would likely ship unnoticed. Hero's image is optional with no fallback on
+ * purpose -- a text-only hero is an intentional look already used on real
+ * pages (e.g. the Ramadan Offer demo), not a missing-content state.
+ */
+const DEFAULT_CONTACT_IMAGE = stock("photo-1513072064285-240f87fa81e8", 900, 1100);
+const DEFAULT_MEDIA_TEXT_IMAGE = stock("photo-1584186028062-637e3e77318d", 900, 700);
 
 /** Long-form prose styling shared by the rich-text and markdown blocks. Headings
  * get scroll-margin so an in-page anchor jump (the Section links block) doesn't
@@ -117,23 +132,30 @@ function ImageBlock({ value }: Extract<FlexBlock, { type: "image" }>) {
 }
 
 function GalleryBlock({ value }: Extract<FlexBlock, { type: "gallery" }>) {
-  const images = value.images
-    .map((image) => ({ image, url: cmsImageUrl(image) }))
-    .filter((x): x is { image: typeof x.image; url: string } => Boolean(x.url));
-  if (images.length === 0) return null;
+  if (value.images.length === 0) return null;
   return (
     <section className="py-12 sm:py-16">
       <Container>
         {value.heading && <h2 className="text-[22px] text-ink">{value.heading}</h2>}
         <div className={`grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 ${value.heading ? "mt-6" : ""}`}>
-          {images.map(({ image, url }, i) => (
-            <Photo
-              key={i}
-              src={url}
-              alt={image.title || ""}
-              className="aspect-[4/3] w-full rounded-[10px] border border-hairline"
-            />
-          ))}
+          {value.images.map((image, i) => {
+            const url = cmsImageUrl(image);
+            return url ? (
+              <Photo
+                key={i}
+                src={url}
+                alt={image?.title || ""}
+                className="aspect-[4/3] w-full rounded-[10px] border border-hairline"
+              />
+            ) : (
+              <div
+                key={i}
+                className="flex aspect-[4/3] w-full items-center justify-center rounded-[10px] border border-dashed border-hairline-firm bg-canvas-sink"
+              >
+                <ImageSquare size={28} className="text-faint" />
+              </div>
+            );
+          })}
         </div>
       </Container>
     </section>
@@ -141,7 +163,7 @@ function GalleryBlock({ value }: Extract<FlexBlock, { type: "gallery" }>) {
 }
 
 function MediaTextBlock({ value }: Extract<FlexBlock, { type: "media_text" }>) {
-  const img = cmsImageUrl(value.image);
+  const img = cmsImageUrl(value.image) ?? DEFAULT_MEDIA_TEXT_IMAGE;
   const cta = value.cta?.label ? value.cta : null;
   const imageFirst = value.image_position !== "right";
   return (
@@ -149,9 +171,7 @@ function MediaTextBlock({ value }: Extract<FlexBlock, { type: "media_text" }>) {
       <Container>
         <div className="grid grid-cols-1 items-center gap-8 sm:grid-cols-2 sm:gap-12">
           <div className={imageFirst ? "sm:order-1" : "sm:order-2"}>
-            {img && (
-              <Photo src={img} alt="" className="aspect-[4/3] w-full rounded-[10px] border border-hairline" />
-            )}
+            <Photo src={img} alt="" className="aspect-[4/3] w-full rounded-[10px] border border-hairline" />
           </div>
           <div className={imageFirst ? "sm:order-2" : "sm:order-1"}>
             {value.heading && <h2 className="text-[22px] text-ink">{value.heading}</h2>}
@@ -194,24 +214,31 @@ function FeatureGridBlock({ value }: Extract<FlexBlock, { type: "feature_grid" }
 }
 
 function LogoStripBlock({ value }: Extract<FlexBlock, { type: "logo_strip" }>) {
-  const logos = value.logos
-    .map((logo) => ({ ...logo, url: cmsImageUrl(logo.image) }))
-    .filter((x): x is typeof x & { url: string } => Boolean(x.url));
-  if (logos.length === 0) return null;
+  if (value.logos.length === 0) return null;
   return (
     <section className="border-y border-hairline bg-canvas-soft py-8">
       <Container>
         {value.heading && <p className="text-center text-[12px] text-muted">{value.heading}</p>}
         <div className={`flex flex-wrap items-center justify-center gap-x-10 gap-y-4 ${value.heading ? "mt-5" : ""}`}>
-          {logos.map((logo, i) => (
-            // eslint-disable-next-line @next/next/no-img-element -- a logo mark, not photography; skip the duotone Photo treatment
-            <img
-              key={i}
-              src={logo.url}
-              alt={logo.name || ""}
-              className="h-7 w-auto object-contain grayscale opacity-70 transition-[filter,opacity] hover:opacity-100 hover:grayscale-0"
-            />
-          ))}
+          {value.logos.map((logo, i) => {
+            const url = cmsImageUrl(logo.image);
+            return url ? (
+              // eslint-disable-next-line @next/next/no-img-element -- a logo mark, not photography; skip the duotone Photo treatment
+              <img
+                key={i}
+                src={url}
+                alt={logo.name || ""}
+                className="h-7 w-auto object-contain grayscale opacity-70 transition-[filter,opacity] hover:opacity-100 hover:grayscale-0"
+              />
+            ) : (
+              <div
+                key={i}
+                className="flex h-7 w-24 items-center justify-center rounded-[6px] border border-dashed border-hairline-firm bg-canvas-sink"
+              >
+                <ImageSquare size={14} className="text-faint" />
+              </div>
+            );
+          })}
         </div>
       </Container>
     </section>
@@ -268,6 +295,28 @@ function InquiryFormBlock({ value }: Extract<FlexBlock, { type: "inquiry_form" }
           askGroupSize={value.ask_group_size}
           className={value.heading ? "mt-6 max-w-[560px]" : "max-w-[560px]"}
         />
+      </Container>
+    </section>
+  );
+}
+
+function ContactBlock({ value }: Extract<FlexBlock, { type: "contact" }>) {
+  const img = cmsImageUrl(value.image) ?? DEFAULT_CONTACT_IMAGE;
+  return (
+    <section className="py-12 sm:py-16">
+      <Container>
+        <div className="grid grid-cols-1 overflow-hidden rounded-[10px] border border-hairline sm:grid-cols-2">
+          <div className="relative min-h-[280px] sm:min-h-0">
+            <Photo src={img} alt="" className="absolute inset-0 h-full w-full" />
+          </div>
+          <div className="bg-canvas p-6 sm:p-10">
+            <h2 className="text-[24px] text-ink">{value.heading}</h2>
+            {value.intro && (
+              <p className="mt-2 max-w-[48ch] text-[14px] leading-relaxed text-body">{value.intro}</p>
+            )}
+            <ContactForm className="mt-6" />
+          </div>
+        </div>
       </Container>
     </section>
   );
@@ -383,6 +432,8 @@ export function PageBlocks({ blocks }: { blocks: FlexBlock[] }) {
             return <CtaBandBlock key={i} {...block} />;
           case "inquiry_form":
             return <InquiryFormBlock key={i} {...block} />;
+          case "contact":
+            return <ContactBlock key={i} {...block} />;
           case "faq":
             return <FaqBlock key={i} {...block} />;
           case "stats":

@@ -113,6 +113,11 @@ export const BLOCK_PLACEHOLDERS: { [K in FlexBlock["type"]]: BlockValue<K> } = {
     lead_time: "2 business days",
     ask_group_size: false,
   },
+  contact: {
+    heading: "Contact us",
+    intro: "Use this form for all general enquiries. We monitor these responses constantly during working hours.",
+    image: sampleImage("photo-1565330770968-0240c0046ce3", 900, 1100),
+  },
   faq: {
     heading: "Common questions",
     items: [

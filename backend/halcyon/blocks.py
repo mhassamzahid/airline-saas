@@ -365,7 +365,10 @@ class GalleryBlock(ScreenshotPreviewBlock):
     preview_image = "flexpages/previews/gallery.png"
 
     heading = blocks.CharBlock(max_length=120, required=False, default=GALLERY_SAMPLE["heading"])
-    images = blocks.ListBlock(ImageChooserBlock())
+    images = blocks.ListBlock(
+        ImageChooserBlock(required=False),
+        help_text="An image left empty (e.g. a slot you haven't uploaded to yet) shows a placeholder, not an error.",
+    )
 
     class Meta:
         icon = "image"
@@ -381,7 +384,7 @@ class MediaTextBlock(ScreenshotPreviewBlock):
         features=["bold", "italic", "link", "ol", "ul"],
         default=MEDIA_TEXT_SAMPLE["body"],
     )
-    image = ImageChooserBlock()
+    image = ImageChooserBlock(required=False, help_text="Optional. Leave empty to use a default image.")
     image_position = blocks.ChoiceBlock(
         choices=[("left", "Image on the left"), ("right", "Image on the right")],
         default=MEDIA_TEXT_SAMPLE["image_position"],
@@ -395,7 +398,7 @@ class MediaTextBlock(ScreenshotPreviewBlock):
 
 
 class LogoItemBlock(blocks.StructBlock):
-    image = ImageChooserBlock()
+    image = ImageChooserBlock(required=False, help_text="Left empty, this logo shows a placeholder rather than an error.")
     name = blocks.CharBlock(max_length=60, required=False, help_text="Used as the image's alt text.")
 
     class Meta:
@@ -445,3 +448,25 @@ class SectionNavBlock(ScreenshotPreviewBlock):
         icon = "list-ul"
         label = "Section links"
         preview_value = SECTION_NAV_SAMPLE
+
+
+CONTACT_SAMPLE = {
+    "heading": "Contact us",
+    "intro": (
+        "Use this form for all general enquiries. We monitor these responses "
+        "constantly during working hours."
+    ),
+}
+
+
+class ContactBlock(ScreenshotPreviewBlock):
+    preview_image = "flexpages/previews/contact.png"
+
+    heading = blocks.CharBlock(max_length=120, default=CONTACT_SAMPLE["heading"])
+    intro = blocks.TextBlock(required=False, default=CONTACT_SAMPLE["intro"])
+    image = ImageChooserBlock(required=False, help_text="Optional. Leave empty to use a default image.")
+
+    class Meta:
+        icon = "mail"
+        label = "Contact"
+        preview_value = CONTACT_SAMPLE
