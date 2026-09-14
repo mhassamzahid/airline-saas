@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { CaretUp, X } from "@phosphor-icons/react";
 import { useQuote } from "@/lib/hooks";
 import { formatGBP } from "@/lib/utils";
-import { SummaryContent, FareHoldChip } from "./FareSummary";
+import { SummaryContent } from "./FareSummary";
 
 export function MobileFareBar() {
   const quote = useQuote();
@@ -19,11 +19,8 @@ export function MobileFareBar() {
           onClick={() => setOpen(true)}
           className="flex w-full items-center justify-between px-5 py-3 text-left"
         >
-          <span className="flex items-center gap-2">
-            <span className="text-[12px] uppercase tracking-[0.12em] text-muted">
-              Total
-            </span>
-            <FareHoldChip />
+          <span className="text-[12px] uppercase tracking-[0.12em] text-muted">
+            Total
           </span>
           <span className="flex items-center gap-2">
             <span data-numeric className="text-[18px] font-semibold text-ink">
@@ -56,7 +53,7 @@ export function MobileFareBar() {
                 >
                   <div className="mb-3 flex items-center justify-between">
                     <Dialog.Title className="text-[15px] font-semibold text-ink">
-                      Your fare
+                      Your quote
                     </Dialog.Title>
                     <Dialog.Close className="grid h-8 w-8 place-items-center rounded-full text-muted hover:bg-canvas-soft hover:text-ink">
                       <X size={16} />

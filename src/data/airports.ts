@@ -153,59 +153,8 @@ export const DESTINATIONS: Destination[] = [
   },
 ];
 
-/** Umrah package tiers: flown into Jeddah, sold as a fixed package rather than a point-to-point fare. Reuses the `Destination` shape so it drops straight into the existing quote/flight/summary code. */
-export interface UmrahPackage extends Destination {
-  nights: number;
-  hotelDistance: string;
-}
-
-export const UMRAH_PACKAGES: UmrahPackage[] = [
-  {
-    code: "ECO", city: "Economy Umrah", name: "14 nights, shared room", country: "Makkah & Madinah",
-    baseFareGBP: 1099, region: "Middle East", airportCity: "Jeddah",
-    nights: 14, hotelDistance: "800m from the Haram",
-    tagline: "Everything you need, nothing you don't",
-    blurb: "Two weeks split between Makkah and Madinah, shared-room hotels a short walk from both mosques.",
-    image: stock("photo-1513072064285-240f87fa81e8"),
-  },
-  {
-    code: "STD", city: "Standard Umrah", name: "10 nights, closer hotels", country: "Makkah & Madinah",
-    baseFareGBP: 1499, popular: true, featured: true, region: "Middle East", airportCity: "Jeddah",
-    nights: 10, hotelDistance: "400m from the Haram",
-    tagline: "The one most families choose",
-    blurb: "A shorter, closer trip: hotels within easy walking distance of Masjid al-Haram and Masjid an-Nabawi.",
-    image: stock("photo-1591604129939-f1efa4d9f7fa"),
-  },
-  {
-    code: "PRM", city: "Premium Umrah", name: "7 nights, 5-star", country: "Makkah & Madinah",
-    baseFareGBP: 2199, region: "Middle East", airportCity: "Jeddah",
-    nights: 7, hotelDistance: "100m from the Haram",
-    tagline: "A week, done properly",
-    blurb: "Five-star towers overlooking the Haram itself, for a shorter trip with no time lost to transfers.",
-    image: stock("photo-1565330770968-0240c0046ce3"),
-  },
-  {
-    code: "VIP", city: "VIP Umrah", name: "7 nights, Haram-view suite", country: "Makkah & Madinah",
-    baseFareGBP: 3499, region: "Middle East", airportCity: "Jeddah",
-    nights: 7, hotelDistance: "Haram-view suite",
-    tagline: "The whole trip, arranged for you",
-    blurb: "A private suite looking directly onto the Haram, a dedicated coordinator, and every transfer handled.",
-    image: stock("photo-1713239060784-e6ed820a0715", 1200, 1400),
-  },
-];
-
-export function umrahPackageByCode(code: string): UmrahPackage | undefined {
-  return UMRAH_PACKAGES.find((p) => p.code === code);
-}
-
-export const ALL_AIRPORTS: Airport[] = [...ORIGINS, ...DESTINATIONS, ...UMRAH_PACKAGES];
-
-export function airportByCode(code: string): Airport | undefined {
-  return ALL_AIRPORTS.find((a) => a.code === code);
-}
-
 export function destinationByCode(code: string): Destination | undefined {
-  return DESTINATIONS.find((d) => d.code === code) ?? UMRAH_PACKAGES.find((p) => p.code === code);
+  return DESTINATIONS.find((d) => d.code === code);
 }
 
 /** Rough block time, primary base <-> destination, minutes. */
@@ -213,6 +162,4 @@ export const BLOCK_MINUTES: Record<string, number> = {
   JFK: 470, BOS: 445, YYZ: 460, GRU: 685, CPT: 700,
   DXB: 420, DEL: 525, SIN: 800, HND: 730, SYD: 1310,
   LHE: 420, KHI: 435, ISB: 415,
-  // Umrah packages all fly the same Jeddah sector regardless of tier.
-  ECO: 415, STD: 415, PRM: 415, VIP: 415,
 };

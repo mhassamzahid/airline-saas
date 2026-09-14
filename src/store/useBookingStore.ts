@@ -1,46 +1,59 @@
 "use client";
 
 import { create } from "zustand";
-import type { StepId, TripType, CabinId, FareId, Passengers, Extras, FlightOption } from "@/types";
-import { flightFor, type DepartureWindowId } from "@/data/flights";
-import { DEFAULT_ORIGIN } from "@/data/airports";
+import type {
+  StepId,
+  CategoryId,
+  RoomSharingId,
+  TransportTierId,
+  VisaChoice,
+  AdditionalServiceKey,
+  Passengers,
+} from "@/types";
+import { type DurationOption, packageTierById } from "@/data/umrah";
 import { makeBookingRef } from "@/lib/utils";
 
 export const STEPS: { id: StepId; label: string }[] = [
-  { id: "destination", label: "Package" },
-  { id: "whenwho", label: "When & who" },
-  { id: "cabin", label: "Cabin" },
-  { id: "departure", label: "Flights" },
-  { id: "addons", label: "Extras" },
+  { id: "landing", label: "Package" },
+  { id: "category", label: "Category" },
+  { id: "duration", label: "Duration" },
+  { id: "travelers", label: "Travellers" },
+  { id: "visa", label: "Visa" },
+  { id: "hotels", label: "Hotels" },
+  { id: "transport", label: "Transport" },
+  { id: "services", label: "Services" },
   { id: "review", label: "Review" },
+  { id: "submit", label: "Submit" },
 ];
+
+export type PackageTierChoice = "standard" | "premium" | "deluxe" | "custom";
 
 export interface BookingState {
   currentStep: number;
 
-  from: string;
-  to: string | null;
-  tripType: TripType;
+  packageTier: PackageTierChoice | null;
 
-  departDate?: string;
-  returnDate?: string;
+  category: CategoryId;
+  durationDays: DurationOption | "custom";
+  customDurationDays: number | null;
+  travelDate?: string; // ISO yyyy-mm-dd, preferred travel date
 
   passengers: Passengers;
 
-  cabin: CabinId;
+  visaChoice: VisaChoice;
 
-  outboundWindow: DepartureWindowId | null;
-  inboundWindow: DepartureWindowId | null;
-  outboundFlight: FlightOption | null;
-  inboundFlight: FlightOption | null;
+  makkahHotelId: string | null;
+  madinahHotelId: string | null;
+  roomSharing: RoomSharingId;
 
-  fare: FareId;
-  extras: Extras;
+  airportTransfer: boolean;
+  intercityTransport: TransportTierId;
+  ziyarat: boolean;
 
-  contact: { name: string; email: string };
+  services: Record<AdditionalServiceKey, boolean>;
 
-  fareHoldExpiresAt: number | null;
-  heldRef: string | null;
+  contact: { name: string; phone: string; email: string };
+  submittedRef: string | null;
 }
 
 interface BookingActions {
@@ -48,153 +61,118 @@ interface BookingActions {
   next: () => void;
   back: () => void;
 
-  setFrom: (code: string) => void;
-  setTo: (code: string) => void;
-  setTripType: (t: TripType) => void;
+  pickPackage: (tier: PackageTierChoice) => void;
 
-  setDepartDate: (iso?: string) => void;
-  setReturnDate: (iso?: string) => void;
+  setCategory: (c: CategoryId) => void;
+  setDuration: (d: DurationOption | "custom") => void;
+  setCustomDurationDays: (n: number) => void;
+  setTravelDate: (iso?: string) => void;
 
   setPassengers: (p: Partial<Passengers>) => void;
-  setCabin: (c: CabinId) => void;
 
-  setOutboundWindow: (w: DepartureWindowId) => void;
-  setInboundWindow: (w: DepartureWindowId) => void;
+  setVisaChoice: (v: VisaChoice) => void;
 
-  toggleAddon: (key: "legroom" | "ziyarat" | "guide" | "flex") => void;
-  setCheckedBags: (n: number) => void;
-  setCarbonOffset: (v: boolean) => void;
+  setMakkahHotel: (id: string) => void;
+  setMadinahHotel: (id: string) => void;
+  setRoomSharing: (id: RoomSharingId) => void;
+
+  setAirportTransfer: (v: boolean) => void;
+  setIntercityTransport: (id: TransportTierId) => void;
+  setZiyarat: (v: boolean) => void;
+
+  toggleService: (key: AdditionalServiceKey) => void;
 
   setContact: (c: Partial<BookingState["contact"]>) => void;
+  submitInquiry: () => void;
 
-  startFareHold: () => void;
-  holdFare: () => void;
   reset: () => void;
 }
 
 const INITIAL: BookingState = {
   currentStep: 0,
-  from: DEFAULT_ORIGIN.code,
-  to: null,
-  tripType: "return",
-  departDate: undefined,
-  returnDate: undefined,
+  packageTier: null,
+  category: "standard",
+  durationDays: 10,
+  customDurationDays: null,
+  travelDate: undefined,
   passengers: { adults: 1, children: 0, infants: 0 },
-  cabin: "economy",
-  outboundWindow: null,
-  inboundWindow: null,
-  outboundFlight: null,
-  inboundFlight: null,
-  fare: "value",
-  extras: {
-    checkedBags: 0,
-    seatPref: "standard",
-    meal: "standard",
-    ziyarat: false,
+  visaChoice: "include",
+  makkahHotelId: null,
+  madinahHotelId: null,
+  roomSharing: "quad",
+  airportTransfer: true,
+  intercityTransport: "shared",
+  ziyarat: false,
+  services: {
+    insurance: false,
+    sim: false,
+    laundry: false,
     guide: false,
-    carbonOffset: true,
+    mealUpgrade: false,
   },
-  contact: { name: "", email: "" },
-  fareHoldExpiresAt: null,
-  heldRef: null,
+  contact: { name: "", phone: "", email: "" },
+  submittedRef: null,
 };
-
-function syncFlights(s: BookingState): Partial<BookingState> {
-  if (!s.to) return {};
-  return {
-    outboundFlight: s.outboundWindow ? flightFor(s.from, s.to, s.outboundWindow) : null,
-    inboundFlight:
-      s.tripType === "return" && s.inboundWindow
-        ? flightFor(s.to, s.from, s.inboundWindow)
-        : null,
-  };
-}
 
 export const useBookingStore = create<BookingState & BookingActions>()((set, get) => ({
   ...INITIAL,
 
   goTo: (currentStep) =>
     set({ currentStep: Math.max(0, Math.min(STEPS.length - 1, currentStep)) }),
-  next: () => {
-    const nextIndex = Math.min(STEPS.length - 1, get().currentStep + 1);
-    if (STEPS[nextIndex].id === "departure" && get().fareHoldExpiresAt === null) {
-      set({ fareHoldExpiresAt: Date.now() + 10 * 60 * 1000 });
-    }
-    set({ currentStep: nextIndex });
+  next: () => set((s) => ({ currentStep: Math.min(STEPS.length - 1, s.currentStep + 1) })),
+  back: () => set((s) => ({ currentStep: Math.max(0, s.currentStep - 1) })),
+
+  pickPackage: (tier) => {
+    const tierDef = tier === "custom" ? undefined : packageTierById(tier);
+    set((s) => ({
+      packageTier: tier,
+      ...(tierDef && {
+        category: tierDef.defaults.category,
+        durationDays: tierDef.defaults.durationDays,
+        makkahHotelId: tierDef.defaults.makkahHotelId,
+        madinahHotelId: tierDef.defaults.madinahHotelId,
+        roomSharing: tierDef.defaults.roomSharing,
+        intercityTransport: tierDef.defaults.intercityTransport,
+        services: { ...s.services, ...tierDef.defaults.services },
+      }),
+      currentStep: 1,
+    }));
   },
-  back: () => set({ currentStep: Math.max(0, get().currentStep - 1) }),
 
-  setFrom: (from) =>
-    set((s) => {
-      const next = { ...s, from, outboundWindow: null, inboundWindow: null };
-      return { from, outboundWindow: null, inboundWindow: null, ...syncFlights(next) };
-    }),
-  setTo: (to) =>
-    set((s) => {
-      const next = { ...s, to, outboundWindow: null, inboundWindow: null };
-      return { to, outboundWindow: null, inboundWindow: null, ...syncFlights(next) };
-    }),
-  setTripType: (tripType) =>
-    set((s) => {
-      const next = { ...s, tripType, inboundWindow: tripType === "oneway" ? null : s.inboundWindow };
-      return {
-        tripType,
-        inboundWindow: next.inboundWindow,
-        returnDate: tripType === "oneway" ? undefined : s.returnDate,
-        ...syncFlights(next),
-      };
-    }),
-
-  setDepartDate: (departDate) => set({ departDate }),
-  setReturnDate: (returnDate) => set({ returnDate }),
+  setCategory: (category) => set({ category }),
+  setDuration: (durationDays) => set({ durationDays }),
+  setCustomDurationDays: (n) => set({ customDurationDays: Math.max(1, n) }),
+  setTravelDate: (travelDate) => set({ travelDate }),
 
   setPassengers: (p) => set((s) => ({ passengers: { ...s.passengers, ...p } })),
-  setCabin: (cabin) => set({ cabin }),
 
-  setOutboundWindow: (outboundWindow) =>
-    set((s) => {
-      const next = { ...s, outboundWindow };
-      return { outboundWindow, ...syncFlights(next) };
-    }),
-  setInboundWindow: (inboundWindow) =>
-    set((s) => {
-      const next = { ...s, inboundWindow };
-      return { inboundWindow, ...syncFlights(next) };
-    }),
+  setVisaChoice: (visaChoice) => set({ visaChoice }),
 
-  toggleAddon: (key) =>
-    set((s) => {
-      if (key === "flex") return { fare: s.fare === "flex" ? "value" : "flex" };
-      if (key === "legroom")
-        return {
-          extras: {
-            ...s.extras,
-            seatPref: s.extras.seatPref === "legroom" ? "standard" : "legroom",
-          },
-        };
-      return { extras: { ...s.extras, [key]: !s.extras[key] } };
-    }),
-  setCheckedBags: (n) =>
-    set((s) => ({ extras: { ...s.extras, checkedBags: Math.max(0, Math.min(5, n)) } })),
-  setCarbonOffset: (carbonOffset) => set((s) => ({ extras: { ...s.extras, carbonOffset } })),
+  setMakkahHotel: (makkahHotelId) => set({ makkahHotelId }),
+  setMadinahHotel: (madinahHotelId) => set({ madinahHotelId }),
+  setRoomSharing: (roomSharing) => set({ roomSharing }),
+
+  setAirportTransfer: (airportTransfer) => set({ airportTransfer }),
+  setIntercityTransport: (intercityTransport) => set({ intercityTransport }),
+  setZiyarat: (ziyarat) => set({ ziyarat }),
+
+  toggleService: (key) =>
+    set((s) => ({ services: { ...s.services, [key]: !s.services[key] } })),
 
   setContact: (c) => set((s) => ({ contact: { ...s.contact, ...c } })),
-
-  startFareHold: () =>
-    set((s) =>
-      s.fareHoldExpiresAt === null
-        ? { fareHoldExpiresAt: Date.now() + 10 * 60 * 1000 }
-        : s,
-    ),
-
-  holdFare: () => {
+  submitInquiry: () => {
     const s = get();
     const seed =
-      (s.to ? s.to.charCodeAt(0) * 131 + s.to.charCodeAt(1) * 17 : 999) +
-      (s.departDate ? Number(s.departDate.replaceAll("-", "")) : 424242) +
+      s.contact.name.length * 131 +
+      s.contact.phone.length * 53 +
+      s.contact.email.length * 17 +
       s.passengers.adults * 9001;
-    set({ heldRef: makeBookingRef(seed) });
+    set({ submittedRef: makeBookingRef(seed) });
   },
 
   reset: () => set({ ...INITIAL }),
 }));
+
+export function effectiveDurationDays(s: Pick<BookingState, "durationDays" | "customDurationDays">): number {
+  return s.durationDays === "custom" ? (s.customDurationDays ?? 10) : s.durationDays;
+}

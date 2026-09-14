@@ -1,146 +1,127 @@
-import type { Quote, QuoteLine } from "@/types";
-import { airportByCode, originByCode } from "@/data/airports";
-import { cabinById } from "@/data/cabins";
-import { fareById } from "@/data/fares";
+import type { Quote } from "@/types";
 import {
-  BAG_PRICE_GBP,
+  VISA_PRICE_GBP,
+  hotelById,
+  roomSharingById,
+  AIRPORT_TRANSFER_PRICE_GBP,
+  transportTierById,
   ZIYARAT_PRICE_GBP,
-  GUIDE_PRICE_GBP,
-  LEGROOM_PRICE_PER_DIRECTION,
-  OFFSET_PRICE_PER_PAX_PER_DIRECTION,
-} from "@/data/extras";
+  additionalServiceByKey,
+} from "@/data/umrah";
 import type { BookingState } from "@/store/useBookingStore";
-
-const PAX_WEIGHT = { adults: 1, children: 0.75, infants: 0.1 };
-const TAX_RATE = 0.166;
-const CARRIER_CHARGE_PER_PAX = 42;
-
-export function payingWeight(p: BookingState["passengers"]) {
-  return (
-    p.adults * PAX_WEIGHT.adults +
-    p.children * PAX_WEIGHT.children +
-    p.infants * PAX_WEIGHT.infants
-  );
-}
+import { effectiveDurationDays } from "@/store/useBookingStore";
 
 export function headcount(p: BookingState["passengers"]) {
   return p.adults + p.children + p.infants;
 }
 
+/** Adults and children occupy rooms and pay for services; infants travel free. */
+function payingHeadcount(p: BookingState["passengers"]) {
+  return p.adults + p.children;
+}
+
+/** Nights split across the two cities -- more time in Makkah, the rest in Madinah. */
+function nightSplit(totalDays: number) {
+  const makkahNights = Math.max(1, Math.round(totalDays * 0.6));
+  const madinahNights = Math.max(1, totalDays - makkahNights);
+  return { makkahNights, madinahNights };
+}
+
 export function computeQuote(s: BookingState): Quote {
-  const dest = s.to ? airportByCode(s.to) : undefined;
-  const directions = s.tripType === "return" ? 2 : 1;
-  const weight = payingWeight(s.passengers);
-  const heads = headcount(s.passengers);
+  const lines: Quote["lines"] = [];
+  const heads = payingHeadcount(s.passengers);
+  const days = effectiveDurationDays(s);
+  const { makkahNights, madinahNights } = nightSplit(days);
 
-  const lines: QuoteLine[] = [];
+  if (s.visaChoice === "include") {
+    lines.push({
+      id: "visa",
+      label: "Umrah visa",
+      detail: `${heads} ${heads === 1 ? "person" : "people"}`,
+      amount: VISA_PRICE_GBP * heads,
+    });
+  }
 
-  const cabin = cabinById(s.cabin);
-  const routeBase = (dest?.baseFareGBP ?? 0) * cabin.multiplier;
-  const baseFare = routeBase * directions * weight;
+  const rooms = Math.max(1, Math.ceil(heads / roomSharingById(s.roomSharing).divisor));
+  const makkahHotel = s.makkahHotelId ? hotelById(s.makkahHotelId) : undefined;
+  const madinahHotel = s.madinahHotelId ? hotelById(s.madinahHotelId) : undefined;
+
+  if (makkahHotel) {
+    lines.push({
+      id: "makkah-hotel",
+      label: makkahHotel.name,
+      detail: `${makkahNights} nights x ${rooms} room${rooms > 1 ? "s" : ""}`,
+      amount: makkahHotel.pricePerNightGBP * makkahNights * rooms,
+    });
+  }
+  if (madinahHotel) {
+    lines.push({
+      id: "madinah-hotel",
+      label: madinahHotel.name,
+      detail: `${madinahNights} nights x ${rooms} room${rooms > 1 ? "s" : ""}`,
+      amount: madinahHotel.pricePerNightGBP * madinahNights * rooms,
+    });
+  }
+
+  if (s.airportTransfer) {
+    lines.push({
+      id: "airport-transfer",
+      label: "Airport transfers",
+      detail: "Arrival and departure",
+      amount: AIRPORT_TRANSFER_PRICE_GBP * heads * 2,
+    });
+  }
+
+  const transportTier = transportTierById(s.intercityTransport);
   lines.push({
-    id: "fare",
-    label: `${cabin.name} fare`,
-    detail: `${s.tripType === "return" ? "Return" : "One way"} · ${formatPax(s.passengers)}`,
-    amount: baseFare,
+    id: "intercity",
+    label: transportTier.label,
+    detail: "Jeddah, Makkah, Madinah circuit",
+    amount: transportTier.priceGBP * heads,
   });
 
-  const origin = originByCode(s.from);
-  if (origin && origin.adjustmentGBP !== 0) {
-    lines.push({
-      id: "origin",
-      label: `Departing ${origin.city}`,
-      detail: "Base adjustment",
-      amount: origin.adjustmentGBP * directions * weight,
-    });
-  }
-
-  const flightDelta =
-    ((s.outboundFlight?.priceGBP ?? 0) +
-      (s.tripType === "return" ? s.inboundFlight?.priceGBP ?? 0 : 0)) *
-    weight;
-  if (flightDelta !== 0) {
-    lines.push({
-      id: "flights",
-      label: "Departure times",
-      amount: flightDelta,
-    });
-  }
-
-  if (s.fare === "flex") {
-    lines.push({
-      id: "flex",
-      label: "Fully flexible",
-      detail: "Free changes and cancellation",
-      amount: fareById("flex").addPerDirection * directions * weight,
-    });
-  }
-
-  if (s.extras.checkedBags > 0) {
-    lines.push({
-      id: "bags",
-      label: "Extra checked bags",
-      detail: `${s.extras.checkedBags} x £${BAG_PRICE_GBP}`,
-      amount: s.extras.checkedBags * BAG_PRICE_GBP,
-    });
-  }
-  if (s.extras.seatPref === "legroom") {
-    lines.push({
-      id: "seat",
-      label: "Extra legroom",
-      detail: `${heads} seated · ${directions === 2 ? "both flights" : "one flight"}`,
-      amount: LEGROOM_PRICE_PER_DIRECTION * directions * heads,
-    });
-  }
-  if (s.extras.ziyarat) {
+  if (s.ziyarat) {
     lines.push({
       id: "ziyarat",
       label: "Ziyarat tour",
-      detail: `${heads} x £${ZIYARAT_PRICE_GBP}`,
-      amount: heads * ZIYARAT_PRICE_GBP,
-    });
-  }
-  if (s.extras.guide) {
-    lines.push({ id: "guide", label: "Private guide", amount: GUIDE_PRICE_GBP });
-  }
-  if (s.extras.carbonOffset) {
-    lines.push({
-      id: "offset",
-      label: "Verified carbon removal",
-      detail: "Added to each ticket",
-      amount: OFFSET_PRICE_PER_PAX_PER_DIRECTION * directions * heads,
+      detail: `${heads} x ${formatGBPPlain(ZIYARAT_PRICE_GBP)}`,
+      amount: ZIYARAT_PRICE_GBP * heads,
     });
   }
 
-  const preTax = lines.reduce((sum, l) => sum + l.amount, 0);
-  const taxes = preTax * TAX_RATE + CARRIER_CHARGE_PER_PAX * heads;
+  for (const key of Object.keys(s.services) as (keyof BookingState["services"])[]) {
+    if (!s.services[key]) continue;
+    const service = additionalServiceByKey(key);
+    const amount =
+      service.per === "person"
+        ? service.priceGBP * heads
+        : service.per === "day"
+          ? service.priceGBP * heads * days
+          : service.priceGBP;
+    lines.push({ id: `service-${key}`, label: service.title, amount });
+  }
 
-  return {
-    lines,
-    taxes: round2(taxes),
-    total: round2(preTax + taxes),
-  };
+  const total = round2(lines.reduce((sum, l) => sum + l.amount, 0));
+
+  return { lines, total };
 }
 
-/** 0-100, how close the trip is to being ready to hold. */
+/** 0-100, how close the enquiry is to being ready to submit. */
 export function computeReadiness(s: BookingState): number {
   let done = 0;
-  const total = 6;
-  if (s.to) done++;
-  if (s.departDate && (s.tripType === "oneway" || s.returnDate)) done++;
-  if (s.cabin) done++;
-  if (s.outboundFlight && (s.tripType === "oneway" || s.inboundFlight)) done++;
-  done++; // add-ons are optional, always "done"
-  if (s.contact.name.trim() && s.contact.email.trim()) done++;
+  const total = 7;
+  if (s.category) done++;
+  if (s.travelDate) done++;
+  if (headcount(s.passengers) > 0) done++;
+  if (s.visaChoice) done++;
+  if (s.makkahHotelId && s.madinahHotelId) done++;
+  done++; // transport always has a default, counts as done
+  done++; // additional services are optional, always "done"
   return Math.round((done / total) * 100);
 }
 
-function formatPax(p: BookingState["passengers"]) {
-  const parts: string[] = [];
-  if (p.adults) parts.push(`${p.adults} adult${p.adults > 1 ? "s" : ""}`);
-  if (p.children) parts.push(`${p.children} child${p.children > 1 ? "ren" : ""}`);
-  if (p.infants) parts.push(`${p.infants} infant${p.infants > 1 ? "s" : ""}`);
-  return parts.join(", ") || "1 adult";
+function formatGBPPlain(n: number) {
+  return `£${n}`;
 }
 
 function round2(n: number) {

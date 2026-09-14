@@ -4,7 +4,7 @@ import { BookingShell } from "@/components/booking/BookingShell";
 export const metadata = {
   title: "Build your Umrah package",
   description:
-    "Plan an Umrah trip step by step: package, dates, cabin, flights and extras, with the price in view the whole way.",
+    "Choose a ready-made Umrah package or build your own: category, dates, hotels, transport and add-ons, with an estimated price the whole way.",
 };
 
 export default function UmrahPage() {
