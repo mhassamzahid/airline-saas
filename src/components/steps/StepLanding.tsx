@@ -13,7 +13,13 @@ import {
 } from "@/data/umrah";
 import { Photo } from "@/components/ui/Photo";
 import { Button } from "@/components/ui/Button";
+import { stock } from "@/lib/img";
 import { formatGBP, cn } from "@/lib/utils";
+
+// Same image used as the Umrah category card on the homepage, cropped for
+// a hero -- matches the split-photo hero every other listing page runs
+// (Hajj, Tours, Pakistan Tours), rather than a bare text block.
+const HERO_IMAGE = stock("photo-1513072064285-240f87fa81e8", 900, 1125);
 
 interface Band {
   label: string;
@@ -173,19 +179,28 @@ export function StepLanding() {
 
   return (
     <div>
-      <motion.div variants={container} initial="hidden" animate="show">
-        <motion.p variants={item} className="overline mb-3 text-muted">
-          Umrah
-        </motion.p>
-        <motion.h1 variants={item} className="max-w-[22ch] text-[38px] leading-[1.05] text-ink sm:text-[48px]">
-          Find your Umrah package
-        </motion.h1>
-        <motion.p variants={item} className="mt-3 max-w-[56ch] text-[16px] leading-relaxed text-body">
-          Filter by duration, category, hotel and price to browse ready-made packages, or build
-          your own from scratch if nothing here is an exact match. All prices are estimated until
-          confirmed by our sales team.
-        </motion.p>
-      </motion.div>
+      <div className="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
+        <motion.div variants={container} initial="hidden" animate="show">
+          <motion.p variants={item} className="overline mb-3 text-muted">
+            Umrah
+          </motion.p>
+          <motion.h1 variants={item} className="max-w-[22ch] text-[38px] leading-[1.05] text-ink sm:text-[48px]">
+            Find your Umrah package
+          </motion.h1>
+          <motion.p variants={item} className="mt-3 max-w-[56ch] text-[16px] leading-relaxed text-body">
+            Filter by duration, category, hotel and price to browse ready-made packages, or build
+            your own from scratch if nothing here is an exact match. All prices are estimated until
+            confirmed by our sales team.
+          </motion.p>
+        </motion.div>
+        <Photo
+          src={HERO_IMAGE}
+          alt="Pilgrims performing Umrah at the Grand Mosque"
+          priority
+          sizes="(min-width: 1024px) 38vw, 100vw"
+          className="order-first aspect-[16/10] rounded-[12px] border border-hairline lg:order-last lg:aspect-[4/5]"
+        />
+      </div>
 
       <div className="mt-8">
         <div className="flex flex-wrap items-center gap-2">

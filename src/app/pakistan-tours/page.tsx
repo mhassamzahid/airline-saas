@@ -2,6 +2,7 @@ import { PageContainer, PageIntro } from "@/components/site/PageIntro";
 import { PakistanToursBrowser } from "@/components/site/PakistanToursBrowser";
 import { getSiteSettings } from "@/lib/cms";
 import { getPakistanTourPackages } from "@/lib/packages";
+import { stock } from "@/lib/img";
 
 export async function generateMetadata() {
   const { site_title } = await getSiteSettings();
@@ -20,6 +21,7 @@ export default async function PakistanToursPage() {
         eyebrow="Tours"
         title="Pakistan Tour Packages"
         lede="From Hunza's glacial lakes to a family weekend in Murree. Filter by region, duration, price, group type or season, then open a package for the full itinerary."
+        image={{ src: stock("photo-1603491656337-3b491147917c", 900, 1125), alt: "A Pakistan tour destination in the northern valleys" }}
         className="mb-10"
       />
       <PakistanToursBrowser packages={packages} />

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, CaretDown, Quotes } from "@phosphor-icons/react/dist/ssr";
 import { Photo } from "@/components/ui/Photo";
 import { QuickFilterWidget } from "@/components/site/QuickFilterWidget";
+import { CinematicHero } from "@/components/site/CinematicHero";
 import { FLEET_STATS } from "@/data/fleet";
 import { stock } from "@/lib/img";
 import { getHomePage, getSiteSettings, type CmsIconTextLink, type CmsTestimonial, type CmsFaq } from "@/lib/cms";
@@ -30,6 +31,17 @@ const CATEGORY_IMAGE_BY_HREF: Record<string, string> = {
   "/hajj": stock("photo-1554794470-42d3cd193ecc", 700, 860),
   "/tours": stock("photo-1512453979798-5ea266f8880c", 700, 860),
   "/pakistan-tours": stock("photo-1603491656337-3b491147917c", 700, 860),
+};
+
+// Same photos as the category cards below, cropped wide and at a much
+// higher resolution than the boxed card art -- this one runs the full
+// viewport width (up to 2400px+ on a large monitor), so a portrait crop
+// sized for a small card would upscale visibly.
+const HERO_PHOTO_BY_HREF: Record<string, string> = {
+  "/umrah": stock("photo-1513072064285-240f87fa81e8", 2400, 1350),
+  "/hajj": stock("photo-1554794470-42d3cd193ecc", 2400, 1350),
+  "/tours": stock("photo-1512453979798-5ea266f8880c", 2400, 1350),
+  "/pakistan-tours": stock("photo-1603491656337-3b491147917c", 2400, 1350),
 };
 
 const FALLBACK_HERO = {
@@ -142,6 +154,10 @@ export default async function HomePage() {
 
   const categories =
     cms?.body.find((b) => b.type === "category_cards")?.value ?? FALLBACK_CATEGORIES;
+  const heroPhotos = categories.map((c) => ({
+    image: HERO_PHOTO_BY_HREF[c.href] ?? Object.values(HERO_PHOTO_BY_HREF)[0],
+    alt: c.label,
+  }));
   const cmsStats = cms?.body.find((b) => b.type === "stats")?.value;
   const stats = cmsStats
     ? cmsStats.map((s) => ({ label: s.label, value: s.figure }))
@@ -154,18 +170,37 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="mx-auto max-w-[1180px] px-5 pb-14 pt-14 sm:px-8 sm:pb-16 sm:pt-20">
-        <p className="overline mb-4">{hero.eyebrow}</p>
-        <h1 className="max-w-[20ch] text-[38px] leading-[1.05] text-ink sm:text-[54px]">
+      {/* Hero: full-bleed, edge-to-edge -- the one place on the site the
+          photography runs the whole width instead of sitting in a boxed
+          panel beside the text, which is what every inner page's hero does. */}
+      {/* Fills exactly what's left of the viewport below the navbar on
+          first load (utility strip + 64px main bar = 96px from `sm` up,
+          just the 64px bar below it) -- "full screen" on any device, not
+          an arbitrary fixed band. */}
+      <CinematicHero items={heroPhotos} className="min-h-[calc(100dvh-64px)] sm:min-h-[calc(100dvh-96px)]">
+        <p className="overline mb-3 text-on-dark/70">{hero.eyebrow}</p>
+        <h1 className="max-w-[20ch] text-[34px] leading-[1.05] text-on-dark sm:text-[44px] lg:text-[54px]">
           {hero.heading}
         </h1>
-        <p className="mt-4 max-w-[56ch] text-[16px] leading-relaxed text-body">
+        <p className="mt-4 max-w-[56ch] text-[15px] leading-relaxed text-on-dark/85 sm:text-[16px]">
           {hero.subheading}
         </p>
+        <div className="mt-5 flex flex-wrap gap-2">
+          {categories.map((c) => (
+            <Link
+              key={c.href}
+              href={c.href}
+              className="rounded-full border border-on-dark/25 bg-on-dark/10 px-3.5 py-1.5 text-[12.5px] font-medium text-on-dark backdrop-blur-sm transition-colors hover:bg-on-dark/20"
+            >
+              {c.label}
+            </Link>
+          ))}
+        </div>
+      </CinematicHero>
 
+      <section className="mx-auto max-w-[1180px] px-5 pb-14 pt-10 sm:px-8 sm:pb-16 sm:pt-12">
         {/* Category cards: each leads straight into its own entry point */}
-        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {categories.map((c) => (
             <Link
               key={c.href}

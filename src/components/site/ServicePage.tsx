@@ -29,14 +29,20 @@ export function ServicePage({ eyebrow, title, lede, heroImage, children, cta }: 
         >
           <PageIntro eyebrow={eyebrow} title={title} lede={lede} />
           {heroImage && (
-            <Photo
-              src={heroImage.src}
-              alt={heroImage.alt}
-              priority
-              unoptimized={heroImage.unoptimized}
-              sizes="(min-width: 1024px) 38vw, 0px"
-              className="hidden aspect-[4/5] rounded-[10px] border border-hairline lg:block"
-            />
+            <div className="relative order-first lg:order-last">
+              <div
+                aria-hidden="true"
+                className="absolute -right-3 -top-3 hidden aspect-[16/10] w-full rounded-[10px] border border-hairline-firm bg-rust-700/10 sm:block sm:aspect-[4/5]"
+              />
+              <Photo
+                src={heroImage.src}
+                alt={heroImage.alt}
+                priority
+                unoptimized={heroImage.unoptimized}
+                sizes="(min-width: 1024px) 38vw, 100vw"
+                className="relative aspect-[16/10] rounded-[10px] border border-hairline sm:aspect-[4/5]"
+              />
+            </div>
           )}
         </div>
       </PageContainer>
