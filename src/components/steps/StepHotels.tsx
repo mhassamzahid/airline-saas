@@ -4,7 +4,7 @@ import { Star } from "@phosphor-icons/react";
 import { useBookingStore } from "@/store/useBookingStore";
 import { StepFrame } from "@/components/booking/StepFrame";
 import { PhotoCard } from "@/components/ui/PhotoCard";
-import { MAKKAH_HOTELS, MADINAH_HOTELS, ROOM_SHARING, type HotelDef } from "@/data/umrah";
+import type { HotelDef } from "@/data/umrah";
 import { formatGBP, cn } from "@/lib/utils";
 
 function HotelGrid({
@@ -58,11 +58,19 @@ function HotelGrid({
 }
 
 export function StepHotels() {
-  const { category, makkahHotelId, madinahHotelId, roomSharing, setMakkahHotel, setMadinahHotel, setRoomSharing } =
-    useBookingStore();
+  const {
+    category,
+    makkahHotelId,
+    madinahHotelId,
+    roomSharing,
+    setMakkahHotel,
+    setMadinahHotel,
+    setRoomSharing,
+    catalog,
+  } = useBookingStore();
 
-  const makkahOptions = MAKKAH_HOTELS.filter((h) => h.categories.includes(category));
-  const madinahOptions = MADINAH_HOTELS.filter((h) => h.categories.includes(category));
+  const makkahOptions = catalog.hotels.filter((h) => h.city === "Makkah" && h.categories.includes(category));
+  const madinahOptions = catalog.hotels.filter((h) => h.city === "Madinah" && h.categories.includes(category));
 
   return (
     <StepFrame
@@ -87,7 +95,7 @@ export function StepHotels() {
         <div>
           <h2 className="mb-3 text-[16px] font-semibold text-ink">Room sharing</h2>
           <div className="flex flex-wrap gap-2">
-            {ROOM_SHARING.map((r) => (
+            {catalog.roomSharingOptions.map((r) => (
               <button
                 key={r.id}
                 type="button"

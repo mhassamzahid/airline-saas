@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MagnifyingGlass } from "@phosphor-icons/react";
-import { PACKAGE_TIERS } from "@/data/umrah";
+import type { PackageTierDef } from "@/data/umrah";
 import { Button } from "@/components/ui/Button";
 
 /** Jumps straight into the Umrah builder pre-filled, skipping the section page: the homepage's fast path for a visitor who already knows which package they want. */
-export function QuickFilterWidget() {
+export function QuickFilterWidget({ packages }: { packages: PackageTierDef[] }) {
   const router = useRouter();
   const [tier, setTier] = useState("");
 
@@ -30,7 +30,7 @@ export function QuickFilterWidget() {
           className="field-input"
         >
           <option value="">Not sure yet</option>
-          {PACKAGE_TIERS.map((p) => (
+          {packages.map((p) => (
             <option key={p.id} value={p.id}>
               {p.name}
             </option>

@@ -1,6 +1,7 @@
 import { Clock } from "@phosphor-icons/react/dist/ssr";
 import { PageContainer, PageIntro } from "@/components/site/PageIntro";
 import { HajjBrowser } from "@/components/site/HajjBrowser";
+import { getHajjPackages } from "@/lib/packages";
 
 export const metadata = {
   title: "Hajj",
@@ -8,7 +9,9 @@ export const metadata = {
     "Hajj packages grouped by type: Government Scheme, Private Economy and Private Premium. Browse what's included and request a place.",
 };
 
-export default function HajjPage() {
+export default async function HajjPage() {
+  const packages = await getHajjPackages();
+
   return (
     <PageContainer>
       <PageIntro
@@ -27,7 +30,7 @@ export default function HajjPage() {
         </p>
       </div>
 
-      <HajjBrowser />
+      <HajjBrowser packages={packages} />
     </PageContainer>
   );
 }

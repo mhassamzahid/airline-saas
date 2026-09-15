@@ -5,13 +5,10 @@ import { motion, useReducedMotion, type Variants } from "motion/react";
 import { ArrowRight, MapPinLine, Sliders, Star, X } from "@phosphor-icons/react";
 import { useBookingStore } from "@/store/useBookingStore";
 import {
-  UMRAH_PACKAGES,
-  CATEGORIES,
   DURATION_OPTIONS,
-  ROOM_SHARING,
   UMRAH_SEASONS,
-  hotelById,
   distanceMeters,
+  type HotelDef,
   type PackageTierDef,
 } from "@/data/umrah";
 import { Photo } from "@/components/ui/Photo";
@@ -48,8 +45,16 @@ function chipClass(active: boolean) {
   );
 }
 
-function PackageCard({ p, onSelect }: { p: PackageTierDef; onSelect: () => void }) {
-  const makkahHotel = hotelById(p.defaults.makkahHotelId);
+function PackageCard({
+  p,
+  hotels,
+  onSelect,
+}: {
+  p: PackageTierDef;
+  hotels: HotelDef[];
+  onSelect: () => void;
+}) {
+  const makkahHotel = hotels.find((h) => h.id === p.defaults.makkahHotelId);
   return (
     <button type="button" onClick={onSelect} className="group block w-full text-left">
       <div className="overflow-hidden rounded-[12px] border border-hairline bg-canvas transition-all hover:-translate-y-1 hover:h-shadow-md">
@@ -106,7 +111,7 @@ function PackageCard({ p, onSelect }: { p: PackageTierDef; onSelect: () => void 
 }
 
 export function StepLanding() {
-  const { pickPackage } = useBookingStore();
+  const { pickPackage, catalog } = useBookingStore();
   const reduce = useReducedMotion();
 
   const [duration, setDuration] = useState<number | "all">("all");
@@ -120,10 +125,10 @@ export function StepLanding() {
   const results = useMemo(() => {
     const pBand = priceBand === "all" ? null : PRICE_BANDS.find((b) => b.label === priceBand);
     const dBand = distanceBand === "all" ? null : DISTANCE_BANDS.find((b) => b.label === distanceBand);
-    return UMRAH_PACKAGES.filter((p) => {
+    return catalog.packages.filter((p) => {
       if (duration !== "all" && p.defaults.durationDays !== duration) return false;
       if (category !== "all" && p.defaults.category !== category) return false;
-      const makkahHotel = hotelById(p.defaults.makkahHotelId);
+      const makkahHotel = catalog.hotels.find((h) => h.id === p.defaults.makkahHotelId);
       if (stars !== "all" && makkahHotel?.stars !== stars) return false;
       if (dBand && makkahHotel) {
         const meters = distanceMeters(makkahHotel.distance);
@@ -134,7 +139,7 @@ export function StepLanding() {
       if (season !== "all" && p.season !== season) return false;
       return true;
     });
-  }, [duration, category, stars, distanceBand, roomSharing, priceBand, season]);
+  }, [catalog, duration, category, stars, distanceBand, roomSharing, priceBand, season]);
 
   function clearFilters() {
     setDuration("all");
@@ -198,7 +203,7 @@ export function StepLanding() {
           <button onClick={() => setCategory("all")} className={chipClass(category === "all")}>
             Any category
           </button>
-          {CATEGORIES.map((c) => (
+          {catalog.categories.map((c) => (
             <button key={c.id} onClick={() => setCategory(c.id)} className={chipClass(category === c.id)}>
               {c.name}
             </button>
@@ -247,7 +252,7 @@ export function StepLanding() {
               className="field-input h-9 w-auto py-0 pr-8"
             >
               <option value="all">Any room type</option>
-              {ROOM_SHARING.map((r) => (
+              {catalog.roomSharingOptions.map((r) => (
                 <option key={r.id} value={r.id}>
                   {r.label}
                 </option>
@@ -295,7 +300,7 @@ export function StepLanding() {
         {results.length > 0 ? (
           <div className="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {results.map((p) => (
-              <PackageCard key={p.id} p={p} onSelect={() => pickPackage(p.id)} />
+              <PackageCard key={p.id} p={p} hotels={catalog.hotels} onSelect={() => pickPackage(p.id)} />
             ))}
           </div>
         ) : (

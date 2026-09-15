@@ -4,11 +4,10 @@ import { FileText, IdentificationCard } from "@phosphor-icons/react";
 import { useBookingStore } from "@/store/useBookingStore";
 import { StepFrame } from "@/components/booking/StepFrame";
 import { ChoiceCard } from "@/components/ui/ChoiceCard";
-import { VISA_PRICE_GBP } from "@/data/umrah";
 import { formatGBP } from "@/lib/utils";
 
 export function StepVisa() {
-  const { visaChoice, setVisaChoice } = useBookingStore();
+  const { visaChoice, setVisaChoice, catalog } = useBookingStore();
 
   return (
     <StepFrame title="Umrah visa" description="Let us know if you need a visa arranged, or if you're already covered.">
@@ -25,7 +24,7 @@ export function StepVisa() {
             We handle the application and documentation for everyone in your party.
           </p>
           <p data-numeric className="mt-2 text-[13px] font-medium text-ink">
-            {formatGBP(VISA_PRICE_GBP)} per person
+            {formatGBP(catalog.pricing.visaPriceGBP)} per person
           </p>
         </ChoiceCard>
         <ChoiceCard

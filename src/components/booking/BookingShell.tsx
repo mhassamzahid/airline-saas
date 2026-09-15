@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { STEPS, useBookingStore } from "@/store/useBookingStore";
-import { packageTierById } from "@/data/umrah";
+import type { UmrahCatalog } from "@/lib/packages";
 import { useStepDirection } from "@/lib/hooks";
 import { ProgressRail } from "./ProgressRail";
 import { FareSummary } from "./FareSummary";
@@ -33,7 +33,15 @@ const STEP_COMPONENTS = {
   submit: StepSubmit,
 } as const;
 
-export function BookingShell() {
+export function BookingShell({ catalog }: { catalog: UmrahCatalog }) {
+  // Hydrate the store from the server-fetched catalog before the first paint
+  // (not in a useEffect, which would flash the hardcoded fallback first).
+  const hydrated = useRef(false);
+  if (!hydrated.current) {
+    useBookingStore.setState({ catalog });
+    hydrated.current = true;
+  }
+
   const currentStep = useBookingStore((s) => s.currentStep);
   const stepId = STEPS[currentStep].id;
   const isIntro = stepId === "landing";
@@ -47,8 +55,9 @@ export function BookingShell() {
 
   useEffect(() => {
     const tier = searchParams.get("package");
-    if (tier && (tier === "custom" || packageTierById(tier))) {
-      useBookingStore.getState().pickPackage(tier);
+    const state = useBookingStore.getState();
+    if (tier && (tier === "custom" || state.catalog.packages.some((p) => p.id === tier))) {
+      state.pickPackage(tier);
     }
     // Prefill from a deep link (homepage quick-filter) once on mount.
     // eslint-disable-next-line react-hooks/exhaustive-deps

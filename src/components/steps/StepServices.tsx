@@ -10,7 +10,7 @@ import {
 import { useBookingStore } from "@/store/useBookingStore";
 import { StepFrame } from "@/components/booking/StepFrame";
 import { ToggleRow } from "@/components/ui/Toggle";
-import { ADDITIONAL_SERVICES } from "@/data/umrah";
+import type { AdditionalServiceDef } from "@/data/umrah";
 import { formatGBP } from "@/lib/utils";
 import type { AdditionalServiceKey } from "@/types";
 
@@ -22,14 +22,14 @@ const ICONS: Record<AdditionalServiceKey, React.ReactNode> = {
   mealUpgrade: <ForkKnife size={18} weight="fill" />,
 };
 
-const PER_LABEL: Record<(typeof ADDITIONAL_SERVICES)[number]["per"], string> = {
+const PER_LABEL: Record<AdditionalServiceDef["per"], string> = {
   person: "per person",
   booking: "per booking",
   day: "per person, per day",
 };
 
 export function StepServices() {
-  const { services, toggleService } = useBookingStore();
+  const { services, toggleService, catalog } = useBookingStore();
 
   return (
     <StepFrame
@@ -37,7 +37,7 @@ export function StepServices() {
       description="All optional. Skip this and continue if your package already has you covered."
     >
       <div className="space-y-3">
-        {ADDITIONAL_SERVICES.map((s) => (
+        {catalog.addOnServices.map((s) => (
           <ToggleRow
             key={s.key}
             checked={services[s.key]}

@@ -3,8 +3,6 @@
 import { useMemo, useState } from "react";
 import { X } from "@phosphor-icons/react";
 import {
-  PAKISTAN_TOUR_PACKAGES,
-  PAKISTAN_REGIONS,
   PAKISTAN_TOUR_DURATIONS,
   PAKISTAN_PRICE_BANDS,
   TOUR_GROUP_TYPES,
@@ -12,6 +10,7 @@ import {
   type PakistanRegion,
   type TourGroupType,
   type TourSeason,
+  type PakistanTourPackage,
 } from "@/data/pakistan-tours";
 import { PakistanTourCard } from "@/components/site/PakistanTourCard";
 import { Button } from "@/components/ui/Button";
@@ -36,7 +35,7 @@ function chipClass(active: boolean) {
 }
 
 /** Archetype C, scoped to domestic Pakistan destinations -- the same filter-driven pattern as `ToursBrowser`, kept as its own component since the facets (region vs. country) and card shape (region + Family/Honeymoon/Group tag) differ. */
-export function PakistanToursBrowser() {
+export function PakistanToursBrowser({ packages }: { packages: PakistanTourPackage[] }) {
   const [region, setRegion] = useState<PakistanRegion | "all">("all");
   const [groupType, setGroupType] = useState<TourGroupType | "all">("all");
   const [duration, setDuration] = useState<number | "all">("all");
@@ -44,11 +43,16 @@ export function PakistanToursBrowser() {
   const [season, setSeason] = useState<TourSeason | "all">("all");
   const [sort, setSort] = useState<Sort>("price-asc");
 
-  const featured = useMemo(() => PAKISTAN_TOUR_PACKAGES.filter((p) => p.featured), []);
+  const regions = useMemo(
+    () => Array.from(new Set(packages.map((p) => p.region))).sort(),
+    [packages],
+  );
+
+  const featured = useMemo(() => packages.filter((p) => p.featured), [packages]);
 
   const results = useMemo(() => {
     const band = priceBand === "all" ? null : PAKISTAN_PRICE_BANDS.find((b) => b.label === priceBand);
-    let list = PAKISTAN_TOUR_PACKAGES.filter((p) => {
+    let list = packages.filter((p) => {
       if (region !== "all" && p.region !== region) return false;
       if (groupType !== "all" && !p.groupTypes.includes(groupType)) return false;
       if (duration !== "all" && p.durationDays !== duration) return false;
@@ -63,7 +67,7 @@ export function PakistanToursBrowser() {
       return a.name.localeCompare(b.name);
     });
     return list;
-  }, [region, groupType, duration, priceBand, season, sort]);
+  }, [packages, region, groupType, duration, priceBand, season, sort]);
 
   function clearFilters() {
     setRegion("all");
@@ -112,7 +116,7 @@ export function PakistanToursBrowser() {
         <button onClick={() => setRegion("all")} className={chipClass(region === "all")}>
           All regions
         </button>
-        {PAKISTAN_REGIONS.map((r) => (
+        {regions.map((r) => (
           <button key={r} onClick={() => setRegion(r)} className={chipClass(region === r)}>
             {r}
           </button>

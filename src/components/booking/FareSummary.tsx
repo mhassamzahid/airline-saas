@@ -4,7 +4,6 @@ import { motion } from "motion/react";
 import { ClipboardText } from "@phosphor-icons/react";
 import { useBookingStore, effectiveDurationDays } from "@/store/useBookingStore";
 import { useQuote, useReadiness } from "@/lib/hooks";
-import { categoryById, hotelById, roomSharingById } from "@/data/umrah";
 import { formatGBP, formatDateShort } from "@/lib/utils";
 import { headcount } from "@/lib/quote";
 
@@ -25,13 +24,16 @@ export function SummaryContent() {
   const readiness = useReadiness();
   const heads = headcount(s.passengers);
   const days = effectiveDurationDays(s);
-  const makkahHotel = s.makkahHotelId ? hotelById(s.makkahHotelId) : undefined;
-  const madinahHotel = s.madinahHotelId ? hotelById(s.madinahHotelId) : undefined;
+  const { catalog } = s;
+  const makkahHotel = catalog.hotels.find((h) => h.id === s.makkahHotelId);
+  const madinahHotel = catalog.hotels.find((h) => h.id === s.madinahHotelId);
+  const category = catalog.categories.find((c) => c.id === s.category) ?? catalog.categories[0];
+  const roomSharing = catalog.roomSharingOptions.find((r) => r.id === s.roomSharing) ?? catalog.roomSharingOptions[0];
 
   return (
     <div>
       <div className="flex items-center justify-between">
-        <span className="text-[15px] font-semibold text-ink">{categoryById(s.category).name} Umrah</span>
+        <span className="text-[15px] font-semibold text-ink">{category.name} Umrah</span>
       </div>
 
       {/* Readiness */}
@@ -56,7 +58,7 @@ export function SummaryContent() {
         <Row label="Travellers" value={`${heads} ${heads === 1 ? "person" : "people"}`} />
         {makkahHotel && <Row label="Makkah" value={makkahHotel.name} />}
         {madinahHotel && <Row label="Madinah" value={madinahHotel.name} />}
-        <Row label="Room sharing" value={roomSharingById(s.roomSharing).label} />
+        <Row label="Room sharing" value={roomSharing.label} />
       </div>
 
       <div className="mt-4 space-y-1.5">

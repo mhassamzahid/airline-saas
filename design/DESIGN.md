@@ -309,6 +309,28 @@ every destination to its Tours listing (`/tours` or `/pakistan-tours`) rather
 than a per-code detail page, since flight network codes (JFK, CPT, DXB, LHE,
 …) no longer map 1:1 onto either curated tour-package's slugs.
 
+**All four package catalogs are now database-backed, deliberately outside
+the CMS.** A plain (non-Wagtail) Django app, `backend/packages/`, holds the
+real tables — one per section, plus lookup/child tables for hotels,
+itinerary steps, inclusions, gallery images, group types, etc. — exposed via
+hand-serialized JSON views at `/api/packages/{umrah,hajj,tours,pakistan-tours}/`
+(see `halcyon/urls.py`; explicitly not the Wagtail API router, since this
+content isn't page-tree content). `src/lib/packages.ts` fetches these,
+falling back to the original hardcoded arrays in `data/*.ts` if the backend
+is unreachable — the same resilience convention `lib/cms.ts` uses for
+Wagtail content. Hajj/Tours/Pakistan Tours pages fetch server-side and pass
+the result down as props (Browser components take `packages` as a prop
+instead of importing a constant). Umrah is different: the wizard's step
+components call synchronous lookups (`hotelById`-style) all over the
+9-step flow, so `useBookingStore` holds the fetched catalog as state
+(`catalog`, defaulting to the hardcoded fallback) with a `hydrateCatalog`
+action that `BookingShell` calls once from the server-fetched prop, before
+first paint. A management command (`seed_packages`) migrated the original
+hardcoded content into the database as the initial seed. The real content
+pipeline is a separate dashboard with CSV upload, matched by slug on
+re-import — not built yet; django-admin (`UmrahPackageAdmin`, etc.) is the
+interim way to edit rows.
+
 **Homepage (`/`)** is the portal: hero with one photo card per core-section
 entry point (`Start here →`, leads straight into that section, not a generic
 landing page — Umrah, Hajj, International Tours, Pakistan Tours), a

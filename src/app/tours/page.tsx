@@ -1,6 +1,7 @@
 import { PageContainer, PageIntro } from "@/components/site/PageIntro";
 import { ToursBrowser } from "@/components/site/ToursBrowser";
 import { getSiteSettings } from "@/lib/cms";
+import { getTourPackages } from "@/lib/packages";
 
 export async function generateMetadata() {
   const { site_title } = await getSiteSettings();
@@ -10,7 +11,9 @@ export async function generateMetadata() {
   };
 }
 
-export default function ToursPage() {
+export default async function ToursPage() {
+  const packages = await getTourPackages();
+
   return (
     <PageContainer>
       <PageIntro
@@ -19,7 +22,7 @@ export default function ToursPage() {
         lede="Guided tours across Turkey, Thailand, Dubai, Malaysia, Europe and more. Filter by country, duration, price, group type or season, then open a package for the full itinerary."
         className="mb-10"
       />
-      <ToursBrowser />
+      <ToursBrowser packages={packages} />
     </PageContainer>
   );
 }

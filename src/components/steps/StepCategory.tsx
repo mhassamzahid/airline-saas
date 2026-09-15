@@ -3,10 +3,9 @@
 import { useBookingStore } from "@/store/useBookingStore";
 import { StepFrame } from "@/components/booking/StepFrame";
 import { ChoiceCard } from "@/components/ui/ChoiceCard";
-import { CATEGORIES } from "@/data/umrah";
 
 export function StepCategory() {
-  const { category, setCategory } = useBookingStore();
+  const { category, setCategory, catalog } = useBookingStore();
 
   return (
     <StepFrame
@@ -14,7 +13,7 @@ export function StepCategory() {
       description="Sets your starting point for hotel class and what's included. You can fine-tune each part later."
     >
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        {CATEGORIES.map((c) => (
+        {catalog.categories.map((c) => (
           <ChoiceCard
             key={c.id}
             name="category"

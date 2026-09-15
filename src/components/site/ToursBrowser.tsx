@@ -3,8 +3,6 @@
 import { useMemo, useState } from "react";
 import { X } from "@phosphor-icons/react";
 import {
-  TOUR_PACKAGES,
-  TOUR_COUNTRIES,
   TOUR_GROUP_TYPES,
   TOUR_SEASONS,
   TOUR_DURATIONS,
@@ -12,6 +10,7 @@ import {
   type TourCountry,
   type TourGroupType,
   type TourSeason,
+  type TourPackage,
 } from "@/data/tours";
 import { TourCard } from "@/components/site/TourCard";
 import { Button } from "@/components/ui/Button";
@@ -36,7 +35,7 @@ function chipClass(active: boolean) {
 }
 
 /** Archetype C: five clean AND-combined facets, all click-and-see -- no multi-step builder needed at this inventory size. */
-export function ToursBrowser() {
+export function ToursBrowser({ packages }: { packages: TourPackage[] }) {
   const [country, setCountry] = useState<TourCountry | "all">("all");
   const [groupType, setGroupType] = useState<TourGroupType | "all">("all");
   const [duration, setDuration] = useState<number | "all">("all");
@@ -44,11 +43,16 @@ export function ToursBrowser() {
   const [season, setSeason] = useState<TourSeason | "all">("all");
   const [sort, setSort] = useState<Sort>("price-asc");
 
-  const featured = useMemo(() => TOUR_PACKAGES.filter((p) => p.featured), []);
+  const countries = useMemo(
+    () => Array.from(new Set(packages.map((p) => p.country))).sort(),
+    [packages],
+  );
+
+  const featured = useMemo(() => packages.filter((p) => p.featured), [packages]);
 
   const results = useMemo(() => {
     const band = priceBand === "all" ? null : TOUR_PRICE_BANDS.find((b) => b.label === priceBand);
-    let list = TOUR_PACKAGES.filter((p) => {
+    let list = packages.filter((p) => {
       if (country !== "all" && p.country !== country) return false;
       if (groupType !== "all" && !p.groupTypes.includes(groupType)) return false;
       if (duration !== "all" && p.durationDays !== duration) return false;
@@ -63,7 +67,7 @@ export function ToursBrowser() {
       return a.name.localeCompare(b.name);
     });
     return list;
-  }, [country, groupType, duration, priceBand, season, sort]);
+  }, [packages, country, groupType, duration, priceBand, season, sort]);
 
   function clearFilters() {
     setCountry("all");
@@ -112,7 +116,7 @@ export function ToursBrowser() {
         <button onClick={() => setCountry("all")} className={chipClass(country === "all")}>
           All countries
         </button>
-        {TOUR_COUNTRIES.map((c) => (
+        {countries.map((c) => (
           <button key={c} onClick={() => setCountry(c)} className={chipClass(country === c)}>
             {c}
           </button>

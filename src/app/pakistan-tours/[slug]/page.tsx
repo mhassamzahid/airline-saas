@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarBlank, MapPinLine, Star, Users } from "@phosphor-icons/react/dist/ssr";
-import { PAKISTAN_TOUR_PACKAGES, pakistanTourPackageBySlug } from "@/data/pakistan-tours";
+import { getPakistanTourPackages } from "@/lib/packages";
 import { PageContainer } from "@/components/site/PageIntro";
 import { ServiceChecklist } from "@/components/site/ServicePage";
 import { PakistanTourCard } from "@/components/site/PakistanTourCard";
@@ -9,23 +9,26 @@ import { Photo } from "@/components/ui/Photo";
 import { InquiryForm } from "@/components/site/InquiryForm";
 import { formatGBP } from "@/lib/utils";
 
-export function generateStaticParams() {
-  return PAKISTAN_TOUR_PACKAGES.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const packages = await getPakistanTourPackages();
+  return packages.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const p = pakistanTourPackageBySlug(slug);
+  const packages = await getPakistanTourPackages();
+  const p = packages.find((x) => x.slug === slug);
   if (!p) return {};
   return { title: p.name, description: p.blurb };
 }
 
 export default async function PakistanTourPackageDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const p = pakistanTourPackageBySlug(slug);
+  const packages = await getPakistanTourPackages();
+  const p = packages.find((x) => x.slug === slug);
   if (!p) notFound();
 
-  const more = PAKISTAN_TOUR_PACKAGES.filter((x) => x.slug !== p.slug).slice(0, 3);
+  const more = packages.filter((x) => x.slug !== p.slug).slice(0, 3);
 
   return (
     <PageContainer>

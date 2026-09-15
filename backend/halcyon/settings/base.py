@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "services",
     "support",
     "flexpages",
+    "packages",
     "search",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",

@@ -10,8 +10,36 @@ import type {
   AdditionalServiceKey,
   Passengers,
 } from "@/types";
-import { type DurationOption, packageTierById } from "@/data/umrah";
+import {
+  type DurationOption,
+  CATEGORIES,
+  MAKKAH_HOTELS,
+  MADINAH_HOTELS,
+  ROOM_SHARING,
+  TRANSPORT_TIERS,
+  ADDITIONAL_SERVICES,
+  UMRAH_PACKAGES,
+  VISA_PRICE_GBP,
+  AIRPORT_TRANSFER_PRICE_GBP,
+  ZIYARAT_PRICE_GBP,
+} from "@/data/umrah";
+import type { UmrahCatalog } from "@/lib/packages";
 import { makeBookingRef } from "@/lib/utils";
+
+/** Hardcoded fallback, used until `hydrateCatalog` replaces it with the DB-backed catalog fetched server-side in `/umrah/page.tsx`. */
+const FALLBACK_CATALOG: UmrahCatalog = {
+  categories: CATEGORIES,
+  hotels: [...MAKKAH_HOTELS, ...MADINAH_HOTELS],
+  roomSharingOptions: ROOM_SHARING,
+  transportTiers: TRANSPORT_TIERS,
+  addOnServices: ADDITIONAL_SERVICES,
+  pricing: {
+    visaPriceGBP: VISA_PRICE_GBP,
+    airportTransferPriceGBP: AIRPORT_TRANSFER_PRICE_GBP,
+    ziyaratPriceGBP: ZIYARAT_PRICE_GBP,
+  },
+  packages: UMRAH_PACKAGES,
+};
 
 export const STEPS: { id: StepId; label: string }[] = [
   { id: "landing", label: "Package" },
@@ -31,6 +59,11 @@ export type PackageTierChoice = string;
 
 export interface BookingState {
   currentStep: number;
+
+  /** DB-backed catalog (categories, hotels, packages, pricing, ...), hydrated
+   * once from the server-fetched data via `hydrateCatalog`. Starts as the
+   * hardcoded fallback so the wizard works before hydration runs. */
+  catalog: UmrahCatalog;
 
   packageTier: PackageTierChoice | null;
 
@@ -86,11 +119,15 @@ interface BookingActions {
   setContact: (c: Partial<BookingState["contact"]>) => void;
   submitInquiry: () => void;
 
+  /** Replaces the fallback catalog with the DB-backed one, fetched server-side and passed down once on mount. */
+  hydrateCatalog: (catalog: UmrahCatalog) => void;
+
   reset: () => void;
 }
 
 const INITIAL: BookingState = {
   currentStep: 0,
+  catalog: FALLBACK_CATALOG,
   packageTier: null,
   category: "standard",
   durationDays: 10,
@@ -124,25 +161,29 @@ export const useBookingStore = create<BookingState & BookingActions>()((set, get
   back: () => set((s) => ({ currentStep: Math.max(0, s.currentStep - 1) })),
 
   pickPackage: (tier) => {
-    const tierDef = tier === "custom" ? undefined : packageTierById(tier);
-    set((s) => ({
-      packageTier: tier,
-      ...(tierDef && {
-        category: tierDef.defaults.category,
-        durationDays: tierDef.defaults.durationDays,
-        makkahHotelId: tierDef.defaults.makkahHotelId,
-        madinahHotelId: tierDef.defaults.madinahHotelId,
-        roomSharing: tierDef.defaults.roomSharing,
-        intercityTransport: tierDef.defaults.intercityTransport,
-        services: { ...s.services, ...tierDef.defaults.services },
-      }),
-      // A fixed package is already fully specified -- jump straight to the
-      // last step. Every earlier step still shows as done in the rail and
-      // stays editable via goTo, so nothing is actually skipped, just not
-      // clicked through. Custom starts at the first real step instead.
-      currentStep: tierDef ? STEPS.length - 1 : 1,
-    }));
+    set((s) => {
+      const tierDef = tier === "custom" ? undefined : s.catalog.packages.find((p) => p.id === tier);
+      return {
+        packageTier: tier,
+        ...(tierDef && {
+          category: tierDef.defaults.category,
+          durationDays: tierDef.defaults.durationDays,
+          makkahHotelId: tierDef.defaults.makkahHotelId,
+          madinahHotelId: tierDef.defaults.madinahHotelId,
+          roomSharing: tierDef.defaults.roomSharing,
+          intercityTransport: tierDef.defaults.intercityTransport,
+          services: { ...s.services, ...tierDef.defaults.services },
+        }),
+        // A fixed package is already fully specified -- jump straight to the
+        // last step. Every earlier step still shows as done in the rail and
+        // stays editable via goTo, so nothing is actually skipped, just not
+        // clicked through. Custom starts at the first real step instead.
+        currentStep: tierDef ? STEPS.length - 1 : 1,
+      };
+    });
   },
+
+  hydrateCatalog: (catalog) => set({ catalog }),
 
   setCategory: (category) => set({ category }),
   setDuration: (durationDays) => set({ durationDays }),
@@ -175,7 +216,7 @@ export const useBookingStore = create<BookingState & BookingActions>()((set, get
     set({ submittedRef: makeBookingRef(seed) });
   },
 
-  reset: () => set({ ...INITIAL }),
+  reset: () => set((s) => ({ ...INITIAL, catalog: s.catalog })),
 }));
 
 export function effectiveDurationDays(s: Pick<BookingState, "durationDays" | "customDurationDays">): number {

@@ -3,7 +3,6 @@
 import { useBookingStore, effectiveDurationDays } from "@/store/useBookingStore";
 import { useQuote } from "@/lib/hooks";
 import { StepFrame } from "@/components/booking/StepFrame";
-import { categoryById, hotelById, roomSharingById, transportTierById } from "@/data/umrah";
 import { formatGBP, formatDateLong } from "@/lib/utils";
 import { headcount } from "@/lib/quote";
 
@@ -12,14 +11,15 @@ export function StepReviewQuote() {
   const quote = useQuote();
   const heads = headcount(s.passengers);
   const days = effectiveDurationDays(s);
-  const makkahHotel = s.makkahHotelId ? hotelById(s.makkahHotelId) : undefined;
-  const madinahHotel = s.madinahHotelId ? hotelById(s.madinahHotelId) : undefined;
+  const { catalog } = s;
+  const makkahHotel = catalog.hotels.find((h) => h.id === s.makkahHotelId);
+  const madinahHotel = catalog.hotels.find((h) => h.id === s.madinahHotelId);
 
   const chips = [
-    categoryById(s.category).name,
+    (catalog.categories.find((c) => c.id === s.category) ?? catalog.categories[0]).name,
     s.visaChoice === "include" ? "Visa included" : "Visa not included",
-    roomSharingById(s.roomSharing).label,
-    transportTierById(s.intercityTransport).label,
+    (catalog.roomSharingOptions.find((r) => r.id === s.roomSharing) ?? catalog.roomSharingOptions[0]).label,
+    (catalog.transportTiers.find((t) => t.id === s.intercityTransport) ?? catalog.transportTiers[0]).label,
     s.airportTransfer ? "Airport transfers" : null,
     s.ziyarat ? "Ziyarat tour" : null,
   ].filter(Boolean);

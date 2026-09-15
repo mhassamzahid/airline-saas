@@ -4,12 +4,18 @@ import { Car, MapPin } from "@phosphor-icons/react";
 import { useBookingStore } from "@/store/useBookingStore";
 import { StepFrame } from "@/components/booking/StepFrame";
 import { ToggleRow } from "@/components/ui/Toggle";
-import { TRANSPORT_TIERS, AIRPORT_TRANSFER_PRICE_GBP, ZIYARAT_PRICE_GBP } from "@/data/umrah";
 import { formatGBP, cn } from "@/lib/utils";
 
 export function StepTransport() {
-  const { airportTransfer, intercityTransport, ziyarat, setAirportTransfer, setIntercityTransport, setZiyarat } =
-    useBookingStore();
+  const {
+    airportTransfer,
+    intercityTransport,
+    ziyarat,
+    setAirportTransfer,
+    setIntercityTransport,
+    setZiyarat,
+    catalog,
+  } = useBookingStore();
 
   return (
     <StepFrame title="Getting around" description="Transfers and travel between Jeddah, Makkah and Madinah.">
@@ -19,14 +25,14 @@ export function StepTransport() {
           onChange={setAirportTransfer}
           title="Airport transfers"
           description="Jeddah airport to your hotel, and back for departure"
-          price={`${formatGBP(AIRPORT_TRANSFER_PRICE_GBP)} per person, each way`}
+          price={`${formatGBP(catalog.pricing.airportTransferPriceGBP)} per person, each way`}
           icon={<MapPin size={18} weight="fill" />}
         />
 
         <div>
           <h2 className="mb-3 text-[16px] font-semibold text-ink">Intercity transport</h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {TRANSPORT_TIERS.map((t) => (
+            {catalog.transportTiers.map((t) => (
               <button
                 key={t.id}
                 type="button"
@@ -54,7 +60,7 @@ export function StepTransport() {
           onChange={setZiyarat}
           title="Ziyarat tour"
           description="A guided half-day around the historical sites of Makkah and Madinah"
-          price={`${formatGBP(ZIYARAT_PRICE_GBP)} per person`}
+          price={`${formatGBP(catalog.pricing.ziyaratPriceGBP)} per person`}
           icon={<MapPin size={18} weight="fill" />}
         />
       </div>

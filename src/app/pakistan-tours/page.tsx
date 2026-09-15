@@ -1,6 +1,7 @@
 import { PageContainer, PageIntro } from "@/components/site/PageIntro";
 import { PakistanToursBrowser } from "@/components/site/PakistanToursBrowser";
 import { getSiteSettings } from "@/lib/cms";
+import { getPakistanTourPackages } from "@/lib/packages";
 
 export async function generateMetadata() {
   const { site_title } = await getSiteSettings();
@@ -10,7 +11,9 @@ export async function generateMetadata() {
   };
 }
 
-export default function PakistanToursPage() {
+export default async function PakistanToursPage() {
+  const packages = await getPakistanTourPackages();
+
   return (
     <PageContainer>
       <PageIntro
@@ -19,7 +22,7 @@ export default function PakistanToursPage() {
         lede="From Hunza's glacial lakes to a family weekend in Murree. Filter by region, duration, price, group type or season, then open a package for the full itinerary."
         className="mb-10"
       />
-      <PakistanToursBrowser />
+      <PakistanToursBrowser packages={packages} />
     </PageContainer>
   );
 }

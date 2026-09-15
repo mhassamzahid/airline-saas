@@ -1,13 +1,4 @@
 import type { Quote } from "@/types";
-import {
-  VISA_PRICE_GBP,
-  hotelById,
-  roomSharingById,
-  AIRPORT_TRANSFER_PRICE_GBP,
-  transportTierById,
-  ZIYARAT_PRICE_GBP,
-  additionalServiceByKey,
-} from "@/data/umrah";
 import type { BookingState } from "@/store/useBookingStore";
 import { effectiveDurationDays } from "@/store/useBookingStore";
 
@@ -28,6 +19,7 @@ function nightSplit(totalDays: number) {
 }
 
 export function computeQuote(s: BookingState): Quote {
+  const { catalog } = s;
   const lines: Quote["lines"] = [];
   const heads = payingHeadcount(s.passengers);
   const days = effectiveDurationDays(s);
@@ -38,13 +30,15 @@ export function computeQuote(s: BookingState): Quote {
       id: "visa",
       label: "Umrah visa",
       detail: `${heads} ${heads === 1 ? "person" : "people"}`,
-      amount: VISA_PRICE_GBP * heads,
+      amount: catalog.pricing.visaPriceGBP * heads,
     });
   }
 
-  const rooms = Math.max(1, Math.ceil(heads / roomSharingById(s.roomSharing).divisor));
-  const makkahHotel = s.makkahHotelId ? hotelById(s.makkahHotelId) : undefined;
-  const madinahHotel = s.madinahHotelId ? hotelById(s.madinahHotelId) : undefined;
+  const roomSharing =
+    catalog.roomSharingOptions.find((r) => r.id === s.roomSharing) ?? catalog.roomSharingOptions[0];
+  const rooms = Math.max(1, Math.ceil(heads / roomSharing.divisor));
+  const makkahHotel = catalog.hotels.find((h) => h.id === s.makkahHotelId);
+  const madinahHotel = catalog.hotels.find((h) => h.id === s.madinahHotelId);
 
   if (makkahHotel) {
     lines.push({
@@ -68,11 +62,12 @@ export function computeQuote(s: BookingState): Quote {
       id: "airport-transfer",
       label: "Airport transfers",
       detail: "Arrival and departure",
-      amount: AIRPORT_TRANSFER_PRICE_GBP * heads * 2,
+      amount: catalog.pricing.airportTransferPriceGBP * heads * 2,
     });
   }
 
-  const transportTier = transportTierById(s.intercityTransport);
+  const transportTier =
+    catalog.transportTiers.find((t) => t.id === s.intercityTransport) ?? catalog.transportTiers[0];
   lines.push({
     id: "intercity",
     label: transportTier.label,
@@ -84,14 +79,15 @@ export function computeQuote(s: BookingState): Quote {
     lines.push({
       id: "ziyarat",
       label: "Ziyarat tour",
-      detail: `${heads} x ${formatGBPPlain(ZIYARAT_PRICE_GBP)}`,
-      amount: ZIYARAT_PRICE_GBP * heads,
+      detail: `${heads} x ${formatGBPPlain(catalog.pricing.ziyaratPriceGBP)}`,
+      amount: catalog.pricing.ziyaratPriceGBP * heads,
     });
   }
 
   for (const key of Object.keys(s.services) as (keyof BookingState["services"])[]) {
     if (!s.services[key]) continue;
-    const service = additionalServiceByKey(key);
+    const service = catalog.addOnServices.find((a) => a.key === key);
+    if (!service) continue;
     const amount =
       service.per === "person"
         ? service.priceGBP * heads

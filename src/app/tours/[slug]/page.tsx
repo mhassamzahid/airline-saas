@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarBlank, MapPinLine, Star, Users, XCircle } from "@phosphor-icons/react/dist/ssr";
-import { TOUR_PACKAGES, tourPackageBySlug } from "@/data/tours";
+import { getTourPackages } from "@/lib/packages";
 import { PageContainer } from "@/components/site/PageIntro";
 import { ServiceChecklist } from "@/components/site/ServicePage";
 import { TourCard } from "@/components/site/TourCard";
@@ -9,23 +9,26 @@ import { Photo } from "@/components/ui/Photo";
 import { InquiryForm } from "@/components/site/InquiryForm";
 import { formatGBP } from "@/lib/utils";
 
-export function generateStaticParams() {
-  return TOUR_PACKAGES.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const packages = await getTourPackages();
+  return packages.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const p = tourPackageBySlug(slug);
+  const packages = await getTourPackages();
+  const p = packages.find((x) => x.slug === slug);
   if (!p) return {};
   return { title: p.name, description: p.blurb };
 }
 
 export default async function TourPackageDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const p = tourPackageBySlug(slug);
+  const packages = await getTourPackages();
+  const p = packages.find((x) => x.slug === slug);
   if (!p) notFound();
 
-  const more = TOUR_PACKAGES.filter((x) => x.slug !== p.slug).slice(0, 3);
+  const more = packages.filter((x) => x.slug !== p.slug).slice(0, 3);
 
   return (
     <PageContainer>

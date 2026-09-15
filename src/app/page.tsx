@@ -6,6 +6,9 @@ import { FLEET_STATS } from "@/data/fleet";
 import { stock } from "@/lib/img";
 import { getHomePage, getSiteSettings, type CmsIconTextLink, type CmsTestimonial, type CmsFaq } from "@/lib/cms";
 import { resolveIcon } from "@/lib/icons";
+import { getUmrahCatalog } from "@/lib/packages";
+
+const NAMED_UMRAH_TIERS = ["standard", "premium", "deluxe"];
 
 // The homepage sets an absolute title (rather than relying on the root
 // layout's "%s · {site title}" template) since "{site title}: Umrah, Hajj,
@@ -122,7 +125,12 @@ const FALLBACK_FAQS: CmsFaq[] = [
 ];
 
 export default async function HomePage() {
-  const [cms, { site_title }] = await Promise.all([getHomePage(), getSiteSettings()]);
+  const [cms, { site_title }, umrahCatalog] = await Promise.all([
+    getHomePage(),
+    getSiteSettings(),
+    getUmrahCatalog(),
+  ]);
+  const umrahNamedTiers = umrahCatalog.packages.filter((p) => NAMED_UMRAH_TIERS.includes(p.id));
 
   const hero = {
     // The eyebrow is just the brand name -- follows the CMS site title unless
@@ -191,7 +199,7 @@ export default async function HomePage() {
 
         {/* Quick-filter: the fast path into an Umrah package for a visitor who already knows their dates */}
         <div className="mt-6">
-          <QuickFilterWidget />
+          <QuickFilterWidget packages={umrahNamedTiers} />
         </div>
       </section>
 

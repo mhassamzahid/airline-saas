@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Clock } from "@phosphor-icons/react";
-import { HAJJ_PACKAGES, HAJJ_PACKAGE_TYPES, type HajjPackage } from "@/data/hajj";
+import { HAJJ_PACKAGE_TYPES, type HajjPackage } from "@/data/hajj";
 import { Photo } from "@/components/ui/Photo";
 import { formatGBP } from "@/lib/utils";
 
@@ -63,11 +63,11 @@ function HajjCard({ p }: { p: HajjPackage }) {
   );
 }
 
-export function HajjBrowser() {
+export function HajjBrowser({ packages }: { packages: HajjPackage[] }) {
   const [sort, setSort] = useState<Sort>("type");
 
   const sorted = useMemo(() => {
-    const list = [...HAJJ_PACKAGES];
+    const list = [...packages];
     if (sort === "type") {
       list.sort((a, b) => HAJJ_PACKAGE_TYPES.indexOf(a.type) - HAJJ_PACKAGE_TYPES.indexOf(b.type));
     } else if (sort === "price-asc") {
@@ -76,7 +76,7 @@ export function HajjBrowser() {
       list.sort((a, b) => b.fromPriceGBP - a.fromPriceGBP);
     }
     return list;
-  }, [sort]);
+  }, [packages, sort]);
 
   return (
     <div>

@@ -1,20 +1,22 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CheckCircle, Clock, MapPinLine } from "@phosphor-icons/react/dist/ssr";
-import { HAJJ_PACKAGES, hajjPackageBySlug } from "@/data/hajj";
+import { getHajjPackages } from "@/lib/packages";
 import { PageContainer } from "@/components/site/PageIntro";
 import { ServiceSteps } from "@/components/site/ServicePage";
 import { Photo } from "@/components/ui/Photo";
 import { InquiryForm } from "@/components/site/InquiryForm";
 import { formatGBP } from "@/lib/utils";
 
-export function generateStaticParams() {
-  return HAJJ_PACKAGES.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const packages = await getHajjPackages();
+  return packages.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const p = hajjPackageBySlug(slug);
+  const packages = await getHajjPackages();
+  const p = packages.find((x) => x.slug === slug);
   if (!p) return {};
   return { title: p.name, description: p.blurb };
 }
@@ -25,7 +27,8 @@ export default async function HajjPackageDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const p = hajjPackageBySlug(slug);
+  const packages = await getHajjPackages();
+  const p = packages.find((x) => x.slug === slug);
   if (!p) notFound();
 
   return (

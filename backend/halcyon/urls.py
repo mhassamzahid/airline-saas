@@ -12,10 +12,12 @@ from wagtail.models import Site
 
 from search import views as search_views
 from home.models import FooterSettings, HeaderSettings, SiteSettings
+from packages import views as package_views
 
-# Read-only content API for the Next.js frontend to consume later.
-# Listings (CSV/XLSX-backed) endpoints are a separate, not-yet-built piece --
-# this router only exposes Wagtail pages.
+# Read-only content API for the Next.js frontend to consume.
+# Package listings (Umrah/Hajj/Tours/Pakistan Tours) live in the `packages`
+# app below, deliberately outside this router -- that content isn't managed
+# through the CMS page tree, so it isn't Wagtail API surface.
 api_router = WagtailAPIRouter("wagtailapi")
 api_router.register_endpoint("pages", PagesAPIViewSet)
 
@@ -83,6 +85,10 @@ urlpatterns = [
     path("api/v2/header-settings/", header_settings_api),
     path("api/v2/footer-settings/", footer_settings_api),
     path("api/v2/site-settings/", site_settings_api),
+    path("api/packages/umrah/", package_views.umrah_catalog_api),
+    path("api/packages/hajj/", package_views.hajj_packages_api),
+    path("api/packages/tours/", package_views.tour_packages_api),
+    path("api/packages/pakistan-tours/", package_views.pakistan_tour_packages_api),
     path("search/", search_views.search, name="search"),
 ]
 
