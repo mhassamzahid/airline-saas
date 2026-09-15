@@ -254,14 +254,20 @@ export function additionalServiceByKey(key: AdditionalServiceKey): AdditionalSer
   return ADDITIONAL_SERVICES.find((s) => s.key === key) as AdditionalServiceDef;
 }
 
+export type UmrahSeason = "Ramadan" | "Winter" | "Spring" | "Summer" | "Autumn" | "Year-round";
+export const UMRAH_SEASONS: UmrahSeason[] = ["Ramadan", "Winter", "Spring", "Summer", "Autumn", "Year-round"];
+
 export interface PackageTierDef {
-  id: "standard" | "premium" | "deluxe";
+  /** Any catalog package id, or one of the three named tiers. */
+  id: string;
   name: string;
   strap: string;
   blurb: string;
   image: string;
   popular?: boolean;
   fromPriceGBP: number;
+  /** Best/typical travel season for this specific hotel-and-date combination -- not a hard rule, just what the filter narrows by. */
+  season: UmrahSeason;
   /** Defaults applied when this tile is picked -- the traveller can still
    * change any of them in the steps that follow. */
   defaults: {
@@ -277,11 +283,15 @@ export interface PackageTierDef {
 }
 
 /**
- * The three ready-made tiers shown on the landing screen. Picking one
- * pre-fills Category through Transport with sensible defaults; the customer
- * still walks the full 9-step flow and can change anything.
+ * The full filterable catalog shown on the Umrah landing screen (Duration,
+ * Category, hotel rating, distance, room type, price and season, all
+ * AND-combined). Picking one pre-fills Category through Transport with its
+ * defaults and jumps straight to Review; the customer can still change
+ * anything. Includes the three named tiers (also used standalone by
+ * `PACKAGE_TIERS` for the homepage quick-filter) plus further curated
+ * combinations for real filter variety.
  */
-export const PACKAGE_TIERS: PackageTierDef[] = [
+export const UMRAH_PACKAGES: PackageTierDef[] = [
   {
     id: "standard",
     name: "Standard",
@@ -290,6 +300,7 @@ export const PACKAGE_TIERS: PackageTierDef[] = [
     image: stock("photo-1591604129939-f1efa4d9f7fa", 1200, 900),
     popular: true,
     fromPriceGBP: 1499,
+    season: "Year-round",
     defaults: {
       category: "standard",
       durationDays: 10,
@@ -312,6 +323,7 @@ export const PACKAGE_TIERS: PackageTierDef[] = [
     blurb: "7 nights, 5-star hotels within a few minutes of the Haram, private intercity transport, triple sharing.",
     image: stock("photo-1565330770968-0240c0046ce3", 1200, 900),
     fromPriceGBP: 2199,
+    season: "Winter",
     defaults: {
       category: "premium",
       durationDays: 7,
@@ -334,6 +346,7 @@ export const PACKAGE_TIERS: PackageTierDef[] = [
     blurb: "7 nights, 5-star hotels within a few minutes of the Haram, a private guide, and every transfer handled.",
     image: stock("photo-1650446647974-451d05d2136d", 1200, 900),
     fromPriceGBP: 3499,
+    season: "Year-round",
     defaults: {
       category: "premium",
       durationDays: 7,
@@ -350,8 +363,196 @@ export const PACKAGE_TIERS: PackageTierDef[] = [
       "A dedicated guide for the whole trip",
     ],
   },
+  {
+    id: "economy-7-quad",
+    name: "Economy Essentials",
+    strap: "Everything you need, nothing you don't",
+    blurb: "7 nights, 3-star hotels a short walk or shuttle from both mosques, quad sharing, shared transport.",
+    image: stock("photo-1513072064285-240f87fa81e8", 1200, 900),
+    fromPriceGBP: 949,
+    season: "Summer",
+    defaults: {
+      category: "economy",
+      durationDays: 7,
+      makkahHotelId: "makkah-ajyad-heritage",
+      madinahHotelId: "madinah-ansar",
+      roomSharing: "quad",
+      intercityTransport: "shared",
+    },
+    inclusions: [
+      "Umrah visa processing",
+      "3-star hotels in Makkah and Madinah, quad sharing",
+      "Shared airport and intercity transport",
+    ],
+  },
+  {
+    id: "economy-21-triple",
+    name: "Economy Extended",
+    strap: "Three weeks, comfortably paced",
+    blurb: "21 nights, 4-star hotels a short walk from both mosques, triple sharing, shared transport.",
+    image: stock("photo-1584186028062-637e3e77318d", 1200, 900),
+    fromPriceGBP: 1650,
+    season: "Autumn",
+    defaults: {
+      category: "economy",
+      durationDays: 21,
+      makkahHotelId: "makkah-zam-residence",
+      madinahHotelId: "madinah-rawdah",
+      roomSharing: "triple",
+      intercityTransport: "shared",
+    },
+    inclusions: [
+      "Umrah visa processing",
+      "4-star hotels in Makkah and Madinah, triple sharing",
+      "Shared airport and intercity transport",
+    ],
+  },
+  {
+    id: "economy-30-quad",
+    name: "Economy Extended, 30 nights",
+    strap: "The lowest cost per night",
+    blurb: "30 nights, 3-star hotels a short walk or shuttle from both mosques, quad sharing, shared transport.",
+    image: stock("photo-1513072064285-240f87fa81e8", 1200, 900),
+    fromPriceGBP: 1899,
+    season: "Winter",
+    defaults: {
+      category: "economy",
+      durationDays: 30,
+      makkahHotelId: "makkah-ajyad-heritage",
+      madinahHotelId: "madinah-ansar",
+      roomSharing: "quad",
+      intercityTransport: "shared",
+    },
+    inclusions: [
+      "Umrah visa processing",
+      "3-star hotels in Makkah and Madinah, quad sharing",
+      "Shared airport and intercity transport",
+    ],
+  },
+  {
+    id: "economy-15-ramadan",
+    name: "Economy Ramadan, 15 nights",
+    strap: "A budget-conscious Ramadan Umrah",
+    blurb: "15 nights over Ramadan, 4-star hotels a short walk from both mosques, quad sharing, shared transport.",
+    image: stock("photo-1584186028062-637e3e77318d", 1200, 900),
+    fromPriceGBP: 1799,
+    season: "Ramadan",
+    defaults: {
+      category: "economy",
+      durationDays: 15,
+      makkahHotelId: "makkah-zam-residence",
+      madinahHotelId: "madinah-rawdah",
+      roomSharing: "quad",
+      intercityTransport: "shared",
+    },
+    inclusions: [
+      "Umrah visa processing",
+      "4-star hotels in Makkah and Madinah, quad sharing",
+      "Shared airport and intercity transport",
+    ],
+  },
+  {
+    id: "standard-15-double",
+    name: "Standard, 15 nights",
+    strap: "A fortnight, closer in",
+    blurb: "15 nights, 4-star hotels within a few minutes of both mosques, double sharing, shared transport.",
+    image: stock("photo-1650446647974-451d05d2136d", 1200, 900),
+    fromPriceGBP: 2299,
+    season: "Spring",
+    defaults: {
+      category: "standard",
+      durationDays: 15,
+      makkahHotelId: "makkah-grand-plaza",
+      madinahHotelId: "madinah-taiba-grand",
+      roomSharing: "double",
+      intercityTransport: "shared",
+    },
+    inclusions: [
+      "Umrah visa processing",
+      "4-star hotels in Makkah and Madinah, double sharing",
+      "Shared airport and intercity transport",
+    ],
+  },
+  {
+    id: "standard-21-triple",
+    name: "Standard Extended, 21 nights",
+    strap: "Three weeks, closer in",
+    blurb: "21 nights, 4-star hotels a short walk from both mosques, triple sharing, private transport.",
+    image: stock("photo-1591604129939-f1efa4d9f7fa", 1200, 900),
+    fromPriceGBP: 2650,
+    season: "Autumn",
+    defaults: {
+      category: "standard",
+      durationDays: 21,
+      makkahHotelId: "makkah-zam-residence",
+      madinahHotelId: "madinah-rawdah",
+      roomSharing: "triple",
+      intercityTransport: "private",
+    },
+    inclusions: [
+      "Umrah visa processing",
+      "4-star hotels in Makkah and Madinah, triple sharing",
+      "Private intercity transport",
+    ],
+  },
+  {
+    id: "premium-15-single",
+    name: "Premium, 15 nights, single room",
+    strap: "The whole room to yourself",
+    blurb: "15 nights, 5-star hotels within 50m of both mosques, a private room, luxury transport throughout.",
+    image: stock("photo-1565330770968-0240c0046ce3", 1200, 900),
+    fromPriceGBP: 4899,
+    season: "Winter",
+    defaults: {
+      category: "premium",
+      durationDays: 15,
+      makkahHotelId: "makkah-kaaba-vista",
+      madinahHotelId: "madinah-rawdah-royal",
+      roomSharing: "single",
+      intercityTransport: "luxury",
+    },
+    inclusions: [
+      "Everything in Premium",
+      "5-star hotels within 50m of both Harams, a private room",
+      "Luxury private transport throughout",
+    ],
+  },
+  {
+    id: "premium-10-ramadan",
+    name: "Premium Ramadan, 10 nights",
+    strap: "5-star, over Ramadan",
+    blurb: "10 nights over Ramadan, 5-star hotels within a few minutes of the Haram, private transport, double sharing.",
+    image: stock("photo-1650446647974-451d05d2136d", 1200, 900),
+    fromPriceGBP: 3299,
+    season: "Ramadan",
+    defaults: {
+      category: "premium",
+      durationDays: 10,
+      makkahHotelId: "makkah-al-haram-view",
+      madinahHotelId: "madinah-nabawi-suites",
+      roomSharing: "double",
+      intercityTransport: "private",
+    },
+    inclusions: [
+      "Everything in Premium",
+      "5-star hotels within a few minutes of both Harams, double sharing",
+      "Private intercity transport",
+      "Priority visa processing",
+    ],
+  },
 ];
 
+/** The three named tiers, for the homepage quick-filter's short dropdown. */
+export const PACKAGE_TIERS: PackageTierDef[] = UMRAH_PACKAGES.filter((p) =>
+  ["standard", "premium", "deluxe"].includes(p.id),
+);
+
 export function packageTierById(id: string): PackageTierDef | undefined {
-  return PACKAGE_TIERS.find((p) => p.id === id);
+  return UMRAH_PACKAGES.find((p) => p.id === id);
+}
+
+/** Bucketed for the "Distance" filter -- parsed from the Makkah hotel's distance string. */
+export function distanceMeters(distance: string): number {
+  const match = distance.match(/(\d+)/);
+  return match ? Number(match[1]) : Infinity;
 }

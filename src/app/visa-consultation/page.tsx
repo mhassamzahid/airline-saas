@@ -1,34 +1,63 @@
 import { ServicePage, ServiceSection, ServiceSteps, ServiceChecklist } from "@/components/site/ServicePage";
 import { InquiryForm } from "@/components/site/InquiryForm";
 import { stock } from "@/lib/img";
-import { getServicePage, getSiteSettings } from "@/lib/cms";
+import { getServicePage, getSiteSettings, cmsRenditionUrl } from "@/lib/cms";
 
 export const metadata = {
   title: "Visa Consultation",
-  description: "Help with Umrah, Hajj and tour visas: document checklists, application tracking, and a specialist you can ask.",
+  description: "Countries we cover, how the process works, the documents you'll need, and a specialist you can ask.",
 };
 
-const FALLBACK = {
-  lede: "Every Umrah, Hajj and tour booking needs the right paperwork in the right order. We check it before it becomes a problem at the airport.",
-  checklist: {
-    title: "What we help with",
-    items: [
-      "Saudi Umrah and Hajj visa applications, including biometric appointments",
-      "Passport validity checks against your destination's requirement",
-      "Document review before you submit, so errors get caught early",
-      "Visa status tracking once your application is submitted",
-      "Guidance for group and family applications submitted together",
-    ],
+// Editors can add/reorder "checklist" and "steps" blocks freely in Wagtail --
+// each one renders as its own <ServiceSection>, in the order given here.
+const FALLBACK_SECTIONS = [
+  {
+    type: "checklist" as const,
+    value: {
+      title: "Countries we cover",
+      items: [
+        "Saudi Arabia — Umrah & Hajj visas",
+        "Turkey",
+        "Thailand",
+        "United Arab Emirates (Dubai)",
+        "Malaysia",
+        "Schengen Europe",
+        "Egypt",
+        "Maldives",
+        "Indonesia",
+        "Pakistan — NICOP & visit visas",
+      ],
+    },
   },
-  steps: {
-    title: "How it works",
-    steps: [
-      { title: "Send your details", body: "Passport, travel dates, and which package or tour you've booked, or plan to." },
-      { title: "We check the requirement", body: "A specialist confirms exactly what's needed for your nationality and destination." },
-      { title: "We track it through", body: "You get a status update at each stage, through to the visa landing in your inbox." },
-    ],
+  {
+    type: "steps" as const,
+    value: {
+      title: "How it works",
+      steps: [
+        { title: "Send your details", body: "Passport, travel dates, and which package or tour you've booked, or plan to." },
+        { title: "We check the requirement", body: "A specialist confirms exactly what's needed for your nationality and destination." },
+        { title: "We track it through", body: "You get a status update at each stage, through to the visa landing in your inbox." },
+      ],
+    },
   },
-};
+  {
+    type: "checklist" as const,
+    value: {
+      title: "Documents you'll need",
+      items: [
+        "A passport valid for at least 6 months beyond your return date",
+        "Two recent passport-sized photographs",
+        "A completed visa application form",
+        "Proof of travel — your booking confirmation or itinerary",
+        "Proof of accommodation for the full stay",
+        "Bank statements or proof of funds, where the destination requires them",
+      ],
+    },
+  },
+];
+
+const FALLBACK_LEDE =
+  "Every Umrah, Hajj and tour booking needs the right paperwork in the right order. We check it before it becomes a problem at the airport.";
 
 export default async function VisaConsultationPage() {
   const [cms, { site_title }] = await Promise.all([
@@ -36,30 +65,42 @@ export default async function VisaConsultationPage() {
     getSiteSettings(),
   ]);
   const eyebrow = cms?.eyebrow || `${site_title} services`;
-  const lede = cms?.lede || FALLBACK.lede;
-  const checklist = cms?.sections.find((s) => s.type === "checklist")?.value ?? FALLBACK.checklist;
-  const steps = cms?.sections.find((s) => s.type === "steps")?.value ?? FALLBACK.steps;
+  const title = cms?.title || "Visa Consultation";
+  const lede = cms?.lede || FALLBACK_LEDE;
+  const sections = cms?.sections.length ? cms.sections : FALLBACK_SECTIONS;
+  const heroImageUrl = cmsRenditionUrl(cms?.hero_image ?? null);
 
   return (
     <ServicePage
       eyebrow={eyebrow}
-      title="Visa Consultation"
+      title={title}
       lede={lede}
       heroImage={{
-        src: stock("photo-1524661135-423995f22d0b", 900, 1125),
-        alt: "A world map laid out on a table",
+        src: heroImageUrl || stock("photo-1524661135-423995f22d0b", 900, 1125),
+        alt: cms?.hero_image?.alt || "A world map laid out on a table",
+        unoptimized: Boolean(heroImageUrl),
       }}
     >
-      <ServiceSection title={checklist.title}>
-        <ServiceChecklist items={checklist.items} />
-      </ServiceSection>
+      {sections.map((s) => {
+        if (s.type === "checklist") {
+          return (
+            <ServiceSection key={s.value.title} title={s.value.title}>
+              <ServiceChecklist items={s.value.items} />
+            </ServiceSection>
+          );
+        }
+        if (s.type === "steps") {
+          return (
+            <ServiceSection key={s.value.title} title={s.value.title}>
+              <ServiceSteps steps={s.value.steps} />
+            </ServiceSection>
+          );
+        }
+        return null;
+      })}
 
-      <ServiceSection title={steps.title}>
-        <ServiceSteps steps={steps.steps} />
-      </ServiceSection>
-
-      <ServiceSection title="Ask a specialist">
-        <InquiryForm subject="Visa consultation" leadTime="2 business days" />
+      <ServiceSection title="Start your visa application">
+        <InquiryForm subject="Visa consultation" leadTime="2 business days" submitLabel="Start my visa application" />
       </ServiceSection>
     </ServicePage>
   );

@@ -1,12 +1,12 @@
 import { PageContainer, PageIntro } from "@/components/site/PageIntro";
-import { DestinationsBrowser } from "@/components/site/DestinationsBrowser";
+import { ToursBrowser } from "@/components/site/ToursBrowser";
 import { getSiteSettings } from "@/lib/cms";
 
 export async function generateMetadata() {
   const { site_title } = await getSiteSettings();
   return {
-    title: "International & Pakistan Tours",
-    description: `Every ${site_title} route, filterable by region (including Pakistan) and price. Browse before you enquire.`,
+    title: "International Tour Packages",
+    description: `${site_title} guided tour packages across Turkey, Thailand, Dubai, Malaysia, Europe and more, filterable by country, duration, price, group type and season.`,
   };
 }
 
@@ -15,11 +15,11 @@ export default function ToursPage() {
     <PageContainer>
       <PageIntro
         eyebrow="Tours"
-        title="International & Pakistan Tours"
-        lede="Ten nonstop routes from three UK bases, including Lahore, Karachi and Islamabad. Filter by region or search a city, then open a destination to enquire."
+        title="International Tour Packages"
+        lede="Guided tours across Turkey, Thailand, Dubai, Malaysia, Europe and more. Filter by country, duration, price, group type or season, then open a package for the full itinerary."
         className="mb-10"
       />
-      <DestinationsBrowser />
+      <ToursBrowser />
     </PageContainer>
   );
 }

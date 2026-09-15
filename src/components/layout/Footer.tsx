@@ -11,7 +11,8 @@ function columns(siteTitle: string) {
       links: [
         { label: "Build an Umrah package", href: "/umrah" },
         { label: "Hajj", href: "/hajj" },
-        { label: "International & Pakistan Tours", href: "/tours" },
+        { label: "International Tours", href: "/tours" },
+        { label: "Pakistan Tours", href: "/pakistan-tours" },
         { label: "The fleet", href: "/experience" },
       ],
     },
@@ -36,7 +37,7 @@ function columns(siteTitle: string) {
     {
       title: "Help",
       links: [
-        { label: "Contact us", href: "/help" },
+        { label: "Contact us", href: "/contact" },
         { label: "Disruption and refunds", href: "/help" },
         { label: "Manage your trip", href: "/manage" },
         { label: "Accessibility", href: "/help" },
@@ -99,7 +100,7 @@ export async function Footer({
         <div className="mt-14 flex flex-col gap-3 border-t border-white/10 pt-6 text-[12px] text-on-dark-mut sm:flex-row sm:items-center sm:justify-between">
           <p>{legalLine}</p>
           <div className="flex gap-4">
-            <Link href="/help" className="hover:text-on-dark">Privacy</Link>
+            <Link href="/privacy-policy" className="hover:text-on-dark">Privacy</Link>
             <Link href="/help" className="hover:text-on-dark">Cookies</Link>
             <Link href="/help" className="hover:text-on-dark">Conditions of carriage</Link>
           </div>

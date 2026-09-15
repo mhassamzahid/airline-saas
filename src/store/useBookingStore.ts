@@ -26,7 +26,8 @@ export const STEPS: { id: StepId; label: string }[] = [
   { id: "submit", label: "Submit" },
 ];
 
-export type PackageTierChoice = "standard" | "premium" | "deluxe" | "custom";
+/** Any `UMRAH_PACKAGES` id, or "custom" for the step-by-step builder. */
+export type PackageTierChoice = string;
 
 export interface BookingState {
   currentStep: number;
@@ -135,7 +136,11 @@ export const useBookingStore = create<BookingState & BookingActions>()((set, get
         intercityTransport: tierDef.defaults.intercityTransport,
         services: { ...s.services, ...tierDef.defaults.services },
       }),
-      currentStep: 1,
+      // A fixed package is already fully specified -- jump straight to the
+      // last step. Every earlier step still shows as done in the rail and
+      // stays editable via goTo, so nothing is actually skipped, just not
+      // clicked through. Custom starts at the first real step instead.
+      currentStep: tierDef ? STEPS.length - 1 : 1,
     }));
   },
 

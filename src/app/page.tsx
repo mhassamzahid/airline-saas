@@ -25,7 +25,8 @@ export async function generateMetadata() {
 const CATEGORY_IMAGE_BY_HREF: Record<string, string> = {
   "/umrah": stock("photo-1513072064285-240f87fa81e8", 700, 860),
   "/hajj": stock("photo-1554794470-42d3cd193ecc", 700, 860),
-  "/tours": stock("photo-1603491656337-3b491147917c", 700, 860),
+  "/tours": stock("photo-1512453979798-5ea266f8880c", 700, 860),
+  "/pakistan-tours": stock("photo-1603491656337-3b491147917c", 700, 860),
 };
 
 const FALLBACK_HERO = {
@@ -53,8 +54,16 @@ const FALLBACK_CATEGORIES: CmsIconTextLink[] = [
   },
   {
     href: "/tours",
-    label: "International & Pakistan Tours",
-    body: "Ten nonstop routes, filterable by region and price (including Lahore, Karachi and Islamabad).",
+    label: "International Tours",
+    body: "Guided tour packages across Turkey, Thailand, Dubai and more, filterable by country, price and season.",
+    icon_name: "",
+    image: null,
+    action_label: "",
+  },
+  {
+    href: "/pakistan-tours",
+    label: "Pakistan Tours",
+    body: "Domestic tour packages across Hunza, Swat, Murree and more, filterable by region and price.",
     icon_name: "",
     image: null,
     action_label: "",
@@ -77,15 +86,15 @@ const FALLBACK_TESTIMONIALS: CmsTestimonial[] = [
   },
   {
     quote:
-      "Applied for our Hajj place through the Group & Community package, one coordinator, one invoice, twenty-six of us kept together the whole trip.",
+      "Applied for our Hajj place through the Government Scheme. Clear deadline, clear quota, no surprises on what was included.",
     name: "Yusuf M.",
-    detail: "Group & community Hajj",
+    detail: "Government Scheme Hajj",
   },
   {
     quote:
-      "Booked the Lahore tour and had a visa question answered within a day through Visa Consultation. Made the whole thing much less stressful.",
+      "Booked the Swat Valley retreat for the whole family and had a visa question answered within a day through Visa Consultation. Made the whole thing much less stressful.",
     name: "Sana K.",
-    detail: "International & Pakistan Tours",
+    detail: "Pakistan Tours",
   },
 ];
 
@@ -108,7 +117,7 @@ const FALLBACK_FAQS: CmsFaq[] = [
   {
     question: "Do you fly to Pakistan?",
     answer:
-      "Yes, nonstop to Lahore, Karachi and Islamabad from our UK bases. Browse them on International & Pakistan Tours alongside our other routes.",
+      "Yes, nonstop to Lahore, Karachi and Islamabad from our UK bases. Browse them on Pakistan Tours.",
   },
 ];
 
@@ -148,7 +157,7 @@ export default async function HomePage() {
         </p>
 
         {/* Category cards: each leads straight into its own entry point */}
-        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {categories.map((c) => (
             <Link
               key={c.href}

@@ -16,9 +16,10 @@ from home.models import FooterSettings, HeaderSettings, SiteSettings
 NAV_LINKS = [
     {"type": "link", "value": {"label": "Umrah", "href": "/umrah"}},
     {"type": "link", "value": {"label": "Hajj", "href": "/hajj"}},
-    {"type": "link", "value": {"label": "Tours", "href": "/tours"}},
-    {"type": "link", "value": {"label": "Manage trip", "href": "/manage"}},
-    {"type": "link", "value": {"label": "Help", "href": "/help"}},
+    {"type": "link", "value": {"label": "International Tours", "href": "/tours"}},
+    {"type": "link", "value": {"label": "Pakistan Tours", "href": "/pakistan-tours"}},
+    {"type": "link", "value": {"label": "Visa Consultation", "href": "/visa-consultation"}},
+    {"type": "link", "value": {"label": "Air Ticketing", "href": "/air-ticketing"}},
 ]
 
 FALLBACK_TAGLINE = (
@@ -36,7 +37,8 @@ def footer_columns(site_title):
         {"type": "column", "value": {"title": "Travel", "links": [
             {"label": "Build an Umrah package", "href": "/umrah"},
             {"label": "Hajj", "href": "/hajj"},
-            {"label": "International & Pakistan Tours", "href": "/tours"},
+            {"label": "International Tours", "href": "/tours"},
+            {"label": "Pakistan Tours", "href": "/pakistan-tours"},
             {"label": "The fleet", "href": "/experience"},
         ]}},
         {"type": "column", "value": {"title": "Services", "links": [

@@ -69,9 +69,25 @@ export async function getHomePage(): Promise<CmsHomePage | null> {
   return data?.items[0] ?? null;
 }
 
+export interface CmsRenditionImage {
+  url: string;
+  full_url: string;
+  width: number;
+  height: number;
+  alt: string;
+}
+
+/** Builds an absolute URL from an `ImageRenditionField`'s relative `url` (its `full_url` uses a placeholder host outside a real deployment, so `url` + the API's own origin is the reliable path). */
+export function cmsRenditionUrl(image: CmsRenditionImage | null): string | null {
+  if (!image?.url) return null;
+  return image.url.startsWith("http") ? image.url : `${CMS_API_URL.replace(/\/api\/v2$/, "")}${image.url}`;
+}
+
 export interface CmsServicePage {
+  title: string;
   eyebrow: string;
   lede: string;
+  hero_image: CmsRenditionImage | null;
   sections: (
     | { type: "checklist"; value: { title: string; items: string[] } }
     | { type: "steps"; value: { title: string; steps: { title: string; body: string }[] } }

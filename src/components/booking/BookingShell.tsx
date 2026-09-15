@@ -3,7 +3,8 @@
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { STEPS, useBookingStore, type PackageTierChoice } from "@/store/useBookingStore";
+import { STEPS, useBookingStore } from "@/store/useBookingStore";
+import { packageTierById } from "@/data/umrah";
 import { useStepDirection } from "@/lib/hooks";
 import { ProgressRail } from "./ProgressRail";
 import { FareSummary } from "./FareSummary";
@@ -32,8 +33,6 @@ const STEP_COMPONENTS = {
   submit: StepSubmit,
 } as const;
 
-const VALID_TIERS: PackageTierChoice[] = ["standard", "premium", "deluxe", "custom"];
-
 export function BookingShell() {
   const currentStep = useBookingStore((s) => s.currentStep);
   const stepId = STEPS[currentStep].id;
@@ -47,8 +46,8 @@ export function BookingShell() {
   }, [currentStep, reduce]);
 
   useEffect(() => {
-    const tier = searchParams.get("package") as PackageTierChoice | null;
-    if (tier && VALID_TIERS.includes(tier)) {
+    const tier = searchParams.get("package");
+    if (tier && (tier === "custom" || packageTierById(tier))) {
       useBookingStore.getState().pickPackage(tier);
     }
     // Prefill from a deep link (homepage quick-filter) once on mount.

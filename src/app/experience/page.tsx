@@ -224,7 +224,7 @@ export default function ExperiencePage() {
           {DESTINATIONS.filter((d) => d.popular).map((d) => (
             <Link
               key={d.code}
-              href={`/tours/${d.code}`}
+              href={d.region === "Pakistan" ? "/pakistan-tours" : "/tours"}
               className="flex items-baseline justify-between gap-3 border-b border-hairline py-3 transition-colors hover:border-hairline-firm"
             >
               <span className="flex items-baseline gap-2.5">

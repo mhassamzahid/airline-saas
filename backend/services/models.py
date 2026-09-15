@@ -4,6 +4,7 @@ from wagtail.models import Page
 from wagtail.fields import StreamField
 from wagtail.admin.panels import FieldPanel
 from wagtail.api import APIField
+from wagtail.images.api.fields import ImageRenditionField
 from wagtail import blocks
 
 from halcyon.blocks import ChecklistBlock, StepsBlock, IconTextLinkBlock
@@ -74,7 +75,7 @@ class ServicePage(Page):
     api_fields = [
         APIField("eyebrow"),
         APIField("lede"),
-        APIField("hero_image"),
+        APIField("hero_image", serializer=ImageRenditionField("fill-900x1125")),
         APIField("sections"),
     ]
 

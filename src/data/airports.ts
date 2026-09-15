@@ -157,9 +157,3 @@ export function destinationByCode(code: string): Destination | undefined {
   return DESTINATIONS.find((d) => d.code === code);
 }
 
-/** Rough block time, primary base <-> destination, minutes. */
-export const BLOCK_MINUTES: Record<string, number> = {
-  JFK: 470, BOS: 445, YYZ: 460, GRU: 685, CPT: 700,
-  DXB: 420, DEL: 525, SIN: 800, HND: 730, SYD: 1310,
-  LHE: 420, KHI: 435, ISB: 415,
-};

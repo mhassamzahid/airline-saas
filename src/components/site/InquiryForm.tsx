@@ -13,6 +13,8 @@ interface InquiryFormProps {
   leadTime?: string;
   /** Shows a group-size field when relevant (Hajj, group tours). Off by default. */
   askGroupSize?: boolean;
+  /** Submit button text. Defaults to "Send inquiry"; pass a named CTA (e.g. "Start my visa application") where the page calls for one. */
+  submitLabel?: string;
   className?: string;
 }
 
@@ -21,7 +23,13 @@ interface InquiryFormProps {
  * confirmed with the same `makeBookingRef()` reference the booking wizard's
  * fare hold uses: one funnel, whichever archetype got you here.
  */
-export function InquiryForm({ subject, leadTime, askGroupSize = false, className }: InquiryFormProps) {
+export function InquiryForm({
+  subject,
+  leadTime,
+  askGroupSize = false,
+  submitLabel = "Send inquiry",
+  className,
+}: InquiryFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [size, setSize] = useState("");
@@ -104,7 +112,7 @@ export function InquiryForm({ subject, leadTime, askGroupSize = false, className
       </div>
       <Button type="submit" className="mt-5 w-full">
         <PaperPlaneTilt size={15} />
-        Send inquiry
+        {submitLabel}
       </Button>
     </form>
   );

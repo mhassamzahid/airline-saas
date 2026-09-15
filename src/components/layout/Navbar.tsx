@@ -10,9 +10,10 @@ import { Wordmark } from "@/components/ui/Wordmark";
 const FALLBACK_LINKS = [
   { label: "Umrah", href: "/umrah" },
   { label: "Hajj", href: "/hajj" },
-  { label: "Tours", href: "/tours" },
-  { label: "Manage trip", href: "/manage" },
-  { label: "Help", href: "/help" },
+  { label: "International Tours", href: "/tours" },
+  { label: "Pakistan Tours", href: "/pakistan-tours" },
+  { label: "Visa Consultation", href: "/visa-consultation" },
+  { label: "Air Ticketing", href: "/air-ticketing" },
 ];
 
 type NavLink = { label: string; href: string };

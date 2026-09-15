@@ -1,26 +1,28 @@
 ---
 version: 1
 name: halcyon-design
-description: "Design contract for Halcyon — an independent long-haul airline. The site is a four-archetype category portal — Umrah (build a package), Hajj (fixed quota'd packages), International & Pakistan Tours (filtered browsing), and Visa Consultation / Air Ticketing / Other Services (static pages) — not a single booking flow. The Umrah wizard is an image-first, tap-don't-type package builder: package → when & who → cabin → departures → extras → review, with a live price summary and a running 'trip ready' bar. Restrained chrome (kingfisher-rust + Geist), the photography carries the warmth."
+description: "Design contract for Halcyon — an independent long-haul airline. The site is built around six core sections — Umrah (build a package), Hajj (fixed quota'd packages), International Tour Packages and Pakistan Tour Packages (each its own filtered browsing page), and Visa Consultation / Air Ticketing (static pages) — plus Other Services, Manage trip and Help as secondary utilities. The Umrah flow is a ground-services package builder (category, dates, travellers, visa, hotels, transport, add-ons), not a flight booking: pick a fixed tier (skips straight to review) or build custom, with a live quote and a running 'trip ready' bar. Restrained chrome (kingfisher-rust + Geist), the photography carries the warmth."
 ---
 
 # Halcyon — Design Contract
 
 Single source of truth for all UI.
 
-**Site shape (restructured into a portal, see §7A):** the homepage is no
-longer a booking wizard — it's a portal with three entry points (Umrah, Hajj,
-International & Pakistan Tours) plus static service pages, all sharing one
-design system. The categories and their archetypes were given as a brief to
-follow exactly (a generalized 4-archetype category-portal pattern, with
-real-brand examples per archetype) rather than invented; Halcyon's own brand
-voice, palette and photography style carry the execution. The Umrah wizard
-lives at `/umrah` and is unchanged in spirit from the original booking flow —
-it mirrors the `example/` travel-package builder — **you tap photos, you
-barely type**. Six steps, ~4 inputs total (date range, three passenger
-steppers, name, email). Package and cabin auto-advance on selection. A "trip
-ready" progress bar fills as you go. The package photo is pinned in the fare
-summary and reappears as a hero on review and the held screen.
+**Site shape (restructured into a portal, see §7A):** the homepage is a
+portal with four entry points (Umrah, Hajj, International Tours, Pakistan
+Tours) plus static service pages, all sharing one design system. The
+categories and their archetypes were given as a brief to follow exactly (a
+generalized category-portal pattern, with real-brand examples per archetype)
+rather than invented; Halcyon's own brand voice, palette and photography
+style carry the execution. The Umrah flow lives at `/umrah`: a landing screen
+that filters an 11-package catalog (Duration, Category, hotel rating,
+distance, room type, price and month, all AND-combined and instant) down to
+matching ready-made packages, plus a "Build your own" fallback, leading into
+a 9-step ground-services builder (category, duration & dates, travellers,
+visa, hotels, transport, add-ons, review, submit) with a live quote sidebar
+and a running "trip ready" bar. Picking a filtered package pre-fills every
+step and jumps straight to the last one — nothing is hidden, the traveller
+can still go back to any step via the rail.
 
 **Look:** the *chrome* stays restrained — the Stripe reference system
 (forms-as-product, tabular figures, tight radii, hairlines) with a deep
@@ -232,16 +234,24 @@ A recognisable physical object, used where the screen is about **one specific tr
 
 ### Photo grids
 Two sizes, matched to the archetype:
-- **Small, fixed sets** (Archetype A's Umrah packages, Archetype B's Hajj
-  packages — 4 items each): a plain `sm:grid-cols-2` grid, no featured
-  banner, no show-more. At this size a progressive-disclosure device is
-  overhead, not a help — every option should be visible at once. `"Most
-  popular"` appears on exactly one tile, data-flagged (`popular`), never on
-  more than one per grid.
-- **Larger filtered sets** (Archetype C's Tours, 13 destinations): shown in
-  full as `DestinationsBrowser`'s result grid, narrowed by the region/search/
-  sort controls rather than hidden behind a manual expander — the filter bar
-  *is* the progressive disclosure.
+- **Small, fixed sets** (Archetype B's 3 Hajj packages): a plain
+  `sm:grid-cols-2` grid, no featured banner, no show-more. At this size a
+  progressive-disclosure device is overhead, not a help — every option
+  should be visible at once. `"Most popular"` appears on exactly one tile,
+  data-flagged (`popular`), never on more than one per grid. Hajj is one
+  package per type, so "grouped by type" is expressed as a photo-overlay type
+  badge on each tile (the same idiom as the "Most popular" chip) inside a
+  single flat grid, not stacked per-type sections — a section header + a
+  one-card grid per type wastes two-thirds of the row and only earns its
+  keep once a type holds more than one package.
+- **Larger filtered sets**: Umrah (`StepLanding.tsx`, 11 packages),
+  International Tours (`ToursBrowser`, 8 packages) and Pakistan Tours
+  (`PakistanToursBrowser`, 8 packages) all show their full result grid,
+  narrowed by filter/sort controls rather than hidden behind a manual
+  expander — the filter bar *is* the progressive disclosure. The Tours pages
+  pin
+  a "Featured this season" strip above the filtered grid, using the same card
+  shape as the grid below it.
 
 ---
 
@@ -249,76 +259,78 @@ Two sizes, matched to the archetype:
 
 - Page max width `1180px`, `px-5 sm:px-8`, `mx-auto`.
 - Booking screen grid: `lg:grid-cols-[1fr_360px] gap-12`. Below `lg`: single column, summary becomes the bottom bar.
-- Navbar: 64px, single line, wordmark left, 5 nav links + "Sign in" right, hairline bottom, `bg var(--canvas-soft)/90` + `backdrop-blur`.
-- Hero (step 1 of the Umrah builder, `StepPackage.tsx`): full-bleed. One
-  atmospheric photo (wing over cloud) fills the entire header band edge to
-  edge of the content column — "full-bleed" relative to the step's own
-  container, not the true viewport edge; the wizard shell stays at
-  `max-w-[1180px]`. A bottom-anchored `dark/92→transparent` gradient scrim
-  carries the eyebrow, headline (`text-on-dark`, ≤ 2 lines, 54px desktop),
-  and subtext in light type. The From + trip-type controls float on a
-  frosted panel — `bg-canvas/92` + `backdrop-blur-md`, a stronger ink-tinted
-  shadow than `--shadow-raised` (calibrated for light-on-photo, not
-  light-on-paper) — rather than sitting on plain paper, since the whole band
-  is now photographic. Min-height `440/520/580px` (mobile/tablet/desktop) so
-  it never forces scroll to see the controls, even on a 1366×720 laptop.
-  Header text still does the one-time staggerChildren entrance;
-  `prefers-reduced-motion` shows everything at full opacity immediately. No
-  scroll cues, no logo wall.
-- Footer: one dark block (`--dark`), wordmark + 4 short link columns + legal line. Regular hyphens only.
+- Navbar: a slim dark utility strip (tagline + phone, scrolls away with the
+  page, not sticky) above the 64px main bar — wordmark left, 6 core-section
+  nav links + a filled rust "Sign in" button right, hairline bottom,
+  `bg var(--canvas-soft)/90` + `backdrop-blur` on the main bar (which alone
+  stays `sticky top-0`).
+- Umrah landing hero (`StepLanding.tsx`, the flow's first screen): plain
+  text hero (eyebrow, `h1`, subheading) above the filter bar and result grid
+  — no full-bleed photo band here, that pattern is reserved for the
+  individual package-tile photos and the flexible-page builder's Hero block,
+  not the Umrah entry screen itself.
+- Footer: one dark block (`--dark`), wordmark + 4-5 short link columns + legal line. Regular hyphens only.
 
-### 7A. Site structure — four archetypes
+### 7A. Site structure — six core sections, four archetypes
 
-The whole site is built from four repeatable category archetypes rather than
-one bespoke flow per section (a generalized category-portal pattern, given as
-a structure/UX brief to follow — categories chosen to match its real-brand
-examples exactly). Every new section should be sorted into one of these
-before it's designed, not custom-built from scratch:
+The site has **six core sections** — Umrah, Hajj, International Tour
+Packages, Pakistan Tour Packages, Visa Consultation, Air Ticketing — each
+built from one of four repeatable category archetypes rather than a bespoke
+flow per section (a generalized category-portal pattern, given as a
+structure/UX brief to follow — categories chosen to match its real-brand
+examples exactly). Other Services, Manage trip and Help are real pages too,
+just secondary utilities rather than core sections — they sit in the footer,
+not the header nav. Every new section should be sorted into one of the four
+archetypes before it's designed, not custom-built from scratch:
 
 | Archetype | Pattern | On this site |
 |---|---|---|
-| **A — Filter + builder** | Large, combinable inventory; a multi-step configurator with a live running total. | `/umrah` — the 6-step Umrah package wizard (`StepPackage` → when&who → cabin → departure → extras → review). |
-| **B — Fixed listing** | Small, regulated, quota'd or lead-time-bound inventory; browse a short grouped list, open a detail page, inquire (not a live price). | `/hajj` + `/hajj/[slug]` — 4 fixed packages (`data/hajj.ts`), each with its own quota and application deadline shown up front, ending in `InquiryForm`. |
-| **C — Filter-driven listing** | Moderate inventory, a handful of clean AND-combined facets, no builder needed. | `/tours` + `/tours/[code]` ("International & Pakistan Tours") — region chips (incl. a `Pakistan` region) + search + sort over 13 routes (`DestinationsBrowser`), each opening to a detail page that ends in `InquiryForm`, not a booking flow — Tours doesn't earn a builder. |
-| **D — Static service page** | No real inventory — description, process, inquiry CTA. One shared shell so a new page is content dropped into a pattern, not a one-off build. | `/visa-consultation`, `/air-ticketing`, `/other-services` — all built on `components/site/ServicePage.tsx` (+ `ServiceSection`/`ServiceSteps`/`ServiceChecklist`), each ending in an embedded `InquiryForm` rather than just a link-out CTA. |
+| **A — Filter + builder** | Large, combinable inventory; a multi-step configurator with a live running total. | `/umrah` — a landing screen filtering an 11-package catalog (`UMRAH_PACKAGES`) by Duration, Category, hotel rating, distance, room type, price and month, all AND-combined and instant, plus a "Build your own" fallback, into a 9-step ground-services builder: category → duration & dates → travellers → visa → hotels → transport → add-ons → review → submit. Picking a filtered package pre-fills every step and jumps straight to submit; custom starts at step 1. No flights in this flow — see below. |
+| **B — Fixed listing** | Small, regulated, quota'd or lead-time-bound inventory; browse a short grouped list, open a detail page, inquire (not a live price). | `/hajj` + `/hajj/[slug]` — 3 fixed packages, one per type (`data/hajj.ts`), each with its own quota and application deadline shown up front, ending in `InquiryForm`. |
+| **C — Filter-driven listing** | Moderate inventory, a handful of clean AND-combined facets, no builder needed. | **International Tour Packages** (`/tours` + `/tours/[slug]`) — country, group-type, duration, price-range and season filters (`ToursBrowser`, `data/tours.ts`) over 8 curated guided-tour packages (Turkey, Thailand, Dubai, Malaysia, Europe, Egypt, Maldives, Indonesia). **Pakistan Tour Packages** (`/pakistan-tours` + `/pakistan-tours/[slug]`) — the same pattern scoped to domestic destinations: region, group-type, duration, price-range and season filters (`PakistanToursBrowser`, `data/pakistan-tours.ts`) over 8 packages across Hunza/Skardu, Swat, Murree, Naran/Kaghan, Northern Areas, Neelum Valley, Fairy Meadows and Kalash Valley. Both sections use featured/seasonal packages pinned above the filtered grid, a two-CTA card (View details / Inquire now — Pakistan's says "Book now"), and a detail page ending in an itinerary, inclusions, hotel-or-camping info, a gallery, and `InquiryForm`; Pakistan's cards also carry an optional Family/Honeymoon/Group marketing tag next to the region badge, aligned with (but friendlier-worded than) the Group Type filter. The two sections are structurally identical but deliberately not code-shared — each has its own data file, browser and card component, consistent with Hajj/Umrah/Tours each owning their own data model rather than a generic cross-archetype component. |
+| **D — Static service page** | No real inventory — description, process, inquiry CTA. One shared shell so a new page is content dropped into a pattern, not a one-off build. | `/visa-consultation`, `/air-ticketing` (core sections) and `/other-services` (secondary, footer-only) — all built on `components/site/ServicePage.tsx` (+ `ServiceSection`/`ServiceSteps`/`ServiceChecklist`), each ending in an embedded `InquiryForm` with a page-specific `submitLabel` (e.g. "Start my visa application", "Request a fare quote") rather than just a link-out CTA or the generic "Send inquiry" text. Both Next.js pages render `cms.sections` **in order**, mapping each block's `type` (`checklist`/`steps`) to its component, rather than picking one block per type — so Visa Consultation can carry two checklists ("Countries we cover" then, after the process steps, "Documents you'll need") from the same Wagtail `ServicePage.sections` StreamField. Air Ticketing is an assisted, inquiry-only fare-quote service (domestic & international) — flight search/selection isn't self-service yet. |
 
-**Umrah packages reuse the `Destination` data shape** (`UMRAH_PACKAGES` in
-`data/airports.ts`, `UmrahPackage extends Destination`) so the whole
-booking-wizard machinery — `destinationByCode`/`airportByCode` lookups,
-`flightFor()`, the quote engine, `FareSummary`, `StepReview` — works
-unchanged against package tiers instead of point-to-point cities; only
-`StepPackage.tsx`'s content and the `extras`/`ADDON_CARDS` set are
-Umrah-specific. Every package's `city` field is its display name ("Standard
-Umrah"), not a place, since it's a product, not an airport; `airportCity:
-"Jeddah"` is set on each entry so flight-leg labels (`StepDeparture`'s
-"London to Jeddah") stay geographically correct while identity banners
-(`StepReview`'s "Standard Umrah from London") use the package name.
+**Umrah has its own ground-services data model** (`data/umrah.ts`): package
+tiers, categories, Makkah/Madinah hotels, room sharing, transport tiers and
+add-on services, each with its own price — deliberately separate from
+`data/airports.ts`'s flight-era `Destination`/`Airport` shapes, since Umrah no
+longer books a flight at all (no cabin, no departure, no `from`/`to`
+airports). `useBookingStore` and `computeQuote` (`lib/quote.ts`) are built
+around this model; `data/airports.ts` (and its `Origin`/`Destination` shapes,
+`cabinById`, `ORIGINS`) still powers `/experience`'s flight-network overview
+(bases, popular routes, fleet), which is genuinely flight-based. **Both Tours
+sections have their own guided-tour-package data models** — `data/tours.ts`
+(country, duration, price, group types, season, itinerary, inclusions/
+exclusions, hotel info) and `data/pakistan-tours.ts` (the same shape, scoped
+to domestic region, plus hotel-or-camping stays and a Family/Honeymoon/Group
+card tag) — closer in spirit to Umrah/Hajj's ground-services framing than to
+a flight destination. `/experience`'s "Where we fly" route snapshot links
+every destination to its Tours listing (`/tours` or `/pakistan-tours`) rather
+than a per-code detail page, since flight network codes (JFK, CPT, DXB, LHE,
+…) no longer map 1:1 onto either curated tour-package's slugs.
 
-**Homepage (`/`)** is the portal: hero with one photo card per Archetype
-A/B/C entry point (`Start here →`, leads straight into that section, not a
-generic landing page), a `QuickFilterWidget` that jumps straight into
-`/umrah` prefilled with a package (the fast path for a visitor who already
-knows what they want), a trust stats strip (reuses `FLEET_STATS`), an
-"Alongside your trip" highlights strip into the Archetype D pages + Manage
-trip, testimonials, and an FAQ excerpt linking to `/help`.
+**Homepage (`/`)** is the portal: hero with one photo card per core-section
+entry point (`Start here →`, leads straight into that section, not a generic
+landing page — Umrah, Hajj, International Tours, Pakistan Tours), a
+`QuickFilterWidget` that jumps straight into `/umrah` prefilled with a
+package tier (the fast path for a visitor who already knows what they want),
+a trust stats strip (reuses `FLEET_STATS`), an "Alongside your trip"
+highlights strip into the Archetype D pages + Manage trip, testimonials, and
+an FAQ excerpt linking to `/help`.
 
-**Deep-link prefill:** `/umrah` reads `?to=` / `?from=` query params on mount
-(`BookingShell`, validated against `destinationByCode`/`originByCode` before
-applying) and pre-selects them on the package step — it never auto-advances
-past step 1, so the visitor still confirms by tapping.
+**Deep-link prefill:** `/umrah` reads a `?package=` query param on mount
+(`BookingShell`, validated against the three fixed tier ids) and calls the
+same `pickPackage()` a landing-screen tap would — pre-filling every step and
+jumping to submit, exactly like tapping the tile directly.
 
-**One funnel:** whichever archetype a visitor moves through, the terminal
-action produces a `makeBookingRef()` reference either way — Archetype A
-(`StepReview`) hands off to a WhatsApp conversation (button opens a `wa.me`
-link pre-filled with the package, dates, travellers, cabin and estimated
-total; the in-app screen afterwards shows the reference plus a fallback
-"Open WhatsApp" link in case the popup didn't fire), while B/C/D
-(`InquiryForm`) mock-submit a contact-us-style form. Both land the visitor on
-a reference they can quote back, they just differ in whether the next step
-happens in-app (a form) or in another app (a chat). Manage trip and Help sit
-outside the archetype grid as sitewide utilities, matching the source
-structure's own "Contact /
-Inquiry" and "Resources" buckets.
+**One funnel:** every archetype's terminal action is now the same shape — a
+mock-submitted form (`InquiryForm`, or Umrah's `StepSubmit`) that produces a
+`makeBookingRef()` reference and a confirmation screen naming how the team
+will follow up (WhatsApp, email or phone — mentioned as contact channels in
+copy only; there's no real `wa.me` integration anywhere in the prototype).
+Manage trip and Help sit outside the six core sections as sitewide utilities,
+matching the source structure's own "Contact / Inquiry" and "Resources"
+buckets.
 
 ---
 

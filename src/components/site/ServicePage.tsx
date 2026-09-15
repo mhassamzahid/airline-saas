@@ -8,7 +8,7 @@ interface ServicePageProps {
   eyebrow: string;
   title: string;
   lede: string;
-  heroImage?: { src: string; alt: string };
+  heroImage?: { src: string; alt: string; unoptimized?: boolean };
   children: React.ReactNode;
   cta?: { heading: string; body: string; label: string; href: string };
 }
@@ -33,6 +33,7 @@ export function ServicePage({ eyebrow, title, lede, heroImage, children, cta }: 
               src={heroImage.src}
               alt={heroImage.alt}
               priority
+              unoptimized={heroImage.unoptimized}
               sizes="(min-width: 1024px) 38vw, 0px"
               className="hidden aspect-[4/5] rounded-[10px] border border-hairline lg:block"
             />
