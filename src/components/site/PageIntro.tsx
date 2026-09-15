@@ -5,8 +5,15 @@ interface PageIntroProps {
   eyebrow?: string;
   title: string;
   lede?: string;
-  /** Optional hero photo, split-screen with the text. Shown at every breakpoint (stacked above the text on mobile) so a page never loses its imagery on small screens. */
-  image?: { src: string; alt: string };
+  /**
+   * Optional hero photo, split-screen with the text. When present, `PageIntro`
+   * becomes a full-screen hero band (fills the viewport below the navbar, on
+   * every device) -- render it as a direct sibling of `PageContainer`, not
+   * inside it, since `PageContainer`'s own vertical padding would push the
+   * total past one screen. Shown at every breakpoint (stacked above the text
+   * on mobile) so a page never loses its imagery on small screens.
+   */
+  image?: { src: string; alt: string; unoptimized?: boolean };
   className?: string;
   children?: React.ReactNode;
 }
@@ -26,15 +33,23 @@ export function PageIntro({ eyebrow, title, lede, image, className, children }: 
   }
 
   return (
-    <div className={cn("grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14", className)}>
-      <Photo
-        src={image.src}
-        alt={image.alt}
-        priority
-        sizes="(min-width: 1024px) 38vw, 100vw"
-        className="order-first aspect-[16/10] rounded-[12px] border border-hairline lg:order-last lg:aspect-[4/5]"
-      />
-      {header}
+    <div
+      className={cn(
+        "flex min-h-[calc(100dvh-64px)] items-center sm:min-h-[calc(100dvh-96px)]",
+        className,
+      )}
+    >
+      <div className="mx-auto grid w-full max-w-[1180px] items-center gap-8 px-5 py-14 sm:px-8 sm:py-16 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
+        <Photo
+          src={image.src}
+          alt={image.alt}
+          priority
+          unoptimized={image.unoptimized}
+          sizes="(min-width: 1024px) 38vw, 100vw"
+          className="order-first aspect-[16/10] rounded-[12px] border border-hairline lg:order-last lg:aspect-[4/5]"
+        />
+        {header}
+      </div>
     </div>
   );
 }

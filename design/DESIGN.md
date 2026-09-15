@@ -264,39 +264,49 @@ Two sizes, matched to the archetype:
   nav links + a filled rust "Sign in" button right, hairline bottom,
   `bg var(--canvas-soft)/90` + `backdrop-blur` on the main bar (which alone
   stays `sticky top-0`).
+- **Every page hero fills the screen.** Whatever the layout — full-bleed
+  photo (homepage) or a split text/photo panel (every inner page) — the hero
+  band's height is `min-h-[calc(100dvh-64px)] sm:min-h-[calc(100dvh-96px)]`
+  (the exact height of the sticky navbar with/without the utility strip), so
+  the rest of the page's content sits below the fold on first load
+  everywhere, not just on the homepage. This was a deliberate reversal of an
+  earlier version of this doc, which kept the homepage as the only
+  full-screen hero and every inner page compact — the brief changed to want
+  the same big-arrival moment on every entry point, not just `/`.
 - **Page heroes, generally**: `PageIntro` (`components/site/PageIntro.tsx`)
   takes an optional `image` prop that switches it from plain text to a
-  `lg:grid-cols-[1.1fr_0.9fr]` split with a themed photo — used on Hajj,
-  International Tours and Pakistan Tours (`stock()` id matched to the
-  homepage's category-card photo for that section, so the two stay visually
-  tied). The image shows at every breakpoint, stacked above the text on
-  mobile (`order-first lg:order-last`) rather than hidden below `lg` — a
-  hero photo that only exists on desktop is a bug, not a simplification.
-  Umrah landing hero (`StepLanding.tsx`, the flow's first screen) follows the
-  same split shape by hand (it isn't built from `PageIntro`, since the
-  filter bar and motion stagger live in the same component) — same grid
-  ratio, same order classes, same category photo — so Umrah reads as one
-  more listing page rather than a visually different flow entry point.
-  `ServicePage.tsx`'s hero (Visa Consultation, Air Ticketing, Other Services)
-  follows the same rule, plus a `bg-rust-700/10` offset panel behind the
-  photo for a little depth. Manage and Help stay text-only `PageIntro`s:
-  they're utility pages, not a themed section, so a stock photo there would
-  be decorative filler rather than orientation.
-- **Homepage hero is deliberately a different shape from the above**:
-  `CinematicHero` (`components/site/CinematicHero.tsx`) runs the photo the
-  full width of the viewport, edge-to-edge, with a slow crossfade through
-  the four core sections' photos and the heading/subhead/quick-nav pills
-  overlaid on top — not a boxed panel beside the text, which is what every
-  inner page's hero does. This is the one place the site goes full-bleed, so
-  it reads as "you've arrived" rather than one more instance of the same
-  pattern. The scrim is a flat dark wash across the whole photo (never below
-  ~42% opacity, darkest at the bottom) rather than a bottom-only fade —
-  real photography spikes bright in patches (a lit courtyard, white ihram),
-  and text can land anywhere in a content-driven-height band depending on
-  viewport width, so contrast can't depend on a fixed vertical position.
-  Subhead text uses `text-on-dark/85`, not `--on-dark-mut` — that token is
-  tuned for flat dark surfaces (the footer, dark cards), and reads too low-
-  contrast over a photo.
+  full-screen `lg:grid-cols-[1.1fr_0.9fr]` split with a themed photo — used
+  on Hajj, International Tours and Pakistan Tours (`stock()` id matched to
+  the homepage's category-card photo for that section, so the two stay
+  visually tied), and by `ServicePage.tsx` (Visa Consultation, Air
+  Ticketing, Other Services). Render it as a sibling of `PageContainer`, not
+  nested inside it — `PageContainer`'s own vertical padding would push the
+  total past one screen. The image shows at every breakpoint, stacked above
+  the text on mobile (`order-first lg:order-last`) rather than hidden below
+  `lg` — a hero photo that only exists on desktop is a bug, not a
+  simplification. Umrah landing hero (`StepLanding.tsx`, the flow's first
+  screen) follows the same split shape and full-screen sizing by hand (it
+  isn't built from `PageIntro`, since the filter bar and motion stagger live
+  in the same component; its `min-h` is shortened by the progress rail's own
+  height above it). Manage and Help stay text-only `PageIntro`s at their
+  natural height: they're utility pages, not a themed section, so a stock
+  photo — let alone a full screen of one — would be decorative filler
+  rather than orientation.
+- **Homepage hero's shape is still different, only its height now matches
+  the rest**: `CinematicHero` (`components/site/CinematicHero.tsx`) runs the
+  photo the full width of the viewport, edge-to-edge, with a slow crossfade
+  through the four core sections' photos and the heading/subhead/quick-nav
+  pills overlaid on top — not a boxed panel beside the text, which is what
+  every inner page's hero does. This is the one place the site goes
+  full-bleed, so it reads as "you've arrived" rather than one more instance
+  of the same pattern. The scrim is a flat dark wash across the whole photo
+  (never below ~42% opacity, darkest at the bottom) rather than a
+  bottom-only fade — real photography spikes bright in patches (a lit
+  courtyard, white ihram), and text can land anywhere in a content-driven-
+  height band depending on viewport width, so contrast can't depend on a
+  fixed vertical position. Subhead text uses `text-on-dark/85`, not
+  `--on-dark-mut` — that token is tuned for flat dark surfaces (the footer,
+  dark cards), and reads too low-contrast over a photo.
 - Footer: one dark block (`--dark`), wordmark + 4-5 short link columns + legal line. Regular hyphens only.
 
 ### 7A. Site structure — six core sections, four archetypes

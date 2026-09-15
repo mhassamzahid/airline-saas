@@ -1,11 +1,26 @@
 "use client";
 
+import { useState } from "react";
 import { Star } from "@phosphor-icons/react";
 import { useBookingStore } from "@/store/useBookingStore";
 import { StepFrame } from "@/components/booking/StepFrame";
 import { PhotoCard } from "@/components/ui/PhotoCard";
-import type { HotelDef } from "@/data/umrah";
+import { distanceMeters, type HotelDef } from "@/data/umrah";
 import { formatGBP, cn } from "@/lib/utils";
+
+interface Band {
+  label: string;
+  min: number;
+  max: number;
+}
+
+const DISTANCE_BANDS: Band[] = [
+  { label: "Under 200m", min: 0, max: 199 },
+  { label: "200m – 500m", min: 200, max: 500 },
+  { label: "500m+", min: 501, max: Infinity },
+];
+
+const STAR_OPTIONS = [3, 4, 5] as const;
 
 function HotelGrid({
   title,
@@ -21,6 +36,9 @@ function HotelGrid({
   return (
     <div>
       <h2 className="mb-3 text-[16px] font-semibold text-ink">{title}</h2>
+      {hotels.length === 0 && (
+        <p className="mb-3 text-[13px] text-body">No {title} hotels match those filters.</p>
+      )}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {hotels.map((h) => (
           <PhotoCard
@@ -69,8 +87,26 @@ export function StepHotels() {
     catalog,
   } = useBookingStore();
 
-  const makkahOptions = catalog.hotels.filter((h) => h.city === "Makkah" && h.categories.includes(category));
-  const madinahOptions = catalog.hotels.filter((h) => h.city === "Madinah" && h.categories.includes(category));
+  const [stars, setStars] = useState<number | "all">("all");
+  const [distanceBand, setDistanceBand] = useState<string>("all");
+
+  const dBand = distanceBand === "all" ? null : DISTANCE_BANDS.find((b) => b.label === distanceBand);
+
+  function matchesFilters(h: HotelDef) {
+    if (stars !== "all" && h.stars !== stars) return false;
+    if (dBand) {
+      const meters = distanceMeters(h.distance);
+      if (meters < dBand.min || meters > dBand.max) return false;
+    }
+    return true;
+  }
+
+  const makkahOptions = catalog.hotels.filter(
+    (h) => h.city === "Makkah" && h.categories.includes(category) && matchesFilters(h),
+  );
+  const madinahOptions = catalog.hotels.filter(
+    (h) => h.city === "Madinah" && h.categories.includes(category) && matchesFilters(h),
+  );
 
   return (
     <StepFrame
@@ -79,6 +115,41 @@ export function StepHotels() {
       canContinue={!!makkahHotelId && !!madinahHotelId}
     >
       <div className="space-y-8">
+        <div className="flex flex-wrap gap-3">
+          <label className="flex items-center gap-2 text-[13px] text-body">
+            <span className="shrink-0 text-muted">Hotel rating</span>
+            <select
+              value={stars}
+              onChange={(e) => setStars(e.target.value === "all" ? "all" : Number(e.target.value))}
+              aria-label="Filter hotels by star rating"
+              className="field-input h-9 w-auto py-0 pr-8"
+            >
+              <option value="all">Any rating</option>
+              {STAR_OPTIONS.map((s) => (
+                <option key={s} value={s}>
+                  {s} star
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="flex items-center gap-2 text-[13px] text-body">
+            <span className="shrink-0 text-muted">Distance</span>
+            <select
+              value={distanceBand}
+              onChange={(e) => setDistanceBand(e.target.value)}
+              aria-label="Filter hotels by distance from the Haram"
+              className="field-input h-9 w-auto py-0 pr-8"
+            >
+              <option value="all">Any distance</option>
+              {DISTANCE_BANDS.map((b) => (
+                <option key={b.label} value={b.label}>
+                  {b.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
         <HotelGrid
           title="Makkah"
           hotels={makkahOptions}

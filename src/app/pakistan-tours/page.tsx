@@ -16,15 +16,16 @@ export default async function PakistanToursPage() {
   const packages = await getPakistanTourPackages();
 
   return (
-    <PageContainer>
+    <>
       <PageIntro
         eyebrow="Tours"
         title="Pakistan Tour Packages"
         lede="From Hunza's glacial lakes to a family weekend in Murree. Filter by region, duration, price, group type or season, then open a package for the full itinerary."
         image={{ src: stock("photo-1603491656337-3b491147917c", 900, 1125), alt: "A Pakistan tour destination in the northern valleys" }}
-        className="mb-10"
       />
-      <PakistanToursBrowser packages={packages} />
-    </PageContainer>
+      <PageContainer>
+        <PakistanToursBrowser packages={packages} />
+      </PageContainer>
+    </>
   );
 }

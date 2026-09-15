@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, CheckCircle } from "@phosphor-icons/react/dist/ssr";
 import { PageContainer, PageIntro } from "@/components/site/PageIntro";
-import { Photo } from "@/components/ui/Photo";
 import { cn } from "@/lib/utils";
 
 interface ServicePageProps {
@@ -21,31 +20,13 @@ interface ServicePageProps {
 export function ServicePage({ eyebrow, title, lede, heroImage, children, cta }: ServicePageProps) {
   return (
     <>
-      <PageContainer className={heroImage ? "pb-10 sm:pb-12" : undefined}>
-        <div
-          className={
-            heroImage ? "grid items-center gap-10 lg:grid-cols-[1fr_0.8fr] lg:gap-16" : undefined
-          }
-        >
+      {heroImage ? (
+        <PageIntro eyebrow={eyebrow} title={title} lede={lede} image={heroImage} />
+      ) : (
+        <PageContainer>
           <PageIntro eyebrow={eyebrow} title={title} lede={lede} />
-          {heroImage && (
-            <div className="relative order-first lg:order-last">
-              <div
-                aria-hidden="true"
-                className="absolute -right-3 -top-3 hidden aspect-[16/10] w-full rounded-[10px] border border-hairline-firm bg-rust-700/10 sm:block sm:aspect-[4/5]"
-              />
-              <Photo
-                src={heroImage.src}
-                alt={heroImage.alt}
-                priority
-                unoptimized={heroImage.unoptimized}
-                sizes="(min-width: 1024px) 38vw, 100vw"
-                className="relative aspect-[16/10] rounded-[10px] border border-hairline sm:aspect-[4/5]"
-              />
-            </div>
-          )}
-        </div>
-      </PageContainer>
+        </PageContainer>
+      )}
 
       <section className="border-t border-hairline bg-canvas">
         <PageContainer className="py-14 sm:py-16">

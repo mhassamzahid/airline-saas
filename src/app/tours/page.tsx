@@ -16,15 +16,16 @@ export default async function ToursPage() {
   const packages = await getTourPackages();
 
   return (
-    <PageContainer>
+    <>
       <PageIntro
         eyebrow="Tours"
         title="International Tour Packages"
         lede="Guided tours across Turkey, Thailand, Dubai, Malaysia, Europe and more. Filter by country, duration, price, group type or season, then open a package for the full itinerary."
         image={{ src: stock("photo-1512453979798-5ea266f8880c", 900, 1125), alt: "A guided international tour destination" }}
-        className="mb-10"
       />
-      <ToursBrowser packages={packages} />
-    </PageContainer>
+      <PageContainer>
+        <ToursBrowser packages={packages} />
+      </PageContainer>
+    </>
   );
 }

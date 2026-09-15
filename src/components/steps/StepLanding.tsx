@@ -116,6 +116,33 @@ function PackageCard({
   );
 }
 
+function BuildOwnCard({ onSelect }: { onSelect: () => void }) {
+  return (
+    <button type="button" onClick={onSelect} className="group flex h-full w-full text-left">
+      <div className="flex w-full flex-col overflow-hidden rounded-[12px] border-2 border-dashed border-hairline-firm bg-canvas-soft transition-all hover:-translate-y-1 hover:h-shadow-md">
+        <div className="flex aspect-[4/3] w-full items-center justify-center bg-canvas-sink">
+          <Sliders size={30} className="text-rust-700" />
+        </div>
+        <div className="flex flex-1 flex-col p-4">
+          <h3 className="text-[17px] font-semibold text-ink">Build your own</h3>
+          <p className="mt-1 text-[12px] text-muted">
+            Can&apos;t find an exact match? Choose every hotel, transport option and add-on yourself.
+          </p>
+          <div className="mt-auto flex items-center justify-between border-t border-hairline-firm pt-3">
+            <div>
+              <p className="text-[11px] text-muted">Fully custom</p>
+              <p className="text-[17px] font-semibold text-ink">No fixed price</p>
+            </div>
+            <span className="flex items-center gap-1 text-[13px] font-medium text-rust-700 transition-transform group-hover:translate-x-0.5">
+              Start <ArrowRight size={13} />
+            </span>
+          </div>
+        </div>
+      </div>
+    </button>
+  );
+}
+
 export function StepLanding() {
   const { pickPackage, catalog } = useBookingStore();
   const reduce = useReducedMotion();
@@ -179,27 +206,32 @@ export function StepLanding() {
 
   return (
     <div>
-      <div className="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
-        <motion.div variants={container} initial="hidden" animate="show">
-          <motion.p variants={item} className="overline mb-3 text-muted">
-            Umrah
-          </motion.p>
-          <motion.h1 variants={item} className="max-w-[22ch] text-[38px] leading-[1.05] text-ink sm:text-[48px]">
-            Find your Umrah package
-          </motion.h1>
-          <motion.p variants={item} className="mt-3 max-w-[56ch] text-[16px] leading-relaxed text-body">
-            Filter by duration, category, hotel and price to browse ready-made packages, or build
-            your own from scratch if nothing here is an exact match. All prices are estimated until
-            confirmed by our sales team.
-          </motion.p>
-        </motion.div>
-        <Photo
-          src={HERO_IMAGE}
-          alt="Pilgrims performing Umrah at the Grand Mosque"
-          priority
-          sizes="(min-width: 1024px) 38vw, 100vw"
-          className="order-first aspect-[16/10] rounded-[12px] border border-hairline lg:order-last lg:aspect-[4/5]"
-        />
+      {/* Fills what's left of the screen below the navbar + progress rail on
+          first load, same "full screen hero" treatment as every other
+          section's page hero -- filters/results sit below the fold. */}
+      <div className="flex min-h-[calc(100dvh-160px)] items-center sm:min-h-[calc(100dvh-190px)]">
+        <div className="grid w-full items-center gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
+          <motion.div variants={container} initial="hidden" animate="show">
+            <motion.p variants={item} className="overline mb-3 text-muted">
+              Umrah
+            </motion.p>
+            <motion.h1 variants={item} className="max-w-[22ch] text-[38px] leading-[1.05] text-ink sm:text-[48px]">
+              Find your Umrah package
+            </motion.h1>
+            <motion.p variants={item} className="mt-3 max-w-[56ch] text-[16px] leading-relaxed text-body">
+              Filter by duration, category, hotel and price to browse ready-made packages, or
+              build your own from scratch if nothing here is an exact match. All prices are
+              estimated until confirmed by our sales team.
+            </motion.p>
+          </motion.div>
+          <Photo
+            src={HERO_IMAGE}
+            alt="Pilgrims performing Umrah at the Grand Mosque"
+            priority
+            sizes="(min-width: 1024px) 38vw, 100vw"
+            className="order-first aspect-[16/10] rounded-[12px] border border-hairline lg:order-last lg:aspect-[4/5]"
+          />
+        </div>
       </div>
 
       <div className="mt-8">
@@ -308,45 +340,29 @@ export function StepLanding() {
           </label>
         </div>
 
-        <p className="mt-5 text-[13px] text-muted" aria-live="polite">
-          {results.length} package{results.length === 1 ? "" : "s"}
-        </p>
-
-        {results.length > 0 ? (
-          <div className="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {results.map((p) => (
-              <PackageCard key={p.id} p={p} hotels={catalog.hotels} onSelect={() => pickPackage(p.id)} />
-            ))}
-          </div>
-        ) : (
-          <div className="mt-3 flex flex-col items-center gap-4 rounded-[10px] border border-dashed border-hairline-firm bg-canvas-soft px-6 py-16 text-center">
-            <p className="text-[15px] font-medium text-ink">No packages match those filters</p>
-            <p className="max-w-[40ch] text-[13px] text-body">
-              Try different filters, clear them, or build your own package below.
-            </p>
-            {hasFilters && (
-              <Button variant="secondary" size="sm" onClick={clearFilters}>
-                <X size={14} />
-                Clear filters
-              </Button>
-            )}
-          </div>
+        <div className="mt-5 flex items-center justify-between gap-3">
+          <p className="text-[13px] text-muted" aria-live="polite">
+            {results.length} package{results.length === 1 ? "" : "s"}
+          </p>
+          {results.length === 0 && hasFilters && (
+            <Button variant="secondary" size="sm" onClick={clearFilters}>
+              <X size={14} />
+              Clear filters
+            </Button>
+          )}
+        </div>
+        {results.length === 0 && (
+          <p className="mt-1 text-[13px] text-body">
+            No packages match those filters — try different filters, clear them, or build your own
+            below.
+          </p>
         )}
 
-        <div className="mt-10 flex flex-col items-start gap-4 rounded-[12px] border-2 border-dashed border-hairline-firm bg-canvas-soft p-6 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-3">
-            <Sliders size={22} className="mt-0.5 shrink-0 text-rust-700" />
-            <div>
-              <h3 className="text-[16px] font-semibold text-ink">Can't find an exact match?</h3>
-              <p className="mt-1 text-[13px] text-body">
-                Build your own package from scratch: choose every hotel, transport option and
-                add-on yourself.
-              </p>
-            </div>
-          </div>
-          <Button variant="secondary" className="w-full shrink-0 sm:w-auto" onClick={() => pickPackage("custom")}>
-            Build your own
-          </Button>
+        <div className="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {results.map((p) => (
+            <PackageCard key={p.id} p={p} hotels={catalog.hotels} onSelect={() => pickPackage(p.id)} />
+          ))}
+          <BuildOwnCard onSelect={() => pickPackage("custom")} />
         </div>
       </div>
     </div>
