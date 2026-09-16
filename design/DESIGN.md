@@ -253,6 +253,33 @@ Two sizes, matched to the archetype:
   a "Featured this season" strip above the filtered grid, using the same card
   shape as the grid below it.
 
+### Loading states (`src/components/ui/Skeleton.tsx`)
+Every top-level route has a `loading.tsx` that Next streams in automatically
+while its server data resolves — never a spinner. Skeletons are built from one
+`Skeleton` primitive (`bg-canvas-sink`, `animate-pulse`, collapses to a flat
+block under `prefers-reduced-motion`) and composed into shapes that mirror the
+real layout so nothing reflows when content arrives:
+- `HeroSkeleton` — the full-screen split hero every top-level page uses (image
+  block + eyebrow/heading/lede bars). Used directly by `hajj`, `tours`,
+  `pakistan-tours`, `other-services`, `air-ticketing`, `visa-consultation`.
+- `IntroSkeleton` — the compact, no-image `PageIntro` variant (`help` and the
+  generic root fallback).
+- `PackageCardSkeleton` / `PackageGridSkeleton` — mirrors the Hajj/Tour/Umrah
+  card shape (photo, title, footer row); `umrah/loading.tsx` appends a dashed
+  "Build your own" placeholder tile to match `StepLanding`'s real grid.
+- `FilterChipsSkeleton`, `ServiceBodySkeleton` (headed sections + dark CTA
+  band, matches `ServicePage`) round out the rest.
+- `src/app/loading.tsx` (root) is the generic fallback for every route that
+  doesn't define a more specific one — dynamic detail pages, `manage`,
+  `signin`, `[...slug]`.
+
+### 404 (`src/app/not-found.tsx`)
+Full-screen like every other page hero (`min-h-[calc(100dvh-64px)]`), not the
+old top-aligned text block. A rust-100 icon badge (`Signpost`) sits above the
+`404` mono overline and heading, then a primary "Back to home" action and a
+hairline-divided list of real recovery links (Umrah, Hajj, Tours, Help) —
+a 404 should route somewhere useful, not just bounce home.
+
 ---
 
 ## 7. Layout
