@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { ArrowRight, CaretDown, Quotes } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRight, Quotes } from "@phosphor-icons/react/dist/ssr";
 import { Photo } from "@/components/ui/Photo";
 import { QuickFilterWidget } from "@/components/site/QuickFilterWidget";
 import { CinematicHero } from "@/components/site/CinematicHero";
+import { FaqAccordion } from "@/components/site/FaqAccordion";
 import { FLEET_STATS } from "@/data/fleet";
 import { stock } from "@/lib/img";
 import { getHomePage, getSiteSettings, type CmsIconTextLink, type CmsTestimonial, type CmsFaq } from "@/lib/cms";
@@ -179,7 +180,7 @@ export default async function HomePage() {
           an arbitrary fixed band. */}
       <CinematicHero items={heroPhotos} className="min-h-[calc(100dvh-64px)] sm:min-h-[calc(100dvh-96px)]">
         <p className="overline mb-3 text-on-dark/70">{hero.eyebrow}</p>
-        <h1 className="max-w-[20ch] text-[34px] leading-[1.05] text-on-dark sm:text-[44px] lg:text-[54px]">
+        <h1 className="max-w-[20ch] text-[34px] leading-[1.05] text-on-dark sm:text-[44px] lg:text-[60px]">
           {hero.heading}
         </h1>
         <p className="mt-4 max-w-[56ch] text-[15px] leading-relaxed text-on-dark/85 sm:text-[16px]">
@@ -313,22 +314,7 @@ export default async function HomePage() {
             <ArrowRight size={13} />
           </Link>
         </div>
-        <div className="mt-6 divide-y divide-hairline border-y border-hairline">
-          {faqs.map((f) => (
-            <details key={f.question} className="group py-1">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[15px] font-medium text-ink [&::-webkit-details-marker]:hidden">
-                {f.question}
-                <CaretDown
-                  size={16}
-                  className="shrink-0 text-muted transition-transform group-open:rotate-180"
-                />
-              </summary>
-              <p className="max-w-[68ch] pb-4 text-[14px] leading-relaxed text-body">
-                {f.answer}
-              </p>
-            </details>
-          ))}
-        </div>
+        <FaqAccordion faqs={faqs} className="mt-6" />
       </section>
     </>
   );

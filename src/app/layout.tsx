@@ -53,6 +53,7 @@ export default async function RootLayout({
       lang="en-GB"
       data-theme={theme}
       data-mode={dataMode}
+      data-scroll-behavior="smooth"
       className={`${GeistSans.variable} ${GeistMono.variable}`}
     >
       <body>

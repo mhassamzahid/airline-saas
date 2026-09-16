@@ -37,7 +37,7 @@ export function CinematicHero({ items, intervalMs = 5200, className, children }:
   if (!current) return null;
 
   return (
-    <div className={cn("relative flex w-full items-end overflow-hidden", className)}>
+    <div className={cn("relative flex w-full items-end overflow-hidden lg:items-center", className)}>
       <AnimatePresence initial={false}>
         <motion.div
           key={current.image}
@@ -64,7 +64,7 @@ export function CinematicHero({ items, intervalMs = 5200, className, children }:
         }}
       />
 
-      <div className="relative mx-auto w-full max-w-[1180px] px-5 pb-10 pt-16 sm:px-8 sm:pb-14">
+      <div className="relative mx-auto w-full max-w-[1180px] px-5 pb-10 pt-16 sm:px-8 sm:pb-14 lg:-translate-x-12">
         {children}
       </div>
     </div>

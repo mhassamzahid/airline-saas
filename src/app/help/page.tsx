@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { CaretDown, ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { PageContainer, PageIntro } from "@/components/site/PageIntro";
+import { FaqAccordion } from "@/components/site/FaqAccordion";
 import { getHelpPage, getSiteSettings, type CmsIconTextLink, type CmsFaq } from "@/lib/cms";
 import { resolveIcon } from "@/lib/icons";
 
@@ -113,22 +114,7 @@ export default async function HelpPage() {
       {/* FAQ */}
       <section className="mt-16">
         <h2 className="text-[24px] text-ink">Common questions</h2>
-        <div className="mt-6 divide-y divide-hairline border-y border-hairline">
-          {faqs.map((f) => (
-            <details key={f.question} className="group py-1">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[15px] font-medium text-ink [&::-webkit-details-marker]:hidden">
-                {f.question}
-                <CaretDown
-                  size={16}
-                  className="shrink-0 text-muted transition-transform group-open:rotate-180"
-                />
-              </summary>
-              <p className="max-w-[68ch] pb-4 text-[14px] leading-relaxed text-body">
-                {f.answer}
-              </p>
-            </details>
-          ))}
-        </div>
+        <FaqAccordion faqs={faqs} className="mt-6" />
       </section>
 
       {/* Disruption strip */}
