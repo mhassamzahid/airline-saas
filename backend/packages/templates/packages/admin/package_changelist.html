@@ -1,0 +1,12 @@
+{% extends "admin/change_list.html" %}
+
+{% block object-tools-items %}
+  {% if import_archetype %}
+    <li>
+      <a href="{% url 'packages_import_upload' archetype=import_archetype %}" class="button">
+        Import / export CSV
+      </a>
+    </li>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}

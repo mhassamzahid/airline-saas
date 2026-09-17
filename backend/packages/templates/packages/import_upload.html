@@ -1,0 +1,27 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<h1>Import {{ spec.label }} packages</h1>
+<p>
+  <a href="{% url 'packages_import_template' archetype=spec.key %}">Download empty template</a>
+  &middot;
+  <a href="{% url 'packages_import_current' archetype=spec.key %}">Download current packages as CSV</a>
+</p>
+
+{% if error %}
+  <p class="errornote">{{ error }}</p>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="Upload and preview" class="default">
+</form>
+
+<p>Expected columns: <code>{{ spec.csv_columns|join:", " }}</code></p>
+<p>
+  Nothing is saved on upload &mdash; the next screen shows exactly what would
+  change before anything touches the database.
+</p>
+<p><a href="{% url 'packages_import_index' %}">&larr; Back to package imports</a></p>
+{% endblock %}

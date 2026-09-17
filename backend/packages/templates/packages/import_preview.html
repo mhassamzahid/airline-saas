@@ -1,0 +1,53 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<h1>Preview: {{ spec.label }} import</h1>
+<p>
+  {{ preview.creates|length }} new, {{ preview.updates|length }} updated,
+  {{ preview.errored|length }} with errors. Nothing has been saved yet.
+</p>
+
+<form method="post" action="{% url 'packages_import_confirm' batch_id=batch.id %}" style="display:inline">
+  {% csrf_token %}
+  <input
+    type="submit"
+    value="Confirm import"
+    class="default"
+    {% if not preview.creates and not preview.updates %}disabled{% endif %}
+  >
+</form>
+<form method="post" action="{% url 'packages_import_cancel' batch_id=batch.id %}" style="display:inline">
+  {% csrf_token %}
+  <input type="submit" value="Cancel">
+</form>
+
+<table>
+  <thead>
+    <tr><th>Line</th><th>Slug</th><th>Action</th><th>Changes / errors</th></tr>
+  </thead>
+  <tbody>
+    {% for row in preview.rows %}
+      <tr>
+        <td>{{ row.line_no }}</td>
+        <td>{{ row.slug }}</td>
+        <td>{{ row.action }}</td>
+        <td>
+          {% if row.errors %}
+            <ul class="errorlist">
+              {% for e in row.errors %}<li>{{ e }}</li>{% endfor %}
+            </ul>
+          {% elif row.changed_fields %}
+            <ul>
+              {% for field, values in row.changed_fields.items %}
+                <li><strong>{{ field }}</strong>: {{ values.0|default:"—" }} &rarr; {{ values.1 }}</li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <em>No changes</em>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

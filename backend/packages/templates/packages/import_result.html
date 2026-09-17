@@ -1,0 +1,23 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<h1>{{ spec.label }} import {{ batch.get_status_display|lower }}</h1>
+
+{% if batch.result_summary %}
+  <p>
+    {{ batch.result_summary.created|length }} created,
+    {{ batch.result_summary.updated|length }} updated,
+    {{ batch.result_summary.skipped|length }} skipped.
+  </p>
+  {% if batch.result_summary.skipped %}
+    <h2>Skipped rows</h2>
+    <ul>
+      {% for s in batch.result_summary.skipped %}
+        <li>Line {{ s.line_no }} ({{ s.slug }}): {{ s.errors|join:"; " }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endif %}
+
+<p><a href="{% url 'packages_import_index' %}">&larr; Back to package imports</a></p>
+{% endblock %}

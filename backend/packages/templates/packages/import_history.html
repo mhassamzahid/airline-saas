@@ -1,0 +1,28 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<h1>Package import history</h1>
+<table>
+  <thead>
+    <tr><th>When</th><th>Archetype</th><th>By</th><th>Status</th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for b in batches %}
+      <tr>
+        <td>{{ b.uploaded_at }}</td>
+        <td>{{ b.get_archetype_display }}</td>
+        <td>{{ b.uploaded_by|default:"—" }}</td>
+        <td>{{ b.get_status_display }}</td>
+        <td>
+          {% if b.status == "pending" %}
+            <a href="{% url 'packages_import_preview' batch_id=b.id %}">Review</a>
+          {% else %}
+            <a href="{% url 'packages_import_result' batch_id=b.id %}">View result</a>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<p><a href="{% url 'packages_import_index' %}">&larr; Back to package imports</a></p>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<h1>Package CSV import</h1>
+<p>
+  Bulk-update pricing, availability and copy for existing packages, or add
+  new ones. Matched by slug: an existing slug updates that package's flat
+  fields, a new slug creates a package. Nested content (itinerary, gallery,
+  inclusions, hotel stays) isn't covered here &mdash; edit those from each
+  package's own admin page.
+</p>
+
+<table>
+  <thead>
+    <tr><th>Archetype</th><th></th><th></th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for spec in specs %}
+      <tr>
+        <td>{{ spec.label }}</td>
+        <td><a href="{% url 'packages_import_upload' archetype=spec.key %}">Upload CSV</a></td>
+        <td><a href="{% url 'packages_import_template' archetype=spec.key %}">Download template</a></td>
+        <td><a href="{% url 'packages_import_current' archetype=spec.key %}">Download current</a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Recent imports</h2>
+{% if recent_batches %}
+  <table>
+    <thead>
+      <tr><th>When</th><th>Archetype</th><th>By</th><th>Status</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for b in recent_batches %}
+        <tr>
+          <td>{{ b.uploaded_at }}</td>
+          <td>{{ b.get_archetype_display }}</td>
+          <td>{{ b.uploaded_by|default:"—" }}</td>
+          <td>{{ b.get_status_display }}</td>
+          <td>
+            {% if b.status == "pending" %}
+              <a href="{% url 'packages_import_preview' batch_id=b.id %}">Review</a>
+            {% else %}
+              <a href="{% url 'packages_import_result' batch_id=b.id %}">View result</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No imports yet.</p>
+{% endif %}
+<p><a href="{% url 'packages_import_history' %}">Full import history</a></p>
+{% endblock %}

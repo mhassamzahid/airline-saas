@@ -8,6 +8,9 @@ re-import (not built yet). Django admin gives a working "back office" in
 the meantime without inventing a throwaway UI.
 """
 
+import uuid
+
+from django.conf import settings
 from django.db import models
 
 SEASON_CHOICES = [
@@ -307,6 +310,48 @@ class TourGalleryImage(SortableChild):
 
     def __str__(self):
         return f"{self.package} — image {self.sort_order}"
+
+
+# ---------------------------------------------------------------------------
+# CSV bulk-import
+# ---------------------------------------------------------------------------
+
+class PackageImportBatch(models.Model):
+    """One uploaded CSV, tracked from upload through preview to commit (or
+    cancellation). The stored file is re-read and re-validated at both
+    preview and confirm time -- this row exists so a batch survives across
+    those requests without trusting anything round-tripped through the
+    browser, and doubles as an audit trail of who imported what and when."""
+
+    ARCHETYPE_CHOICES = [
+        ("hajj", "Hajj"),
+        ("umrah", "Umrah"),
+        ("tours", "International Tours"),
+        ("pakistan-tours", "Pakistan Tours"),
+    ]
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("committed", "Committed"),
+        ("cancelled", "Cancelled"),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    archetype = models.CharField(max_length=20, choices=ARCHETYPE_CHOICES)
+    csv_file = models.FileField(upload_to="package_imports/%Y/%m/")
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+",
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
+    committed_at = models.DateTimeField(null=True, blank=True)
+    result_summary = models.JSONField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-uploaded_at"]
+        verbose_name_plural = "Package import batches"
+
+    def __str__(self):
+        return f"{self.get_archetype_display()} import {self.uploaded_at:%Y-%m-%d %H:%M} ({self.status})"
 
 
 # ---------------------------------------------------------------------------
