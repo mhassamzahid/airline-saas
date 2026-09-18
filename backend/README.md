@@ -4,11 +4,11 @@ The static-content half of the [CMS Architecture Plan](../design/DESIGN.md) --
 Django + Wagtail, managing the site's editable copy (homepage sections, the
 three service pages, the help page, footer text) behind a read-only JSON API.
 
-**Not in this app:** the listings engine (CSV/XLSX product upload, diff/preview/
-confirm flow) and the Next.js frontend integration are separate, not-yet-built
-pieces of the plan. This backend runs standalone; the live site at the repo
-root still reads its own static `src/data/*.ts` files and doesn't call this
-API yet.
+Package content (Hajj/Umrah/International Tours/Pakistan Tours) lives in a
+separate `packages` app, outside the Wagtail page tree -- see
+[Packages &amp; CSV import](#packages--csv-import) below. The Next.js frontend
+at the repo root reads both this CMS's content API and the packages API,
+falling back to its own hardcoded copy if this backend isn't running.
 
 ## Requirements
 
@@ -66,8 +66,10 @@ export DJANGO_SETTINGS_MODULE=halcyon.settings.dev
 python manage.py runserver
 ```
 
-- Admin: <http://127.0.0.1:8000/admin/>
+- Wagtail admin (pages, settings, help): <http://127.0.0.1:8000/admin/>
+- Django admin (packages, package CSV import): <http://127.0.0.1:8000/django-admin/>
 - Content API: <http://127.0.0.1:8000/api/v2/pages/>
+- Packages API: <http://127.0.0.1:8000/api/packages/{umrah,hajj,tours,pakistan-tours}/>
 
 ## Making a schema change
 
@@ -138,3 +140,71 @@ blank settings pages. Run `python manage.py seed_nav` to copy that built-in
 nav into the CMS as editable entries -- it only fills fields that are still
 empty, so it's safe to re-run and won't overwrite anything you've since
 edited.
+
+## Packages & CSV import
+
+Hajj, Umrah, International Tours and Pakistan Tours packages live in the
+`packages` app -- a plain (non-Wagtail) Django app, since this data isn't
+managed through the CMS page tree. It's edited two ways:
+
+- **Django admin** (`/django-admin/`, under "Packages"): full editing,
+  including nested content -- itinerary steps, photo galleries,
+  inclusions/exclusions, hotel stays, Umrah's hotel/category/room/transport
+  catalog. This is the *only* place to edit that nested content.
+- **CSV bulk import** (below): fast bulk edits to the flat, frequently-changed
+  fields (pricing, availability, copy, dates) across many packages at once.
+
+Both read/write the same tables, so either can be used for any single
+package -- CSV import is for bulk changes, admin is for everything else.
+
+### Where to upload a CSV
+
+1. Log into `/django-admin/` with a staff account.
+2. Go to <http://127.0.0.1:8000/packages/import/> directly, **or** open any
+   package changelist (e.g. Packages -> Tour packages) and click the
+   **"Import / export CSV"** button top-right.
+3. Pick the archetype, then **"Download current packages as CSV"** to get a
+   correctly-formatted starting point (or "Download empty template" for a
+   blank one), edit it, and upload it back.
+
+Uploading never saves anything immediately: the next screen previews exactly
+what would change -- new rows, updated rows with each field's old value next
+to the new one, and any per-row validation errors -- before you click
+"Confirm import". Every import is also logged (who, when, what happened) at
+Packages -> "Package import batches".
+
+### Matching & scope
+
+Each CSV row is matched to a package by **`slug`**: an existing slug updates
+that package's flat fields, a new slug creates one. Nothing is ever deleted
+by a CSV upload, and a package's nested content (itinerary/gallery/
+inclusions/hotel stays/group types) is never touched by an import even when
+its flat fields change -- keep editing that in admin as before.
+
+### CSV columns per archetype
+
+All four start with `slug` (required, the match/upsert key). `*_slug`
+columns reference another model's `slug` field and must already exist.
+
+| Archetype | Columns |
+|---|---|
+| **Hajj** | `slug, name, package_type, strap, blurb, image_url, nights, from_price_gbp, quota_text, application_deadline, transport_text, meals_text, guide_text` |
+| **International Tours** | `slug, name, country_slug, strap, blurb, image_url, duration_days, from_price_gbp, season, featured` |
+| **Pakistan Tours** | `slug, name, region_slug, strap, blurb, image_url, duration_days, from_price_gbp, season, featured, card_tag` |
+| **Umrah** | `slug, name, strap, blurb, image_url, category_slug, duration_days, makkah_hotel_slug, madinah_hotel_slug, room_sharing_slug, transport_tier_slug, season, from_price_gbp, popular` |
+
+Field notes:
+
+- **`package_type`** (Hajj): `Government Scheme` / `Private Economy` / `Private Premium` (case-insensitive).
+- **`season`** (Tours/Pakistan Tours/Umrah): `Ramadan` / `Winter` / `Spring` / `Summer` / `Autumn` / `Year-round`.
+- **`card_tag`** (Pakistan Tours, optional): `Family` / `Honeymoon` / `Group`, or blank.
+- **`featured`** / **`popular`**: `true`/`false` (also accepts `yes`/`no`, `1`/`0`; blank = `false`).
+- **`country_slug`** / **`region_slug`**: must match an existing `TourCountry` / `PakistanRegion` slug.
+- **Umrah's `*_slug` columns**: must match existing `UmrahCategory` / `UmrahHotel` / `UmrahRoomSharingOption` /
+  `UmrahTransportTier` slugs. `makkah_hotel_slug` must be a hotel whose city is Makkah, and
+  `madinah_hotel_slug` one whose city is Madinah -- an importer-level check beyond what the schema itself enforces.
+
+The importer engine (`packages/importer.py`) is the source of truth if this
+list and `models.py` ever drift -- every field it validates reuses the
+model's own `full_clean()`, so a rejected value's error message always names
+the exact valid options.

@@ -101,8 +101,8 @@ export async function Footer({
           <p>{legalLine}</p>
           <div className="flex gap-4">
             <Link href="/privacy-policy" className="hover:text-on-dark">Privacy</Link>
-            <Link href="/help" className="hover:text-on-dark">Cookies</Link>
-            <Link href="/help" className="hover:text-on-dark">Conditions of carriage</Link>
+            <Link href="/privacy-policy#cookies" className="hover:text-on-dark">Cookies</Link>
+            <Link href="/terms-of-service" className="hover:text-on-dark">Conditions of carriage</Link>
           </div>
         </div>
       </div>

@@ -1,0 +1,16 @@
+import type { MetadataRoute } from "next";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: {
+      userAgent: "*",
+      allow: "/",
+      // Sign-in is a front-end-only prototype screen, not a real account
+      // area -- nothing to index and no reason to send crawl budget there.
+      disallow: ["/signin"],
+    },
+    sitemap: `${SITE_URL}/sitemap.xml`,
+  };
+}

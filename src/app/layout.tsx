@@ -8,16 +8,30 @@ import { getSiteSettings, getHeaderSettings } from "@/lib/cms";
 
 const LIGHT_BG = "#f7f6f3";
 const DARK_BG = "#1e2123";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { site_title, favicon_url } = await getSiteSettings();
+  const description =
+    "An independent long-haul airline flying from London Gatwick, Manchester and Edinburgh. Plan a trip step by step, with the price in view the whole way.";
   return {
+    metadataBase: new URL(SITE_URL),
     title: {
       default: site_title,
       template: `%s · ${site_title}`,
     },
-    description:
-      "An independent long-haul airline flying from London Gatwick, Manchester and Edinburgh. Plan a trip step by step, with the price in view the whole way.",
+    description,
+    openGraph: {
+      siteName: site_title,
+      title: site_title,
+      description,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: site_title,
+      description,
+    },
     ...(favicon_url ? { icons: { icon: favicon_url } } : {}),
   };
 }
