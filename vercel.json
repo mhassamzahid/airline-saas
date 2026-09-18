@@ -27,7 +27,8 @@
       "installCommand": "npm install"
     },
     "backend": {
-      "root": "backend"
+      "root": "backend",
+      "entrypoint": "halcyon.wsgi:application"
     }
   },
   "rewrites": [
