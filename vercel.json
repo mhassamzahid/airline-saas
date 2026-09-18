@@ -32,15 +32,15 @@
     }
   },
   "rewrites": [
-    { "source": "/django-admin/(.*)", "destination": { "type": "service", "service": "backend" } },
-    { "source": "/admin/(.*)", "destination": { "type": "service", "service": "backend" } },
-    { "source": "/documents/(.*)", "destination": { "type": "service", "service": "backend" } },
-    { "source": "/api/v2/(.*)", "destination": { "type": "service", "service": "backend" } },
-    { "source": "/api/packages/(.*)", "destination": { "type": "service", "service": "backend" } },
-    { "source": "/packages/(.*)", "destination": { "type": "service", "service": "backend" } },
+    { "source": "/django-admin/:match*", "destination": { "type": "service", "service": "backend" } },
+    { "source": "/admin/:match*", "destination": { "type": "service", "service": "backend" } },
+    { "source": "/documents/:match*", "destination": { "type": "service", "service": "backend" } },
+    { "source": "/api/v2/:match*", "destination": { "type": "service", "service": "backend" } },
+    { "source": "/api/packages/:match*", "destination": { "type": "service", "service": "backend" } },
+    { "source": "/packages/:match*", "destination": { "type": "service", "service": "backend" } },
     { "source": "/search", "destination": { "type": "service", "service": "backend" } },
-    { "source": "/static/(.*)", "destination": { "type": "service", "service": "backend" } },
-    { "source": "/media/(.*)", "destination": { "type": "service", "service": "backend" } },
+    { "source": "/static/:match*", "destination": { "type": "service", "service": "backend" } },
+    { "source": "/media/:match*", "destination": { "type": "service", "service": "backend" } },
     { "source": "/(.*)", "destination": { "type": "service", "service": "frontend" } }
   ]
 }
