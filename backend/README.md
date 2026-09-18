@@ -71,6 +71,37 @@ python manage.py runserver
 - Content API: <http://127.0.0.1:8000/api/v2/pages/>
 - Packages API: <http://127.0.0.1:8000/api/packages/{umrah,hajj,tours,pakistan-tours}/>
 
+## Deploying to production
+
+Use `DJANGO_SETTINGS_MODULE=halcyon.settings.production`, which requires two
+env vars `dev.py` hardcodes for you locally:
+
+| Variable | Notes |
+|---|---|
+| `SECRET_KEY` | Required -- boots fail immediately (a clear `KeyError`) if it's missing, rather than silently falling back to the insecure dev key. Generate one with `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"`. |
+| `ALLOWED_HOSTS` | Comma-separated hostnames. When deployed as a Vercel Service alongside the Next.js frontend (see the repo root's `vercel.json` and its README), the shared production domain is trusted automatically via Vercel's own `VERCEL_PROJECT_PRODUCTION_URL`/`VERCEL_URL`, so this can usually be left empty there. |
+| `DATABASE_URL` | Required in practice for anything beyond a quick test -- see the note below. |
+
+**SQLite and local media don't survive a serverless deployment.** Without
+`DATABASE_URL` set, this falls back to a local `db.sqlite3` file, and Wagtail
+image uploads / CSV import files default to local disk under `MEDIA_ROOT`.
+Both assume a persistent, writable filesystem that a platform like Vercel
+Functions doesn't provide (each invocation can get a fresh, ephemeral
+filesystem). For a real deployment:
+
+- Set `DATABASE_URL` to a real hosted Postgres (a Vercel Postgres/Neon
+  integration, or any external Postgres) -- already fully wired up via
+  `dj-database-url`, no code change needed.
+- For uploaded media (Wagtail images, CSV import files), add
+  [`django-storages`](https://django-storages.readthedocs.io/) with an
+  external bucket (S3, Vercel Blob, Cloudflare R2, etc.) and point
+  `DEFAULT_FILE_STORAGE` at it. Not wired up yet -- do this before relying on
+  file uploads in production. Static assets (CSS/JS/admin styling) aren't
+  affected by this; those are collected at build time and don't need it.
+
+See the repo root [`README.md`](../README.md#deploying-vercel) for deploying
+this alongside the Next.js frontend as two Vercel Services in one project.
+
 ## Making a schema change
 
 Whenever you add or change a model field (in `home/models.py`,

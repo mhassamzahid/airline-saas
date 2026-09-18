@@ -63,19 +63,48 @@ the production site URL.
 
 ## Deploying (Vercel)
 
-`vercel.json` sets the framework, security headers, and static-asset cache
-headers. Before deploying, set these as **Vercel project environment
-variables** (not in `vercel.json`, since it's committed to git):
+This repo deploys as **two Vercel Services in one project** — the Next.js
+frontend (repo root) and the Django backend (`backend/`) — sharing a single
+domain, defined in [`vercel.json`](./vercel.json). Vercel's importer
+auto-detects this monorepo shape and offers a "Services" application preset;
+`vercel.json` here already has both services and the routing wired up, so
+you don't need to accept whatever it auto-generates.
+
+**How the routing works:** everything under `/django-admin/*`, `/admin/*`,
+`/documents/*`, `/api/v2/*`, `/api/packages/*`, `/packages/*` (the CSV
+import tool), `/search`, `/static/*` and `/media/*` routes to the `backend`
+service; every other path routes to `frontend`. (If you've only seen
+Vercel's auto-generated `/api/backend/*` rewrite template — that's a generic
+placeholder, not this project's actual URL scheme, so it's been replaced
+with the real one above.)
+
+Because both services share one domain, `src/lib/site.ts` resolves the
+backend's origin and this site's own URL automatically from Vercel's
+built-in `VERCEL_PROJECT_PRODUCTION_URL`/`VERCEL_URL` env vars — **you don't
+need to hand-type your Vercel domain into `CMS_API_URL`/`PACKAGES_API_URL`/
+`NEXT_PUBLIC_SITE_URL`** for this same-project setup. Only set those
+explicitly if you're overriding the default (e.g. hosting the backend on a
+separate service elsewhere).
+
+Set these as **Vercel project environment variables**, scoped to the
+`backend` service (Project Settings → Environment Variables):
 
 | Variable | Purpose |
 |---|---|
-| `CMS_API_URL` | The deployed backend's Wagtail content API (defaults to `http://127.0.0.1:8000/api/v2`, which only works locally) |
-| `PACKAGES_API_URL` | The deployed backend's package-catalog API (defaults to `http://127.0.0.1:8000/api/packages`) |
-| `NEXT_PUBLIC_SITE_URL` | This site's real production URL — used for `metadataBase`/OpenGraph tags, `sitemap.xml` and `robots.txt` |
+| `DJANGO_SETTINGS_MODULE` | `halcyon.settings.production` |
+| `SECRET_KEY` | Required — see `backend/README.md#deploying-to-production` for how to generate one |
+| `DATABASE_URL` | A real hosted Postgres — SQLite doesn't persist on a serverless filesystem. See `backend/README.md` for the caveat on media/file uploads too |
 
-The Django backend itself isn't a Next.js app and doesn't deploy to Vercel —
-host it separately (Railway/Render/Fly/a VM) and point the two API URLs at
-it. Without a reachable backend, the site still works using its built-in
+Optional, on the `frontend` service, only if overriding the same-domain
+defaults above:
+
+| Variable | Purpose |
+|---|---|
+| `CMS_API_URL` | An external backend's Wagtail content API, e.g. `https://your-backend.example.com/api/v2` |
+| `PACKAGES_API_URL` | An external backend's package-catalog API |
+| `NEXT_PUBLIC_SITE_URL` | Override this site's canonical URL (custom domain, etc.) |
+
+Without a reachable backend at all, the site still works using its built-in
 fallback content, just without live package/CMS edits.
 
 ## Pages

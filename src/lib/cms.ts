@@ -5,7 +5,9 @@
  * than the page crashing because a local dev server isn't up.
  */
 
-const CMS_API_URL = process.env.CMS_API_URL ?? "http://127.0.0.1:8000/api/v2";
+import { getBackendOrigin } from "@/lib/site";
+
+const CMS_API_URL = process.env.CMS_API_URL ?? `${getBackendOrigin()}/api/v2`;
 
 async function fetchCms<T>(path: string): Promise<T | null> {
   try {

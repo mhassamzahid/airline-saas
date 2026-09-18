@@ -1,8 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "nextjs",
-  "buildCommand": "next build",
-  "installCommand": "npm install",
   "cleanUrls": true,
   "trailingSlash": false,
   "headers": [
@@ -21,5 +18,28 @@
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     }
+  ],
+  "services": {
+    "frontend": {
+      "root": ".",
+      "framework": "nextjs",
+      "buildCommand": "next build",
+      "installCommand": "npm install"
+    },
+    "backend": {
+      "root": "backend"
+    }
+  },
+  "rewrites": [
+    { "source": "/django-admin/(.*)", "destination": { "type": "service", "service": "backend" } },
+    { "source": "/admin/(.*)", "destination": { "type": "service", "service": "backend" } },
+    { "source": "/documents/(.*)", "destination": { "type": "service", "service": "backend" } },
+    { "source": "/api/v2/(.*)", "destination": { "type": "service", "service": "backend" } },
+    { "source": "/api/packages/(.*)", "destination": { "type": "service", "service": "backend" } },
+    { "source": "/packages/(.*)", "destination": { "type": "service", "service": "backend" } },
+    { "source": "/search", "destination": { "type": "service", "service": "backend" } },
+    { "source": "/static/(.*)", "destination": { "type": "service", "service": "backend" } },
+    { "source": "/media/(.*)", "destination": { "type": "service", "service": "backend" } },
+    { "source": "/(.*)", "destination": { "type": "service", "service": "frontend" } }
   ]
 }

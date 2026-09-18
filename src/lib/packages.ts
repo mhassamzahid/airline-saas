@@ -28,8 +28,9 @@ import {
 import { HAJJ_PACKAGES, type HajjPackage } from "@/data/hajj";
 import { TOUR_PACKAGES, type TourPackage } from "@/data/tours";
 import { PAKISTAN_TOUR_PACKAGES, type PakistanTourPackage } from "@/data/pakistan-tours";
+import { getBackendOrigin } from "@/lib/site";
 
-const PACKAGES_API_URL = process.env.PACKAGES_API_URL ?? "http://127.0.0.1:8000/api/packages";
+const PACKAGES_API_URL = process.env.PACKAGES_API_URL ?? `${getBackendOrigin()}/api/packages`;
 
 async function fetchPackages<T>(path: string): Promise<T | null> {
   try {
