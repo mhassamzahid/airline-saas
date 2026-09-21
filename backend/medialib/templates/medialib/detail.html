@@ -1,0 +1,61 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+  .ml-detail { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .ml-detail img { max-width: 100%; border: 1px solid var(--hairline-color, #ddd); border-radius: 8px; background: var(--darkened-bg, #f4f4f4); }
+  .ml-detail dl { margin: 0; }
+  .ml-detail dt { font-weight: 600; margin-top: 10px; }
+  .ml-detail dd { margin: 2px 0 0; word-break: break-all; }
+  .ml-url { display: flex; gap: 8px; }
+  .ml-url input { flex: 1; min-width: 0; }
+  @media (max-width: 800px) { .ml-detail { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<p><a href="{% url 'medialib_library' %}">&larr; Media library</a></p>
+<h1>{{ asset.original_name }}</h1>
+
+<div class="ml-detail">
+  <div><img src="{{ asset.url }}" alt="{{ asset.original_name }}"></div>
+  <div>
+    <dl>
+      <dt>Public URL</dt>
+      <dd class="ml-url">
+        <input type="text" readonly value="{{ asset.url }}" id="ml-url" onclick="this.select()">
+        <button type="button" class="button" id="ml-copy">Copy</button>
+      </dd>
+      <dt>Type</dt><dd>{{ asset.content_type }}</dd>
+      <dt>Dimensions</dt><dd>{{ asset.dimensions }}</dd>
+      <dt>Size</dt><dd>{{ asset.human_size }}</dd>
+      <dt>Uploaded</dt><dd>{{ asset.uploaded_at }}{% if asset.uploaded_by %} by {{ asset.uploaded_by }}{% endif %}</dd>
+      <dt>Storage key</dt><dd><code>{{ asset.key }}</code></dd>
+      <dt>Used by</dt>
+      <dd>
+        {% if usages %}
+          <ul>
+            {% for u in usages %}<li>{{ u.kind }}: <a href="{{ u.url }}">{{ u.name }}</a></li>{% endfor %}
+          </ul>
+        {% else %}
+          Nothing in the package content points at this image.
+        {% endif %}
+      </dd>
+    </dl>
+    <form method="post" action="{% url 'medialib_delete' %}" style="margin-top:20px">
+      {% csrf_token %}
+      <input type="hidden" name="ids" value="{{ asset.id }}">
+      <input type="submit" value="Delete this image" class="deletelink">
+    </form>
+  </div>
+</div>
+
+<script>
+  document.getElementById('ml-copy').addEventListener('click', function () {
+    var b = this;
+    navigator.clipboard.writeText(document.getElementById('ml-url').value).then(function () {
+      b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 1400);
+    });
+  });
+</script>
+{% endblock %}

@@ -1,4 +1,5 @@
 import type { FlexBlock } from "./cms";
+import { stock } from "./img";
 
 /**
  * Sample content for every page-builder block. `/preview-blocks/[block]`
@@ -17,7 +18,7 @@ function sampleImage(photoId: string, w = 1200, h = 800) {
   return {
     id: 0,
     title: "Sample image",
-    meta: { download_url: `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=${w}&h=${h}&q=70` },
+    meta: { download_url: stock(photoId, w, h) },
   };
 }
 

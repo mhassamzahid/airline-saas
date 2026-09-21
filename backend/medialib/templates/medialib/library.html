@@ -1,0 +1,155 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+  .ml-drop { border: 2px dashed var(--border-color, #ccc); border-radius: 8px; padding: 24px; text-align: center; margin: 0 0 16px; }
+  .ml-drop.is-over { background: var(--selected-row, #f6f6f6); border-color: var(--link-fg, #447e9b); }
+  .ml-progress { list-style: none; margin: 12px 0 0; padding: 0; text-align: left; font-size: 13px; }
+  .ml-progress li { padding: 3px 0; }
+  .ml-progress .is-error { color: var(--error-fg, #ba2121); }
+  .ml-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; margin: 16px 0; }
+  .ml-card { border: 1px solid var(--hairline-color, #ddd); border-radius: 8px; overflow: hidden; background: var(--body-bg, #fff); display: flex; flex-direction: column; }
+  .ml-card img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--darkened-bg, #f4f4f4); }
+  .ml-card-body { padding: 8px 10px; font-size: 12px; flex: 1; }
+  .ml-card-body a { font-weight: 600; word-break: break-word; }
+  .ml-meta { color: var(--body-quiet-color, #666); margin-top: 2px; }
+  .ml-card-actions { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px 10px; gap: 8px; }
+  .ml-pick { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+  .ml-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 12px 0; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>Media library</h1>
+<p>
+  Images stored in your Cloudflare R2 bucket. Upload one to get a public URL you can paste
+  into a package's image field (or a CSV import).
+</p>
+
+{% if not r2_enabled %}
+  <p class="errornote">
+    R2 storage isn't configured on this server, so uploading is disabled. Set
+    <code>R2_ACCOUNT_ID</code>, <code>R2_ACCESS_KEY_ID</code>, <code>R2_SECRET_ACCESS_KEY</code>,
+    <code>R2_BUCKET_NAME</code> and <code>R2_PUBLIC_URL</code>.
+  </p>
+{% else %}
+  <div class="ml-drop" id="ml-drop">
+    <p><strong>Drag images here</strong> or
+      <label class="button" style="display:inline-block;cursor:pointer">choose files
+        <input type="file" id="ml-file" multiple accept="image/jpeg,image/png,image/webp,image/avif" hidden>
+      </label>
+    </p>
+    <p class="help">{{ allowed_types }}, up to {{ max_mb }} MB each.</p>
+    <ul class="ml-progress" id="ml-progress" aria-live="polite"></ul>
+  </div>
+{% endif %}
+
+<form method="get" class="ml-toolbar">
+  <input type="search" name="q" value="{{ query }}" placeholder="Search by file name">
+  <input type="submit" value="Search">
+  {% if query %}<a href="{% url 'medialib_library' %}">Clear</a>{% endif %}
+  <span class="help">{{ page.paginator.count }} image{{ page.paginator.count|pluralize }}</span>
+</form>
+
+<form method="post" action="{% url 'medialib_delete' %}" id="ml-delete-form">
+  {% csrf_token %}
+  {% if page.object_list %}
+    <div class="ml-toolbar">
+      <label class="ml-pick"><input type="checkbox" id="ml-all"> Select all on this page</label>
+      <input type="submit" value="Delete selected" class="deletelink" style="margin:0">
+    </div>
+    <div class="ml-grid">
+      {% for a in page.object_list %}
+        <div class="ml-card">
+          <a href="{% url 'medialib_detail' a.id %}"><img src="{{ a.url }}" alt="{{ a.original_name }}" loading="lazy"></a>
+          <div class="ml-card-body">
+            <a href="{% url 'medialib_detail' a.id %}">{{ a.original_name }}</a>
+            <div class="ml-meta">{{ a.dimensions }} &middot; {{ a.human_size }}</div>
+          </div>
+          <div class="ml-card-actions">
+            <label class="ml-pick"><input type="checkbox" name="ids" value="{{ a.id }}" class="ml-item"> Select</label>
+            <button type="button" class="button ml-copy" data-url="{{ a.url }}">Copy URL</button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>{% if query %}No images match "{{ query }}".{% else %}No images yet. Upload one above.{% endif %}</p>
+  {% endif %}
+</form>
+
+{% if page.has_other_pages %}
+  <p class="paginator">
+    {% if page.has_previous %}<a href="?page={{ page.previous_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}">&larr; Newer</a>{% endif %}
+    Page {{ page.number }} of {{ page.paginator.num_pages }}
+    {% if page.has_next %}<a href="?page={{ page.next_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}">Older &rarr;</a>{% endif %}
+  </p>
+{% endif %}
+
+<script>
+(function () {
+  var csrf = document.querySelector('#ml-delete-form input[name=csrfmiddlewaretoken]').value;
+
+  var all = document.getElementById('ml-all');
+  if (all) all.addEventListener('change', function () {
+    document.querySelectorAll('.ml-item').forEach(function (c) { c.checked = all.checked; });
+  });
+
+  document.querySelectorAll('.ml-copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      navigator.clipboard.writeText(btn.dataset.url).then(function () {
+        var old = btn.textContent; btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = old; }, 1400);
+      });
+    });
+  });
+
+  var drop = document.getElementById('ml-drop');
+  if (!drop) return;
+  var input = document.getElementById('ml-file');
+  var list = document.getElementById('ml-progress');
+
+  function post(url, body) {
+    return fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || 'Request failed'); return j; }); });
+  }
+
+  function put(url, file, headers, onProgress) {
+    return new Promise(function (resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('PUT', url);
+      Object.keys(headers).forEach(function (h) { xhr.setRequestHeader(h, headers[h]); });
+      xhr.upload.onprogress = function (e) { if (e.lengthComputable) onProgress(Math.round(e.loaded / e.total * 100)); };
+      xhr.onload = function () { xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error('Storage rejected the upload (' + xhr.status + ')')); };
+      xhr.onerror = function () { reject(new Error('Could not reach storage. Check the bucket\'s CORS settings.')); };
+      xhr.send(file);
+    });
+  }
+
+  function upload(file) {
+    var row = document.createElement('li');
+    row.textContent = file.name + ' ...';
+    list.appendChild(row);
+    return post('{% url "medialib_presign" %}', { filename: file.name, content_type: file.type, size: file.size })
+      .then(function (p) {
+        return put(p.upload_url, file, p.headers, function (pct) { row.textContent = file.name + ' ' + pct + '%'; })
+          .then(function () { row.textContent = file.name + ' finishing...'; return post('{% url "medialib_complete" %}', { key: p.key, original_name: file.name }); });
+      })
+      .then(function () { row.textContent = file.name + ' uploaded'; return true; })
+      .catch(function (err) { row.textContent = file.name + ': ' + err.message; row.className = 'is-error'; return false; });
+  }
+
+  function handle(files) {
+    var queue = Array.prototype.slice.call(files);
+    if (!queue.length) return;
+    Promise.all(queue.map(upload)).then(function (results) {
+      if (results.some(Boolean)) setTimeout(function () { window.location.reload(); }, results.every(Boolean) ? 600 : 2500);
+    });
+  }
+
+  input.addEventListener('change', function () { handle(input.files); input.value = ''; });
+  ['dragenter', 'dragover'].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('is-over'); }); });
+  ['dragleave', 'drop'].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove('is-over'); }); });
+  drop.addEventListener('drop', function (e) { handle(e.dataTransfer.files); });
+})();
+</script>
+{% endblock %}

@@ -89,6 +89,7 @@ urlpatterns = [
     path("api/packages/hajj/", package_views.hajj_packages_api),
     path("api/packages/tours/", package_views.tour_packages_api),
     path("api/packages/pakistan-tours/", package_views.pakistan_tour_packages_api),
+    path("packages/media/", include("medialib.urls")),
     path("packages/", include("packages.urls")),
     path("search/", search_views.search, name="search"),
 ]

@@ -92,12 +92,9 @@ filesystem). For a real deployment:
 - Set `DATABASE_URL` to a real hosted Postgres (a Vercel Postgres/Neon
   integration, or any external Postgres) -- already fully wired up via
   `dj-database-url`, no code change needed.
-- For uploaded media (Wagtail images, CSV import files), add
-  [`django-storages`](https://django-storages.readthedocs.io/) with an
-  external bucket (S3, Vercel Blob, Cloudflare R2, etc.) and point
-  `DEFAULT_FILE_STORAGE` at it. Not wired up yet -- do this before relying on
-  file uploads in production. Static assets (CSS/JS/admin styling) aren't
-  affected by this; those are collected at build time and don't need it.
+- Uploaded files go to Cloudflare R2 -- see
+  [Image storage (Cloudflare R2)](#image-storage-cloudflare-r2) below. Static
+  assets (CSS/JS/admin styling) are collected at build time and don't need it.
 
 See the repo root [`README.md`](../README.md#deploying-vercel) for deploying
 this alongside the Next.js frontend as two Vercel Services in one project.
@@ -187,6 +184,92 @@ python manage.py seed_pages       # on the target DB: creates/updates pages from
 and never deletes anything -- but it does overwrite edits made in the target's
 admin to any page in the file. Images aren't included (uploaded files live on
 local disk, not in the database).
+
+## Image storage (Cloudflare R2)
+
+Serverless hosts have no persistent disk, so uploaded files live in a
+Cloudflare R2 bucket. When the `R2_*` variables are set, R2 becomes Django's
+default file storage (Wagtail images and documents, CSV import files) and the
+**media library** is available; when they aren't, everything falls back to local
+disk under `media/`. R2 is never enabled under `manage.py test`.
+
+| Variable | Notes |
+|---|---|
+| `R2_ACCOUNT_ID` | Your Cloudflare account ID (or set `R2_ENDPOINT_URL` directly). |
+| `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` | From R2 -> Manage API tokens -> Create API token, permission **Object Read & Write**, scoped to the bucket. This is the S3-compatible key pair, not a general Cloudflare API token. |
+| `R2_BUCKET_NAME` | The bucket. |
+| `R2_PUBLIC_URL` | Where the bucket is served publicly: its `pub-….r2.dev` URL (fine for testing) or a custom domain (better for production). No trailing slash. |
+
+Put them in `backend/.env` locally and in the Vercel project's environment
+variables for production. Never commit real values.
+
+**Bucket CORS (required).** Uploads go straight from the browser to R2 with a
+short-lived signed URL, because Vercel caps request bodies at about 4.5 MB.
+The bucket must allow that cross-origin `PUT`: R2 -> your bucket -> Settings ->
+CORS policy:
+
+```json
+[
+  {
+    "AllowedOrigins": ["https://YOUR-SITE.vercel.app", "http://127.0.0.1:8000", "http://localhost:8000"],
+    "AllowedMethods": ["PUT", "GET", "HEAD"],
+    "AllowedHeaders": ["*"],
+    "MaxAgeSeconds": 3600
+  }
+]
+```
+
+### Media library
+
+Log in to `/django-admin/` as staff and open **Media library -> Images** (or go
+to `/packages/media/`). You can:
+
+- **Upload** by dragging files in or choosing them (JPEG, PNG, WebP or AVIF, up
+  to 15 MB each, several at once). Each file is checked server-side after it
+  lands: it must really be an image of an allowed type and size, or it's
+  deleted from the bucket again.
+- **Copy the public URL** of any image and paste it into a package's image
+  field (Django admin) or the `image_url` column of a CSV import.
+- **Search, select and inspect**: the detail page shows the URL, type,
+  dimensions, size, who uploaded it and when, its storage key, and which
+  package pages currently use it.
+- **Delete** one or several. A confirmation screen lists anything still using
+  the image first; deleting removes the object from the bucket permanently.
+
+Images that are already in the bucket (e.g. put there through the Cloudflare
+dashboard) can be adopted into the library with
+`python manage.py sync_media_library` (add `--prefix some/folder/` to limit
+it). Files Wagtail and the CSV importer manage themselves are never adopted.
+
+### Moving the site's placeholder photos into R2
+
+The site's own photography (package, hotel, gallery and page images) is
+currently hot-linked from Unsplash. `migrate_images_to_r2` copies each photo
+into the bucket once, at three widths (`photos/<photo-id>/640|1280|2400.webp`,
+so cards don't download full-size files), lists it in the media library, and
+rewrites the package image fields to the R2 URL. It's idempotent, so run it
+once per database:
+
+```bash
+python manage.py migrate                      # first: creates the media library tables
+python manage.py migrate_images_to_r2 --dry-run   # report only
+python manage.py migrate_images_to_r2
+```
+
+For production, run it from your machine against the production database
+exactly as you did `migrate` (export `DATABASE_URL`, `DJANGO_SETTINGS_MODULE`,
+`SECRET_KEY` and the `R2_*` variables first). It also scans the repo's `src/`
+folder for photo ids the frontend hard-codes.
+
+**Then, and only then**, set `NEXT_PUBLIC_MEDIA_URL` (the bucket's public URL)
+in the frontend's environment -- on Vercel add it and redeploy, since it's
+inlined at build time. That switches the frontend's built-in content to the R2
+copies. Setting it before the photos exist would break every image. Unset it
+to go back to Unsplash. `seed_packages` also uses the R2 copy of any photo
+that's been migrated, so re-seeding won't put the Unsplash links back.
+
+Images are served exactly as uploaded -- R2 doesn't resize -- so resize large
+photos (about 2400 px wide is plenty) before uploading.
 
 ## Packages & CSV import
 

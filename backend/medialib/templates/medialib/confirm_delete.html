@@ -1,0 +1,29 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<h1>Delete {{ items|length }} image{{ items|length|pluralize }}?</h1>
+<p>This removes {{ items|length|pluralize:"it,them" }} from the R2 bucket permanently. Any page still using an image's URL will show a broken picture.</p>
+
+<ul>
+  {% for item in items %}
+    <li style="margin-bottom:10px">
+      <a href="{% url 'medialib_detail' item.asset.id %}">{{ item.asset.original_name }}</a>
+      <span class="help">({{ item.asset.human_size }})</span>
+      {% if item.usages %}
+        <div class="errornote" style="margin-top:4px">
+          Still used by:
+          {% for u in item.usages %}<a href="{{ u.url }}">{{ u.kind }}: {{ u.name }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+        </div>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+
+<form method="post" action="{% url 'medialib_delete' %}">
+  {% csrf_token %}
+  {% for item in items %}<input type="hidden" name="ids" value="{{ item.asset.id }}">{% endfor %}
+  <input type="hidden" name="confirm" value="1">
+  <input type="submit" value="Yes, delete" class="deletelink">
+  <a href="{% url 'medialib_library' %}" class="button cancel-link">Cancel</a>
+</form>
+{% endblock %}

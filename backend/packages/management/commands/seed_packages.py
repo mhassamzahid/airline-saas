@@ -20,6 +20,13 @@ from packages.models import (
 
 
 def stock(image_id, w=1200, h=1400):
+    # Once `migrate_images_to_r2` has copied a photo into the bucket, seed with
+    # the R2 URL so re-running this command doesn't put the Unsplash link back.
+    from medialib import r2
+    from medialib.models import MediaAsset
+
+    if MediaAsset.objects.filter(key=r2.photo_key(image_id)).exists():
+        return r2.photo_url(image_id)
     return f"https://images.unsplash.com/{image_id}?auto=format&fit=crop&w={w}&h={h}&q=70"
 
 

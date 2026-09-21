@@ -3,13 +3,25 @@
  *
  * Behind Vercel Services the default /_next/image optimizer isn't reachable
  * (requests fall through to the frontend's catch-all and come back as an HTML
- * page), so every photo broke. Photos here are Unsplash URLs, and Unsplash
- * already resizes and re-encodes on demand, so ask it directly for the width
- * next/image wants, scaling `h` in step so the crop's aspect ratio is kept.
- * Anything else (e.g. CMS renditions, which are passed `unoptimized` anyway)
- * is returned untouched.
+ * page), so every photo broke. So images are sized at their source instead:
+ *
+ * - R2 copies of the placeholder photos (photos/<id>/<width>.webp) exist at a
+ *   few fixed widths; pick the smallest one that covers the width asked for.
+ * - Unsplash URLs (local dev, or photos not migrated yet) are resized by
+ *   Unsplash itself, scaling `h` in step so the crop's aspect ratio is kept.
+ * - Anything else (library uploads, CMS renditions, which are passed
+ *   `unoptimized` anyway) is returned untouched.
  */
+const R2_PHOTO = /^(.*\/photos\/photo-[\w-]+\/)\d+\.webp$/;
+const R2_WIDTHS = [640, 1280, 2400];
+
 export default function imageLoader({ src, width, quality }: { src: string; width: number; quality?: number }) {
+  const r2 = src.match(R2_PHOTO);
+  if (r2) {
+    const fit = R2_WIDTHS.find((w) => w >= width) ?? R2_WIDTHS[R2_WIDTHS.length - 1];
+    return `${r2[1]}${fit}.webp`;
+  }
+
   let url: URL;
   try {
     url = new URL(src);

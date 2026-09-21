@@ -104,6 +104,14 @@ defaults above:
 | `PACKAGES_API_URL` | An external backend's package-catalog API |
 | `NEXT_PUBLIC_SITE_URL` | Override this site's canonical URL (custom domain, etc.) |
 
+Once the photos have been copied into R2 (`backend/README.md#moving-the-sites-placeholder-photos-into-r2`),
+set `NEXT_PUBLIC_MEDIA_URL` to the bucket's public URL and redeploy so the
+frontend serves them from there.
+
+For image uploads, also set the backend's `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`,
+`R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME` and `R2_PUBLIC_URL` (and the bucket's
+CORS policy) -- see `backend/README.md#image-storage-cloudflare-r2`.
+
 Without a reachable backend at all, the site still works using its built-in
 fallback content, just without live package/CMS edits.
 

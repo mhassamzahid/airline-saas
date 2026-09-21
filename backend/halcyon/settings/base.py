@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
 
 import dj_database_url
 from dotenv import load_dotenv
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     "support",
     "flexpages",
     "packages",
+    "medialib",
     "search",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
@@ -172,6 +174,45 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
     },
 }
+
+# Cloudflare R2 (S3-compatible) for uploaded files: Wagtail images/documents,
+# CSV import files and the media library. Serverless hosts (Vercel) have no
+# persistent disk, so uploads must live off-box. R2 is enabled only when its
+# credentials are all present, so local dev without them still writes to
+# MEDIA_ROOT; and never under `manage.py test`, so tests can't touch a real
+# bucket.
+R2_ACCOUNT_ID = os.environ.get("R2_ACCOUNT_ID", "")
+R2_ENDPOINT_URL = os.environ.get("R2_ENDPOINT_URL") or (
+    f"https://{R2_ACCOUNT_ID}.r2.cloudflarestorage.com" if R2_ACCOUNT_ID else ""
+)
+R2_ACCESS_KEY_ID = os.environ.get("R2_ACCESS_KEY_ID", "")
+R2_SECRET_ACCESS_KEY = os.environ.get("R2_SECRET_ACCESS_KEY", "")
+R2_BUCKET_NAME = os.environ.get("R2_BUCKET_NAME", "")
+# Public base URL the bucket is served from (r2.dev subdomain or custom domain).
+R2_PUBLIC_URL = os.environ.get("R2_PUBLIC_URL", "").rstrip("/")
+
+R2_ENABLED = bool(
+    R2_ENDPOINT_URL and R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY and R2_BUCKET_NAME and R2_PUBLIC_URL
+) and "test" not in sys.argv
+
+if R2_ENABLED:
+    STORAGES["default"] = {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "endpoint_url": R2_ENDPOINT_URL,
+            "access_key": R2_ACCESS_KEY_ID,
+            "secret_key": R2_SECRET_ACCESS_KEY,
+            "bucket_name": R2_BUCKET_NAME,
+            "region_name": "auto",
+            "signature_version": "s3v4",
+            # Serve straight from the public bucket URL, unsigned.
+            "custom_domain": R2_PUBLIC_URL.split("://", 1)[-1],
+            "url_protocol": R2_PUBLIC_URL.split("://", 1)[0] + ":",
+            "querystring_auth": False,
+            "file_overwrite": False,
+            "default_acl": None,
+        },
+    }
 
 # Django sets a maximum of 1000 fields per form by default, but particularly complex page models
 # can exceed this limit within Wagtail's page editor.
