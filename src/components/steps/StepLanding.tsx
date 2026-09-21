@@ -116,27 +116,51 @@ function PackageCard({
   );
 }
 
+// Shows the process instead of a picture: a dark tile with a miniature of the
+// wizard's own progress rail, so it says what "build your own" involves. A flat
+// dark block can't be mistaken for a missing photo, or for a package.
+const BUILD_OWN_STEPS = ["Category", "Hotels", "Transport", "Add-ons"];
+
 function BuildOwnCard({ onSelect }: { onSelect: () => void }) {
   return (
     <button type="button" onClick={onSelect} className="group flex h-full w-full text-left">
-      <div className="flex w-full flex-col overflow-hidden rounded-[12px] border-2 border-dashed border-hairline-firm bg-canvas-soft transition-all hover:-translate-y-1 hover:h-shadow-md">
-        <div className="flex aspect-[4/3] w-full items-center justify-center bg-canvas-sink">
-          <Sliders size={30} className="text-rust-700" />
-        </div>
-        <div className="flex flex-1 flex-col p-4">
-          <h3 className="text-[17px] font-semibold text-ink">Build your own</h3>
-          <p className="mt-1 text-[12px] text-muted">
-            Can&apos;t find an exact match? Choose every hotel, transport option and add-on yourself.
+      <div className="flex w-full flex-col justify-between gap-6 rounded-[12px] border border-on-dark/10 bg-dark p-5 text-on-dark transition-all hover:-translate-y-1 hover:h-shadow-md">
+        <div>
+          <span className="inline-flex items-center gap-1 rounded-full bg-on-dark/10 px-2.5 py-1 text-[11px] font-medium">
+            <Sliders size={11} /> Custom
+          </span>
+          <h3 className="mt-4 text-[26px] font-semibold leading-[1.1] tracking-[-0.01em]">Build your own</h3>
+          <p className="mt-2 max-w-[32ch] text-[13px] leading-relaxed text-on-dark-mut">
+            Nothing quite right? You choose every step, and the price builds as you go.
           </p>
-          <div className="mt-auto flex items-center justify-between border-t border-hairline-firm pt-3">
-            <div>
-              <p className="text-[11px] text-muted">Fully custom</p>
-              <p className="text-[17px] font-semibold text-ink">No fixed price</p>
-            </div>
-            <span className="flex items-center gap-1 text-[13px] font-medium text-rust-700 transition-transform group-hover:translate-x-0.5">
-              Start <ArrowRight size={13} />
-            </span>
+          <ol className="mt-5">
+            {BUILD_OWN_STEPS.map((step, i) => (
+              <li key={step} className="relative flex items-center gap-3 py-1 text-[13px]">
+                {i < BUILD_OWN_STEPS.length - 1 && (
+                  <span aria-hidden="true" className="absolute left-[9px] top-1/2 h-full w-px bg-on-dark/20" />
+                )}
+                <span
+                  data-numeric
+                  className={cn(
+                    "relative z-10 flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-full border text-[10px]",
+                    i === 0 ? "border-rust-500 bg-rust-500 text-on-rust" : "border-on-dark/25 bg-dark text-on-dark-mut",
+                  )}
+                >
+                  {i + 1}
+                </span>
+                <span className={i === 0 ? "text-on-dark" : "text-on-dark/80"}>{step}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+        <div className="flex items-center justify-between gap-3 border-t border-on-dark/10 pt-3">
+          <div>
+            <p className="text-[11px] text-on-dark-mut">Fully custom</p>
+            <p className="text-[17px] font-semibold">No fixed price</p>
           </div>
+          <span className="inline-flex h-10 items-center gap-1.5 rounded-[10px] bg-on-dark px-4 text-[13px] font-medium text-dark transition-transform group-hover:translate-x-0.5">
+            Start <ArrowRight size={13} />
+          </span>
         </div>
       </div>
     </button>

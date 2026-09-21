@@ -29,16 +29,9 @@ export default function Loading() {
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 5 }).map((_, i) => (
+        {Array.from({ length: 6 }).map((_, i) => (
           <PackageCardSkeleton key={i} />
         ))}
-        <div className="overflow-hidden rounded-[12px] border-2 border-dashed border-hairline-firm bg-canvas-soft">
-          <Skeleton className="aspect-[4/3] w-full rounded-none bg-canvas-sink/60" />
-          <div className="p-4">
-            <Skeleton className="h-4 w-2/3" />
-            <Skeleton className="mt-2.5 h-3 w-full" />
-          </div>
-        </div>
       </div>
     </div>
   );

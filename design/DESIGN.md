@@ -253,6 +253,19 @@ Two sizes, matched to the archetype:
   a "Featured this season" strip above the filtered grid, using the same card
   shape as the grid below it.
 
+**"Build your own" tile (Umrah).** The last tile in the results grid is the
+custom-package entry point, and it is deliberately *not* a package-shaped
+photo card. An empty grey image slot beside photo tiles read as a failed image
+load, so it shows the process instead of a picture: a `--dark` block (`12px`
+radius, same grid slot as the cards, stretching to the row height) with a
+"Custom" chip, a 26px title, one line of copy, a miniature of the wizard's own
+progress rail (`1 Category / 2 Hotels / 3 Transport / 4 Add-ons`, the first
+step a filled `--rust-500` dot exactly as the real rail marks the active step,
+the rest hairline rings joined by a `1px` line), and a light "Start" button.
+Dark surfaces are otherwise reserved for the footer and CTA bands, so this is
+the one allowed exception -- keep it to one per grid. Secondary text is
+`--on-dark-mut` (>= 4.5:1 on `--dark`).
+
 ### Loading states (`src/components/ui/Skeleton.tsx`)
 Every top-level route has a `loading.tsx` that Next streams in automatically
 while its server data resolves — never a spinner. Skeletons are built from one
@@ -265,8 +278,8 @@ real layout so nothing reflows when content arrives:
 - `IntroSkeleton` — the compact, no-image `PageIntro` variant (`help` and the
   generic root fallback).
 - `PackageCardSkeleton` / `PackageGridSkeleton` — mirrors the Hajj/Tour/Umrah
-  card shape (photo, title, footer row); `umrah/loading.tsx` appends a dashed
-  "Build your own" placeholder tile to match `StepLanding`'s real grid.
+  card shape (photo, title, footer row) -- also what `umrah/loading.tsx` uses
+  for the "Build your own" slot, since that tile is photo-backed too.
 - `FilterChipsSkeleton`, `ServiceBodySkeleton` (headed sections + dark CTA
   band, matches `ServicePage`) round out the rest.
 - `src/app/loading.tsx` (root) is the generic fallback for every route that
