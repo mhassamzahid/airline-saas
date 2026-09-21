@@ -1,0 +1,792 @@
+[
+  {
+    "model": "home.HomePage",
+    "parent_slugs": [],
+    "slug": "home",
+    "title": "Home",
+    "live": true,
+    "show_in_menus": false,
+    "seo_title": "",
+    "search_description": "",
+    "fields": {
+      "hero_eyebrow": "",
+      "hero_heading": "Umrah, Hajj, and tours: one trusted place.",
+      "hero_subheading": "Build an Umrah package yourself, secure a Hajj place for the season, or browse international and Pakistan tours, then track the price the whole way through.",
+      "body": [
+        {
+          "id": "6649bff9-08c9-464c-84c1-ecad6d4c84b5",
+          "type": "category_cards",
+          "value": [
+            {
+              "body": "Package, dates, cabin and extras: a few steps, price in view the whole way.",
+              "href": "/umrah",
+              "image": null,
+              "label": "Umrah",
+              "icon_name": "",
+              "action_label": ""
+            },
+            {
+              "body": "Fixed, quota'd packages for the season. Browse what's included and request a place.",
+              "href": "/hajj",
+              "image": null,
+              "label": "Hajj",
+              "icon_name": "",
+              "action_label": ""
+            },
+            {
+              "body": "Guided tour packages across Turkey, Thailand, Dubai and more, filterable by country, price and season.",
+              "href": "/tours",
+              "image": null,
+              "label": "International Tours",
+              "icon_name": "",
+              "action_label": ""
+            },
+            {
+              "body": "Domestic tour packages across Hunza, Swat, Murree and more, filterable by region and price.",
+              "href": "/pakistan-tours",
+              "image": null,
+              "label": "Pakistan Tours",
+              "icon_name": "",
+              "action_label": ""
+            }
+          ]
+        },
+        {
+          "id": "16cfb9d2-0349-4f67-aad8-9e3a36f212c2",
+          "type": "stats",
+          "value": [
+            {
+              "label": "Aircraft in service",
+              "figure": "25"
+            },
+            {
+              "label": "Average fleet age",
+              "figure": "4.2 yrs"
+            },
+            {
+              "label": "Destinations",
+              "figure": "10"
+            },
+            {
+              "label": "On-time within 15 min",
+              "figure": "84.6%"
+            }
+          ]
+        },
+        {
+          "id": "18fa8ab6-f13b-4dc1-a889-ca0fe84a998c",
+          "type": "highlights",
+          "value": [
+            {
+              "body": "Document checks & tracking",
+              "href": "/visa-consultation",
+              "image": null,
+              "label": "Visa Consultation",
+              "icon_name": "IdentificationCard",
+              "action_label": ""
+            },
+            {
+              "body": "Changes to a ticket you hold",
+              "href": "/air-ticketing",
+              "image": null,
+              "label": "Air Ticketing",
+              "icon_name": "Ticket",
+              "action_label": ""
+            },
+            {
+              "body": "Insurance, meet & greet, more",
+              "href": "/other-services",
+              "image": null,
+              "label": "Other Services",
+              "icon_name": "Wrench",
+              "action_label": ""
+            },
+            {
+              "body": "Seats, bags, changes",
+              "href": "/manage",
+              "image": null,
+              "label": "Manage your trip",
+              "icon_name": "ClipboardText",
+              "action_label": ""
+            }
+          ]
+        },
+        {
+          "id": "5a14afc3-9542-4cb2-b145-928759f1b7e0",
+          "type": "testimonials",
+          "value": [
+            {
+              "name": "Amina R.",
+              "quote": "The package price didn't move between building it and paying for it. First time that's happened with an Umrah booking for us.",
+              "detail": "Standard Umrah, LGW departure"
+            },
+            {
+              "name": "Yusuf M.",
+              "quote": "Applied for our Hajj place through the Government Scheme. Clear deadline, clear quota, no surprises on what was included.",
+              "detail": "Government Scheme Hajj"
+            },
+            {
+              "name": "Sana K.",
+              "quote": "Booked the Swat Valley retreat for the whole family and had a visa question answered within a day through Visa Consultation. Made the whole thing much less stressful.",
+              "detail": "Pakistan Tours"
+            }
+          ]
+        },
+        {
+          "id": "0a090c9a-b961-4da8-9538-8a2cf753a35a",
+          "type": "faqs",
+          "value": [
+            {
+              "answer": "Every tier includes flights to Jeddah, hotels in both Makkah and Madinah, and visa processing. Higher tiers add closer hotels, fewer nights, and more personal support.",
+              "question": "What's included in an Umrah package?"
+            },
+            {
+              "answer": "Open the package closest to your group size on the Hajj page and send an inquiry. Places are quota'd by season, so earlier applications have more choice.",
+              "question": "How do I apply for a Hajj place?"
+            },
+            {
+              "answer": "Yes, Visa Consultation checks your documents, tracks your application, and flags anything missing before it becomes a problem at the airport.",
+              "question": "Can you help with my visa?"
+            },
+            {
+              "answer": "Yes, nonstop to Lahore, Karachi and Islamabad from our UK bases. Browse them on Pakistan Tours.",
+              "question": "Do you fly to Pakistan?"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "model": "services.ServicePage",
+    "parent_slugs": [
+      "home"
+    ],
+    "slug": "visa-consultation",
+    "title": "Visa Consultation",
+    "live": true,
+    "show_in_menus": false,
+    "seo_title": "",
+    "search_description": "",
+    "fields": {
+      "eyebrow": "",
+      "lede": "Every Umrah, Hajj and tour booking needs the right paperwork in the right order. We check it before it becomes a problem at the airport.",
+      "sections": [
+        {
+          "id": "b3eb5fab-df3c-479b-acf5-5703c2128125",
+          "type": "checklist",
+          "value": {
+            "items": [
+              "Saudi Arabia — Umrah & Hajj visas",
+              "Turkey",
+              "Thailand",
+              "United Arab Emirates (Dubai)",
+              "Malaysia",
+              "Schengen Europe",
+              "Egypt",
+              "Maldives",
+              "Indonesia",
+              "Pakistan — NICOP & visit visas"
+            ],
+            "title": "Countries we cover"
+          }
+        },
+        {
+          "id": "20872326-0d40-4144-ab3a-23450479bb07",
+          "type": "steps",
+          "value": {
+            "steps": [
+              {
+                "body": "Passport, travel dates, and which package or tour you've booked, or plan to.",
+                "title": "Send your details"
+              },
+              {
+                "body": "A specialist confirms exactly what is needed for your nationality and destination.",
+                "title": "We check the requirement"
+              },
+              {
+                "body": "You get a status update at each stage, through to the visa landing in your inbox.",
+                "title": "We track it through"
+              }
+            ],
+            "title": "How it works"
+          }
+        },
+        {
+          "id": "e078cc3d-4441-4fe7-b83c-96c5c6cd7483",
+          "type": "checklist",
+          "value": {
+            "items": [
+              "A passport valid for at least 6 months beyond your return date",
+              "Two recent passport-sized photographs",
+              "A completed visa application form",
+              "Proof of travel — your booking confirmation or itinerary",
+              "Proof of accommodation for the full stay",
+              "Bank statements or proof of funds, where the destination requires them"
+            ],
+            "title": "Documents you'll need"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "model": "services.ServicePage",
+    "parent_slugs": [
+      "home"
+    ],
+    "slug": "air-ticketing",
+    "title": "Air Ticketing",
+    "live": true,
+    "show_in_menus": false,
+    "seo_title": "",
+    "search_description": "",
+    "fields": {
+      "eyebrow": "",
+      "lede": "Domestic and international flights, quoted and booked for you by a specialist — tell us your route and dates, and we'll come back with fares.",
+      "sections": [
+        {
+          "id": "222cbb0e-f93e-484a-a5a9-2238568684f7",
+          "type": "steps",
+          "value": {
+            "steps": [
+              {
+                "body": "Your route — domestic or international — preferred dates, and how many passengers.",
+                "title": "Tell us where and when"
+              },
+              {
+                "body": "A specialist checks fares across airlines and comes back with the best options for your trip.",
+                "title": "We source the fare"
+              },
+              {
+                "body": "Once you approve a fare, we issue the ticket and send your confirmation.",
+                "title": "Confirm and pay"
+              }
+            ],
+            "title": "How it works"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "model": "services.ServicePage",
+    "parent_slugs": [
+      "home"
+    ],
+    "slug": "other-services",
+    "title": "Other services",
+    "live": true,
+    "show_in_menus": false,
+    "seo_title": "",
+    "search_description": "",
+    "fields": {
+      "eyebrow": "",
+      "lede": "Smaller offerings that round out an Umrah, Hajj or tour booking. None of these need a full booking flow: just tell us what you need.",
+      "sections": [
+        {
+          "id": "c55178fd-5a1d-4c3d-8cf5-10755d169270",
+          "type": "tile_grid",
+          "value": {
+            "tiles": [
+              {
+                "body": "Medical, baggage and trip cancellation cover, arranged alongside any Umrah, Hajj or tour booking.",
+                "href": "",
+                "image": null,
+                "label": "Travel insurance",
+                "icon_name": "ShieldCheck",
+                "action_label": ""
+              },
+              {
+                "body": "Guidance on carrying and exchanging Saudi riyal, plus which airport counters carry the best rate.",
+                "href": "",
+                "image": null,
+                "label": "Currency exchange assistance",
+                "icon_name": "CurrencyGbp",
+                "action_label": ""
+              },
+              {
+                "body": "A representative waiting at Jeddah or Madinah arrivals to walk your group through immigration and baggage.",
+                "href": "",
+                "image": null,
+                "label": "Meet & greet",
+                "icon_name": "HandWaving",
+                "action_label": ""
+              },
+              {
+                "body": "Qurbani booked and confirmed on your behalf during Hajj or Dhul Hijjah, with a certificate sent to you.",
+                "href": "",
+                "image": null,
+                "label": "Qurbani arrangement",
+                "icon_name": "Package",
+                "action_label": ""
+              },
+              {
+                "body": "A printed step-by-step guide to the rites, sent ahead of departure, useful for first-time pilgrims.",
+                "href": "",
+                "image": null,
+                "label": "Umrah guide booklet",
+                "icon_name": "BookOpen",
+                "action_label": ""
+              }
+            ],
+            "title": "What's available"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "model": "support.HelpPage",
+    "parent_slugs": [
+      "home"
+    ],
+    "slug": "help",
+    "title": "Help",
+    "live": true,
+    "show_in_menus": false,
+    "seo_title": "",
+    "search_description": "",
+    "fields": {
+      "eyebrow": "Help",
+      "lede": "Most things can be sorted from Manage your trip. For everything else, here is how to reach us and what to expect.",
+      "body": [
+        {
+          "id": "2a17e13a-afe5-493c-a748-7e0b3cfa24d7",
+          "type": "channels",
+          "value": [
+            {
+              "id": "429c5771-2701-482a-8060-e209dbfa5412",
+              "type": "item",
+              "value": {
+                "body": "In the app or on web, 24 hours. Median first reply is under four minutes.",
+                "href": "/help",
+                "image": null,
+                "label": "Message us",
+                "icon_name": "ChatCircle",
+                "action_label": "Open chat"
+              }
+            },
+            {
+              "id": "7cb15929-28c8-4165-a9b8-6e2842b7d13a",
+              "type": "item",
+              "value": {
+                "body": "+44 20 7946 0100, 06:00 to 23:00 UK time. Priority line for travel within 48 hours.",
+                "href": "/help",
+                "image": null,
+                "label": "Call",
+                "icon_name": "Phone",
+                "action_label": "See numbers by country"
+              }
+            },
+            {
+              "id": "c2078f5d-329b-4886-b6dd-c1be8d0c1c46",
+              "type": "item",
+              "value": {
+                "body": "Our desks at Gatwick South, zone C, from three hours before each departure.",
+                "href": "/help",
+                "image": null,
+                "label": "At the airport",
+                "icon_name": "Lifebuoy",
+                "action_label": "Airport guide"
+              }
+            }
+          ]
+        },
+        {
+          "id": "225f1fa8-04fc-445d-a787-4cd4305c639c",
+          "type": "faqs",
+          "value": [
+            {
+              "id": "87b038c9-e452-438f-949d-b3590412a94d",
+              "type": "item",
+              "value": {
+                "answer": "It depends on your fare. Flex changes are free with only the fare difference to pay. Value changes carry a £60 fee plus any fare difference. Lite fares cannot be changed.",
+                "question": "Can I change my flight after booking?"
+              }
+            },
+            {
+              "id": "60ecf5ea-29f3-4973-8c76-1a11e57dcbb2",
+              "type": "item",
+              "value": {
+                "answer": "Every fare includes a cabin bag and a personal item. Value includes one 23kg checked bag, Flex includes two.",
+                "question": "What is included in my baggage allowance?"
+              }
+            },
+            {
+              "id": "1d92c097-ef88-46ca-8589-cd4dc12c9f0c",
+              "type": "item",
+              "value": {
+                "answer": "Value and Flex fares can choose a standard seat for free at any point after booking.",
+                "question": "When can I choose my seat?"
+              }
+            },
+            {
+              "id": "7b370741-981a-4080-91df-d5820f2ade51",
+              "type": "item",
+              "value": {
+                "answer": "You earn miles as a percentage of the fare paid: 25% on Lite, 100% on Value, 150% on Flex.",
+                "question": "How do reward miles work?"
+              }
+            },
+            {
+              "id": "854ccdf3-8eb5-4b2d-b4e0-7a248181c497",
+              "type": "item",
+              "value": {
+                "answer": "We rebook you on the next available service automatically and message you the details.",
+                "question": "What happens if my flight is delayed or cancelled?"
+              }
+            },
+            {
+              "id": "d8297320-a0b8-442c-9c78-986cea65f870",
+              "type": "item",
+              "value": {
+                "answer": "Yes, at no charge. Add it during booking or from Manage your trip at least 48 hours before departure.",
+                "question": "Do you offer assistance for reduced mobility?"
+              }
+            }
+          ]
+        }
+      ],
+      "disruption_heading": "If something goes wrong today",
+      "disruption_steps": [
+        {
+          "id": "4c250221-dd0f-4f1f-9d30-60cdeb0cb071",
+          "type": "step",
+          "value": {
+            "body": "We send rebooking options before you reach the desk.",
+            "title": "Check your messages"
+          }
+        },
+        {
+          "id": "7b1bc278-906a-462c-8b87-249065d0b6b9",
+          "type": "step",
+          "value": {
+            "body": "Pick a different flight in the same message thread.",
+            "title": "Reply to accept or change"
+          }
+        },
+        {
+          "id": "e5edc79a-8576-4843-9158-12403d3ac2f9",
+          "type": "step",
+          "value": {
+            "body": "Claim meals and transport for eligible delays from Manage your trip.",
+            "title": "Keep receipts"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "model": "flexpages.FlexiblePage",
+    "parent_slugs": [
+      "home"
+    ],
+    "slug": "pages",
+    "title": "Pages",
+    "live": true,
+    "show_in_menus": false,
+    "seo_title": "",
+    "search_description": "",
+    "fields": {
+      "body": []
+    }
+  },
+  {
+    "model": "flexpages.FlexiblePage",
+    "parent_slugs": [
+      "home",
+      "pages"
+    ],
+    "slug": "ramadan-offer",
+    "title": "Ramadan Offer",
+    "live": true,
+    "show_in_menus": false,
+    "seo_title": "",
+    "search_description": "",
+    "fields": {
+      "body": [
+        {
+          "id": "d2e3616b-e11c-42cd-a42d-686dd31b7352",
+          "type": "hero",
+          "value": {
+            "cta": {
+              "href": "/umrah",
+              "label": "See packages"
+            },
+            "image": null,
+            "eyebrow": "Limited time",
+            "heading": "Ramadan Umrah, £200 off",
+            "subheading": "Book before the 15th and travel in the last ten nights."
+          }
+        },
+        {
+          "id": "4f1e33e6-ee56-426d-a6c1-ee670fb5ed29",
+          "type": "rich_text",
+          "value": {
+            "text": "<h2>Why go now</h2><p>The last ten nights are the most sought-after of the year.</p>"
+          }
+        },
+        {
+          "id": "a57d3c18-7a27-47b4-b237-b9fd0a185d52",
+          "type": "stats",
+          "value": {
+            "items": [
+              {
+                "label": "Nights",
+                "figure": "10"
+              },
+              {
+                "label": "From",
+                "figure": "£1,299"
+              },
+              {
+                "label": "Hotels",
+                "figure": "4★"
+              },
+              {
+                "label": "Spots left",
+                "figure": "22"
+              }
+            ],
+            "heading": ""
+          }
+        },
+        {
+          "id": "46d3c836-41de-4925-ac16-550701a6dc94",
+          "type": "cta_band",
+          "value": {
+            "cta": {
+              "href": "/umrah",
+              "label": "Build my package"
+            },
+            "body": "Spots are limited and going fast.",
+            "heading": "Ready to book?"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "model": "flexpages.FlexiblePage",
+    "parent_slugs": [
+      "home"
+    ],
+    "slug": "about",
+    "title": "About",
+    "live": true,
+    "show_in_menus": false,
+    "seo_title": "",
+    "search_description": "",
+    "fields": {
+      "body": [
+        {
+          "id": "b3443153-ead6-41ac-a3cf-686af98b58e6",
+          "type": "hero",
+          "value": {
+            "cta": {
+              "href": "",
+              "label": ""
+            },
+            "image": null,
+            "eyebrow": "",
+            "heading": "About us",
+            "subheading": "A single-slug page sitting at the site root."
+          }
+        },
+        {
+          "id": "2bd03244-f532-478b-801f-a1b0eceb6604",
+          "type": "rich_text",
+          "value": {
+            "text": "<p>Anything you build here shows up at its slug. Link to it from the header, the footer, or anywhere.</p>"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "model": "flexpages.FlexiblePage",
+    "parent_slugs": [
+      "home"
+    ],
+    "slug": "contact",
+    "title": "Contact Us",
+    "live": true,
+    "show_in_menus": false,
+    "seo_title": "",
+    "search_description": "",
+    "fields": {
+      "body": [
+        {
+          "id": "46f4ab13-6992-43d2-b719-11702b8e641a",
+          "type": "contact",
+          "value": {
+            "image": null,
+            "intro": "Use this form for all general enquiries. We monitor these responses constantly during working hours.",
+            "heading": "Contact us"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "model": "flexpages.FlexiblePage",
+    "parent_slugs": [
+      "home"
+    ],
+    "slug": "privacy-policy",
+    "title": "Privacy Policy",
+    "live": true,
+    "show_in_menus": false,
+    "seo_title": "",
+    "search_description": "",
+    "fields": {
+      "body": [
+        {
+          "id": "3e9653a2-1323-47a0-ab2e-57dbaf594cd3",
+          "type": "markdown",
+          "value": {
+            "body": "# Privacy Policy\r\n\r\n**Last Updated: [Insert Date]**\r\n\r\nThis is a **dummy/placeholder Privacy Policy** intended for template, mockup, or testing purposes only. It does not constitute a real legal document and should not be used in production without review by a qualified legal professional.\r\n\r\n## 1. Introduction\r\n\r\nWelcome to [Company Name] (\"we,\" \"our,\" or \"us\"). This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website, application, or services (collectively, the \"Services\").\r\n\r\n## 2. Information We Collect\r\n\r\n### 2.1 Information You Provide\r\n- Name, email address, and contact details\r\n- Account credentials (username, password)\r\n- Payment and billing information\r\n- Any content you submit through the Services\r\n\r\n### 2.2 Information Collected Automatically\r\n- IP address and device identifiers\r\n- Browser type and operating system\r\n- Usage data (pages visited, time spent, click patterns)\r\n- Cookies and similar tracking technologies\r\n\r\n### 2.3 Information from Third Parties\r\n- Data from social media platforms if you connect your account\r\n- Information from analytics and advertising partners\r\n\r\n## 3. How We Use Your Information\r\n\r\nWe use the information we collect to:\r\n- Provide, maintain, and improve our Services\r\n- Process transactions and send related information\r\n- Send administrative information, updates, and marketing communications\r\n- Respond to comments, questions, and customer service requests\r\n- Monitor and analyze usage trends\r\n- Detect, prevent, and address technical issues or fraud\r\n\r\n## 4. How We Share Your Information\r\n\r\nWe may share your information with:\r\n- **Service providers** who perform services on our behalf\r\n- **Business partners** for joint marketing or promotional purposes\r\n- **Legal authorities** when required by law or to protect our rights\r\n- **Successors** in the event of a merger, acquisition, or sale of assets\r\n\r\nWe do not sell your personal information to third parties.\r\n\r\n## 5. Cookies and Tracking Technologies\r\n\r\nWe use cookies and similar technologies to enhance your experience, analyze usage, and deliver personalized content. You can control cookie preferences through your browser settings.\r\n\r\n## 6. Data Retention\r\n\r\nWe retain your personal information for as long as necessary to fulfill the purposes outlined in this Privacy Policy, unless a longer retention period is required by law.\r\n\r\n## 7. Data Security\r\n\r\nWe implement reasonable administrative, technical, and physical safeguards to protect your information. However, no method of transmission or storage is 100% secure, and we cannot guarantee absolute security.\r\n\r\n## 8. Your Rights and Choices\r\n\r\nDepending on your jurisdiction, you may have the right to:\r\n- Access the personal information we hold about you\r\n- Request correction or deletion of your data\r\n- Object to or restrict certain processing activities\r\n- Withdraw consent at any time\r\n- Request a copy of your data in a portable format\r\n\r\nTo exercise these rights, contact us at [contact email].\r\n\r\n## 9. Children's Privacy\r\n\r\nOur Services are not directed to individuals under the age of [13/16/18]. We do not knowingly collect personal information from children.\r\n\r\n## 10. International Data Transfers\r\n\r\nYour information may be transferred to, and processed in, countries other than your own. We take steps to ensure appropriate safeguards are in place.\r\n\r\n## 11. Third-Party Links\r\n\r\nOur Services may contain links to third-party websites. We are not responsible for the privacy practices of those sites.\r\n\r\n## 12. Changes to This Policy\r\n\r\nWe may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the \"Last Updated\" date.\r\n\r\n## 13. Contact Us\r\n\r\nIf you have questions about this Privacy Policy, please contact us at:\r\n\r\n**[Company Name]**\r\n[Address]\r\n[Email Address]\r\n[Phone Number]\r\n\r\n---\r\n\r\n*This document is a placeholder/dummy privacy policy generated for demonstration or development purposes. It is not legal advice and should be replaced with a policy drafted or reviewed by a licensed attorney before actual use.*"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "model": "flexpages.FlexiblePage",
+    "parent_slugs": [
+      "home"
+    ],
+    "slug": "explore",
+    "title": "Explore",
+    "live": true,
+    "show_in_menus": false,
+    "seo_title": "",
+    "search_description": "",
+    "fields": {
+      "body": [
+        {
+          "id": "fcd8bd4c-5358-4d6f-be2f-00d1c2c046e9",
+          "type": "media_text",
+          "value": {
+            "cta": {
+              "href": "/umrah",
+              "label": "Learn more"
+            },
+            "body": "<p data-block-key=\"0484r\">A short paragraph of supporting copy that sits beside the image, explaining the point in a sentence or two.</p>",
+            "image": null,
+            "heading": "Built around how people actually travel",
+            "image_position": "left"
+          }
+        },
+        {
+          "id": "ea7d7ffb-2b1f-4539-ad60-658d74e3a764",
+          "type": "feature_grid",
+          "value": {
+            "items": [
+              {
+                "id": "b1a29f73-60e0-403f-a222-a668f9818ae1",
+                "type": "item",
+                "value": {
+                  "body": "Vetted four-star stays within a short walk of the mosque.",
+                  "href": "",
+                  "image": null,
+                  "label": "Hotels near the Haram",
+                  "icon_name": "ShieldCheck",
+                  "action_label": ""
+                }
+              },
+              {
+                "id": "8bdf0d14-cd44-4d5b-b0b6-c4101652ebc5",
+                "type": "item",
+                "value": {
+                  "body": "Someone with you for the rites, not just a number to call.",
+                  "href": "",
+                  "image": null,
+                  "label": "A guide per group",
+                  "icon_name": "Lifebuoy",
+                  "action_label": ""
+                }
+              },
+              {
+                "id": "db722d3e-d083-4c71-bcfa-033e03687849",
+                "type": "item",
+                "value": {
+                  "body": "The visa is arranged as part of every package.",
+                  "href": "",
+                  "image": null,
+                  "label": "Visa handled",
+                  "icon_name": "BookOpen",
+                  "action_label": ""
+                }
+              }
+            ],
+            "heading": "What's included"
+          }
+        },
+        {
+          "id": "572c5242-0ae0-48a2-a16d-629e85ca46f9",
+          "type": "gallery",
+          "value": {
+            "images": [
+              {
+                "id": "170ef6d3-8898-4963-8130-3132940078c2",
+                "type": "item",
+                "value": null
+              }
+            ],
+            "heading": "A closer look"
+          }
+        },
+        {
+          "id": "6dbc37e9-72ff-493a-bf94-b6dbfdb3bf7a",
+          "type": "cta_band",
+          "value": {
+            "cta": {
+              "href": "/manage",
+              "label": "Get a quote"
+            },
+            "body": "Tell us your dates and group size and we'll come back with options.",
+            "heading": "Ready to start planning?"
+          }
+        },
+        {
+          "id": "c7bde318-ed62-4ca3-bdfc-3465efce3bc3",
+          "type": "testimonials",
+          "value": {
+            "items": [
+              {
+                "id": "65a4f938-3a7a-4d5f-a06a-61746a00a403",
+                "type": "item",
+                "value": {
+                  "name": "Aisha R.",
+                  "quote": "Everything was handled. We turned up and focused on the worship.",
+                  "detail": "Standard Umrah, March"
+                }
+              },
+              {
+                "id": "852e8130-a0bf-48a4-bb62-c3f2b3f5db91",
+                "type": "item",
+                "value": {
+                  "name": "Bilal K.",
+                  "quote": "The hotel really was two minutes from the Haram. That made the trip.",
+                  "detail": "Group Hajj"
+                }
+              },
+              {
+                "id": "3dcdaac5-7e7f-4d61-864d-24b2e00af6b0",
+                "type": "item",
+                "value": {
+                  "name": "Fatima S.",
+                  "quote": "Clear pricing, no surprises, and a guide who knew what he was doing.",
+                  "detail": "Ramadan Umrah"
+                }
+              }
+            ],
+            "heading": "What travellers say"
+          }
+        }
+      ]
+    }
+  }
+]

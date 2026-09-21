@@ -172,6 +172,22 @@ nav into the CMS as editable entries -- it only fills fields that are still
 empty, so it's safe to re-run and won't overwrite anything you've since
 edited.
 
+### Moving CMS pages between environments
+
+Page content is created by hand in the Wagtail admin, so it lives only in
+whichever database you edited it in. To carry it to another database (e.g.
+local -> production):
+
+```bash
+python manage.py export_pages     # writes home/seed/pages.json from the current DB
+python manage.py seed_pages       # on the target DB: creates/updates pages from that file
+```
+
+`seed_pages` matches pages by slug under their parent, so it's safe to re-run
+and never deletes anything -- but it does overwrite edits made in the target's
+admin to any page in the file. Images aren't included (uploaded files live on
+local disk, not in the database).
+
 ## Packages & CSV import
 
 Hajj, Umrah, International Tours and Pakistan Tours packages live in the
