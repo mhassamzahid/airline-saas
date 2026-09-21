@@ -1,8 +1,10 @@
 from django.urls import path
+from django.views.generic import RedirectView
 
 from . import import_views
 
 urlpatterns = [
+    path("", RedirectView.as_view(pattern_name="packages_import_index"), name="packages_index"),
     path("import/", import_views.import_index, name="packages_import_index"),
     path("import/history/", import_views.import_history, name="packages_import_history"),
     path("import/<str:archetype>/upload/", import_views.import_upload, name="packages_import_upload"),

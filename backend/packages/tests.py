@@ -245,6 +245,10 @@ class ImportViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn("/django-admin/login/", response.url)
 
+    def test_packages_root_redirects_to_import_page(self):
+        response = self.client.get("/packages/")
+        self.assertRedirects(response, reverse("packages_import_index"), fetch_redirect_response=False)
+
     def test_non_staff_is_redirected_to_login(self):
         self.client.login(username="regular", password="pw")
         response = self.client.get(reverse("packages_import_index"))
