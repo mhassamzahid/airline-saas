@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, CheckCircle } from "@phosphor-icons/react/dist/ssr";
 import { PageContainer, PageIntro } from "@/components/site/PageIntro";
+import type { HeroAbstractVariant } from "@/components/ui/HeroAbstract";
 import { cn } from "@/lib/utils";
 
 interface ServicePageProps {
@@ -8,6 +9,10 @@ interface ServicePageProps {
   title: string;
   lede: string;
   heroImage?: { src: string; alt: string; unoptimized?: boolean };
+  /** Required alongside `heroImage` -- see `PageIntro`'s `heroVariant`. */
+  heroVariant?: HeroAbstractVariant;
+  /** Real figures for the hero (see `PageIntro`'s `facts`), e.g. a count pulled from `sections`. */
+  heroFacts?: { value: string; label: string }[];
   children: React.ReactNode;
   cta?: { heading: string; body: string; label: string; href: string };
 }
@@ -17,11 +22,11 @@ interface ServicePageProps {
  * One shell, reused for every secondary offering, so a new service page is
  * new content dropped into an existing pattern rather than a one-off build.
  */
-export function ServicePage({ eyebrow, title, lede, heroImage, children, cta }: ServicePageProps) {
+export function ServicePage({ eyebrow, title, lede, heroImage, heroVariant, heroFacts, children, cta }: ServicePageProps) {
   return (
     <>
       {heroImage ? (
-        <PageIntro eyebrow={eyebrow} title={title} lede={lede} image={heroImage} />
+        <PageIntro eyebrow={eyebrow} title={title} lede={lede} image={heroImage} heroVariant={heroVariant} facts={heroFacts} />
       ) : (
         <PageContainer>
           <PageIntro eyebrow={eyebrow} title={title} lede={lede} />

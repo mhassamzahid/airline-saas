@@ -58,6 +58,7 @@ const FALLBACK_SECTIONS = [
 
 const FALLBACK_LEDE =
   "Every Umrah, Hajj and tour booking needs the right paperwork in the right order. We check it before it becomes a problem at the airport.";
+const LEAD_TIME = "2 business days";
 
 export default async function VisaConsultationPage() {
   const [cms, { site_title }] = await Promise.all([
@@ -69,6 +70,8 @@ export default async function VisaConsultationPage() {
   const lede = cms?.lede || FALLBACK_LEDE;
   const sections = cms?.sections.length ? cms.sections : FALLBACK_SECTIONS;
   const heroImageUrl = cmsRenditionUrl(cms?.hero_image ?? null);
+  const countriesSection = sections.find((s) => s.type === "checklist");
+  const stepsSection = sections.find((s) => s.type === "steps");
 
   return (
     <ServicePage
@@ -80,6 +83,12 @@ export default async function VisaConsultationPage() {
         alt: cms?.hero_image?.alt || "A world map laid out on a table",
         unoptimized: Boolean(heroImageUrl),
       }}
+      heroVariant="visa-consultation"
+      heroFacts={[
+        ...(countriesSection ? [{ value: String(countriesSection.value.items.length), label: "Countries covered" }] : []),
+        ...(stepsSection ? [{ value: String(stepsSection.value.steps.length), label: "Simple steps" }] : []),
+        { value: LEAD_TIME, label: "Typical turnaround" },
+      ]}
     >
       {sections.map((s) => {
         if (s.type === "checklist") {
@@ -100,7 +109,7 @@ export default async function VisaConsultationPage() {
       })}
 
       <ServiceSection title="Start your visa application">
-        <InquiryForm subject="Visa consultation" leadTime="2 business days" submitLabel="Start my visa application" />
+        <InquiryForm subject="Visa consultation" leadTime={LEAD_TIME} submitLabel="Start my visa application" />
       </ServiceSection>
     </ServicePage>
   );

@@ -28,7 +28,7 @@ export default async function TermsOfServicePage() {
         className="mb-4"
       />
       <p className="mb-12 max-w-[68ch] text-[13px] italic text-muted">
-        {site_title} is a design prototype, not a real airline or travel agency. This page is sample
+        {site_title} is a design prototype, not a real travel agency or travel agency. This page is sample
         legal content written for demonstration purposes and should not be relied on as an actual
         terms of service.
       </p>

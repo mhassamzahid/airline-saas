@@ -14,6 +14,7 @@ export async function generateMetadata() {
 
 export default async function PakistanToursPage() {
   const packages = await getPakistanTourPackages();
+  const regions = new Set(packages.map((p) => p.region)).size;
 
   return (
     <>
@@ -22,6 +23,11 @@ export default async function PakistanToursPage() {
         title="Pakistan Tour Packages"
         lede="From Hunza's glacial lakes to a family weekend in Murree. Filter by region, duration, price, group type or season, then open a package for the full itinerary."
         image={{ src: stock("photo-1603491656337-3b491147917c", 900, 1125), alt: "A Pakistan tour destination in the northern valleys" }}
+        heroVariant="pakistan-tours"
+        facts={[
+          { value: String(regions), label: "Regions" },
+          { value: String(packages.length), label: "Packages" },
+        ]}
       />
       <PageContainer>
         <PakistanToursBrowser packages={packages} />

@@ -30,6 +30,8 @@ const FALLBACK_SECTIONS = [
   },
 ];
 
+const LEAD_TIME = "2 business days";
+
 export default async function OtherServicesPage() {
   const [cms, { site_title }] = await Promise.all([
     getServicePage("other-services"),
@@ -40,6 +42,7 @@ export default async function OtherServicesPage() {
   const lede = cms?.lede || FALLBACK_LEDE;
   const sections = cms?.sections.length ? cms.sections : FALLBACK_SECTIONS;
   const heroImageUrl = cmsRenditionUrl(cms?.hero_image ?? null);
+  const tileSection = sections.find((s) => s.type === "tile_grid");
 
   return (
     <ServicePage
@@ -51,6 +54,11 @@ export default async function OtherServicesPage() {
         alt: cms?.hero_image?.alt || "Two colleagues at a desk, working through a service request",
         unoptimized: Boolean(heroImageUrl),
       }}
+      heroVariant="other-services"
+      heroFacts={[
+        ...(tileSection ? [{ value: String(tileSection.value.tiles.length), label: "Services available" }] : []),
+        { value: LEAD_TIME, label: "Typical response" },
+      ]}
     >
       {sections.map((s) => {
         if (s.type === "tile_grid") {
@@ -89,7 +97,7 @@ export default async function OtherServicesPage() {
       })}
 
       <ServiceSection title="Ask about any of these">
-        <InquiryForm subject="Other services" leadTime="2 business days" />
+        <InquiryForm subject="Other services" leadTime={LEAD_TIME} />
       </ServiceSection>
     </ServicePage>
   );

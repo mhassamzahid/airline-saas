@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('tagline', models.TextField(blank=True, help_text="Short description under the logo, e.g. 'An independent long-haul airline...'")),
-                ('legal_line', models.CharField(blank=True, help_text="e.g. 'Halcyon Airways Ltd. This is a design prototype, not a real airline.'", max_length=200)),
+                ('legal_line', models.CharField(blank=True, help_text="e.g. 'Halcyon Airways Ltd. This is a design prototype, not a real travel agency.'", max_length=200)),
                 ('site', models.OneToOneField(editable=False, on_delete=django.db.models.deletion.CASCADE, to='wagtailcore.site')),
             ],
             options={

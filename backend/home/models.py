@@ -187,7 +187,7 @@ class FooterSettings(BaseSiteSetting):
     legal_line = models.CharField(
         max_length=200,
         blank=True,
-        help_text="Legal-entity / copyright line. Leave blank to fall back to \"<site title> is a design prototype, not a real airline.\"",
+        help_text="Legal-entity / copyright line. Leave blank to fall back to \"<site title> is a design prototype, not a real travel agency.\"",
     )
     columns = StreamField(
         [("column", FooterColumnBlock())],

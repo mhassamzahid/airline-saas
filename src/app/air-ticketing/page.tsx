@@ -26,6 +26,7 @@ const FALLBACK_SECTIONS = [
 
 const FALLBACK_LEDE =
   "Domestic and international flights, quoted and booked for you by a specialist — tell us your route and dates, and we'll come back with fares.";
+const LEAD_TIME = "1 business day";
 
 export default async function AirTicketingPage() {
   const [cms, { site_title }] = await Promise.all([
@@ -37,6 +38,7 @@ export default async function AirTicketingPage() {
   const lede = cms?.lede || FALLBACK_LEDE;
   const sections = cms?.sections.length ? cms.sections : FALLBACK_SECTIONS;
   const heroImageUrl = cmsRenditionUrl(cms?.hero_image ?? null);
+  const stepsSection = sections.find((s) => s.type === "steps");
 
   return (
     <ServicePage
@@ -48,6 +50,11 @@ export default async function AirTicketingPage() {
         alt: cms?.hero_image?.alt || "An aircraft wing catching the light at sunset",
         unoptimized: Boolean(heroImageUrl),
       }}
+      heroVariant="air-ticketing"
+      heroFacts={[
+        ...(stepsSection ? [{ value: String(stepsSection.value.steps.length), label: "Simple steps" }] : []),
+        { value: LEAD_TIME, label: "Fare quote turnaround" },
+      ]}
     >
       {sections.map((s) => {
         if (s.type !== "steps") return null;
@@ -59,7 +66,7 @@ export default async function AirTicketingPage() {
       })}
 
       <ServiceSection title="Request a fare quote">
-        <InquiryForm subject="Air ticketing" leadTime="1 business day" submitLabel="Request a fare quote" />
+        <InquiryForm subject="Air ticketing" leadTime={LEAD_TIME} submitLabel="Request a fare quote" />
       </ServiceSection>
     </ServicePage>
   );

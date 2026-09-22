@@ -12,13 +12,16 @@ import {
   type PackageTierDef,
 } from "@/data/umrah";
 import { Photo } from "@/components/ui/Photo";
+import { HeroAbstract } from "@/components/ui/HeroAbstract";
 import { Button } from "@/components/ui/Button";
 import { stock } from "@/lib/img";
 import { formatGBP, cn } from "@/lib/utils";
 
 // Same image used as the Umrah category card on the homepage, cropped for
 // a hero -- matches the split-photo hero every other listing page runs
-// (Hajj, Tours, Pakistan Tours), rather than a bare text block.
+// (Hajj, Tours, Pakistan Tours), including the abstract backdrop (see
+// PageIntro, which this hand-rolls since it also carries the wizard's own
+// motion/stagger, not PageIntro's plain markup).
 const HERO_IMAGE = stock("photo-1513072064285-240f87fa81e8", 900, 1125);
 
 interface Band {
@@ -232,9 +235,15 @@ export function StepLanding() {
     <div>
       {/* Fills what's left of the screen below the navbar + progress rail on
           first load, same "full screen hero" treatment as every other
-          section's page hero -- filters/results sit below the fold. */}
-      <div className="flex min-h-[calc(100dvh-160px)] items-center sm:min-h-[calc(100dvh-190px)]">
-        <div className="grid w-full items-center gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
+          section's page hero -- filters/results sit below the fold.
+          Breaks out of BookingShell's max-w-[1180px] column (left-1/2 +
+          -translate-x-1/2 + w-screen, the standard full-bleed trick) so
+          HeroAbstract has the same open margin beyond the photo that every
+          other page's hero gets from PageIntro's own full-bleed wrapper --
+          without this, the shape has nowhere to sit but behind the photo. */}
+      <div className="relative left-1/2 w-screen -translate-x-1/2 flex min-h-[calc(100dvh-160px)] items-center overflow-hidden sm:min-h-[calc(100dvh-190px)]">
+        <HeroAbstract variant="umrah" />
+        <div className="relative mx-auto grid w-full max-w-[1180px] items-center gap-8 px-5 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
           <motion.div variants={container} initial="hidden" animate="show">
             <motion.p variants={item} className="overline mb-3 text-muted">
               Umrah
@@ -247,13 +256,38 @@ export function StepLanding() {
               build your own from scratch if nothing here is an exact match. All prices are
               estimated until confirmed by our sales team.
             </motion.p>
+            <motion.dl
+              variants={item}
+              className="mt-8 flex flex-wrap gap-x-8 gap-y-4 border-t border-hairline pt-6"
+            >
+              <div>
+                <dd data-numeric className="text-[22px] font-semibold text-ink">
+                  {catalog.packages.length}
+                </dd>
+                <dt className="mt-0.5 text-[12px] text-muted">Ready-made packages</dt>
+              </div>
+              <div>
+                <dd data-numeric className="text-[22px] font-semibold text-ink">
+                  {catalog.categories.length}
+                </dd>
+                <dt className="mt-0.5 text-[12px] text-muted">Categories</dt>
+              </div>
+              {catalog.packages.length > 0 && (
+                <div>
+                  <dd data-numeric className="text-[22px] font-semibold text-ink">
+                    {formatGBP(Math.min(...catalog.packages.map((p) => p.fromPriceGBP)))}
+                  </dd>
+                  <dt className="mt-0.5 text-[12px] text-muted">From</dt>
+                </div>
+              )}
+            </motion.dl>
           </motion.div>
           <Photo
             src={HERO_IMAGE}
             alt="Pilgrims performing Umrah at the Grand Mosque"
             priority
             sizes="(min-width: 1024px) 38vw, 100vw"
-            className="order-first aspect-[16/10] rounded-[12px] border border-hairline lg:order-last lg:aspect-[4/5]"
+            className="order-first aspect-[16/10] w-full rounded-[12px] border border-hairline lg:order-last lg:aspect-[4/5]"
           />
         </div>
       </div>

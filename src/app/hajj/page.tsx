@@ -3,6 +3,7 @@ import { PageContainer, PageIntro } from "@/components/site/PageIntro";
 import { HajjBrowser } from "@/components/site/HajjBrowser";
 import { getHajjPackages } from "@/lib/packages";
 import { stock } from "@/lib/img";
+import { formatGBP } from "@/lib/utils";
 
 export const metadata = {
   title: "Hajj",
@@ -12,6 +13,7 @@ export const metadata = {
 
 export default async function HajjPage() {
   const packages = await getHajjPackages();
+  const fromPriceGBP = packages.length ? Math.min(...packages.map((p) => p.fromPriceGBP)) : undefined;
 
   return (
     <>
@@ -20,6 +22,12 @@ export default async function HajjPage() {
         title="A place for the season"
         lede="Hajj allocation is genuinely limited, so it isn't a filter: it's a short list of fixed packages grouped by type, each with its own quota and application deadline. Open one to see what's included and request a place."
         image={{ src: stock("photo-1554794470-42d3cd193ecc", 900, 1125), alt: "Pilgrims at the Grand Mosque" }}
+        heroVariant="hajj"
+        facts={[
+          { value: String(packages.length), label: "Package tiers" },
+          ...(fromPriceGBP ? [{ value: formatGBP(fromPriceGBP), label: "From" }] : []),
+          { value: "Quota'd", label: "Places are limited" },
+        ]}
       />
 
       <PageContainer>

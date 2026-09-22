@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='footersettings',
             name='legal_line',
-            field=models.CharField(blank=True, help_text='Legal-entity / copyright line. Leave blank to fall back to "<site title> is a design prototype, not a real airline."', max_length=200),
+            field=models.CharField(blank=True, help_text='Legal-entity / copyright line. Leave blank to fall back to "<site title> is a design prototype, not a real travel agency."', max_length=200),
         ),
     ]

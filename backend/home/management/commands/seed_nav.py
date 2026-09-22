@@ -105,7 +105,7 @@ class Command(BaseCommand):
             footer.tagline = FALLBACK_TAGLINE
             changed.append("tagline")
         if not footer.legal_line:
-            footer.legal_line = f"{site_title} is a design prototype, not a real airline."
+            footer.legal_line = f"{site_title} is a design prototype, not a real travel agency."
             changed.append("legal_line")
         if changed:
             footer.save()

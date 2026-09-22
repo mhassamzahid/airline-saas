@@ -170,6 +170,26 @@ layers.
 
 The origin and destination drawn as a dashed great-circle arc with the real airport codes. It is data, not decoration, so use it **once**, where there is room and it means something: the `/experience` hero. Not on the booking hero, not on the confirmation (tried both, they crowd).
 
+### 4.3a Hero abstract (`<HeroAbstract variant>`)
+
+The one deliberate exception to "photography carries the warmth, not decoration": a bold rust-only line-art backdrop for every inner-page hero (Hajj, Tours, Pakistan Tours, the three service pages, the Umrah wizard's landing screen), built from `RouteArc`'s stroke/dash/dot vocabulary scaled up — not the component itself, which stays rationed to its one literal use on `/experience`. `absolute inset-0` behind the hero's content, `aria-hidden`, one accent colour throughout, line art rather than a filled gradient so it reads as drawn, not generated.
+
+Each page gets its own named `variant`, not a shared design — seven heroes back to back with one copy-pasted background read as templated, not distinct. Two elements stay identical across every variant so the pages still read as one family: a small dot grid (bottom-left) and a waypoint-dot pair (one filled, one outlined). The "big shape" differs per page, loosely tied to what that page is about:
+
+- **`hajj`** — rays converging on one point, plus two circling rings (pilgrims converging, tawaf).
+- **`umrah`** — a loose 7-node graph (assembling your own package, piece by piece).
+- **`tours`** — three crossing dashed arcs (routes on a map).
+- **`pakistan-tours`** — a jagged double ridgeline (the northern valleys, not a route).
+- **`visa-consultation`** — a scatter of rotated rectangles ("stamps").
+- **`air-ticketing`** — a single ascending line with tick marks and an arrowhead (a flight-progress line).
+- **`other-services`** — a loose scatter of small unrelated shapes (a handful of small extras).
+
+Exists because a single boxed photo beside a short lede left the hero looking bland and empty once every hero became full-screen (§7A) — tried a second layered photo + offset rust panel behind it first; that read as cluttered rather than rich, so the fix is graphic, not more photography. This is also what keeps every inner-page hero visibly distinct from the homepage's full-bleed photographic `CinematicHero` — one is a photograph, the other is a drawing, and the two are never confused for the same pattern.
+
+The homepage hero and `/manage`'s boarding pass don't use it — a hero already full of motion (`CinematicHero`) or object detail (`BoardingPass`) doesn't need a graphic layer competing with it.
+
+Needs the hero's wrapper to be full-bleed (spanning the full viewport width, not a `max-w`-constrained column) or the shape has no open margin to sit in beyond the photo and renders invisible — see `StepLanding`'s hero, which breaks out of `BookingShell`'s `max-w-[1180px]` column with the standard `relative left-1/2 w-screen -translate-x-1/2` trick for exactly this reason.
+
 ### 4.4 Boarding pass (`<BoardingPass>`)
 
 A recognisable physical object, used where the screen is about **one specific trip**: `/manage` (a live pass when the booking resolves, a dashed-border "sample" pass otherwise). Anatomy: face (wordmark, status pill, `FROM → plane → TO` in 34px mono, a passenger/cabin/flights strip, the legs), a dotted **perforation with punched-hole notches** (`overflow-hidden` container + half-off circles filled `--canvas-soft`), then the **stub** (`--canvas-soft` fill) carrying the reference, a CSS `repeating-linear-gradient` barcode, and — on the live pass — the manage actions. Keep it to this one use; it loses meaning if it becomes a generic card style.
@@ -185,6 +205,7 @@ A recognisable physical object, used where the screen is about **one specific tr
 - **Price change:** the total node does `y: -3 → 0, opacity .4 → 1` over `.25` when its value changes (keyed on the number).
 - **Selection:** `scale .985` on press (`whileTap`), border/fill transition `.18`.
 - **Reveal:** lists stagger children `.04` on first mount only (`viewport once`).
+- **Hero entrance:** every full-screen `PageIntro` hero (and Umrah's hand-rolled equivalent) staggers its eyebrow/title/lede/facts in on load — `staggerChildren .08, delayChildren .05`; each item `opacity 0→1, y 14→0, duration .5`, same ease as step change. Fires on mount (`initial`/`animate`), not on scroll — the hero is already in view on load.
 - **Reduced motion:** all of the above collapse to an instant opacity swap or nothing.
   The fare-hold countdown still ticks (it is information, not decoration).
 

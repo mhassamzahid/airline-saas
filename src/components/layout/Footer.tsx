@@ -60,7 +60,7 @@ export async function Footer({
   const tagline = cms?.tagline || FALLBACK_TAGLINE;
   // Editor can set a real legal-entity name; otherwise follows the site title.
   const legalLine =
-    cms?.legal_line || `${siteTitle} is a design prototype, not a real airline.`;
+    cms?.legal_line || `${siteTitle} is a design prototype, not a real travel agency.`;
   // Editor can fully replace the nav columns; otherwise these follow the site
   // title in the brand column, same as everywhere else on the site.
   const COLUMNS = cms?.columns.length ? cms.columns : columns(siteTitle);
