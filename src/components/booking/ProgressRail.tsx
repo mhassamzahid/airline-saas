@@ -2,12 +2,13 @@
 
 import { Check } from "@phosphor-icons/react";
 import { motion } from "motion/react";
-import { STEPS, useBookingStore } from "@/store/useBookingStore";
+import { STEPS, isPackageLocked, useBookingStore } from "@/store/useBookingStore";
 import { cn } from "@/lib/utils";
 
 export function ProgressRail() {
   const current = useBookingStore((s) => s.currentStep);
   const goTo = useBookingStore((s) => s.goTo);
+  const locked = useBookingStore(isPackageLocked);
 
   return (
     <nav aria-label="Booking progress" className="w-full">
@@ -15,14 +16,15 @@ export function ProgressRail() {
         {STEPS.map((step, i) => {
           const done = i < current;
           const active = i === current;
+          const clickable = locked ? i === 0 : i <= current;
           return (
             <li key={step.id} className="flex flex-1 items-center gap-1 last:flex-none">
               <button
-                disabled={i > current}
+                disabled={!clickable}
                 onClick={() => goTo(i)}
                 className={cn(
                   "flex shrink-0 items-center gap-2 rounded-full py-1 pr-2 pl-1 transition-colors",
-                  i <= current ? "cursor-pointer hover:bg-canvas" : "cursor-default",
+                  clickable ? "cursor-pointer hover:bg-canvas" : "cursor-default",
                 )}
               >
                 <span

@@ -41,6 +41,13 @@ const FALLBACK_CATALOG: UmrahCatalog = {
   packages: UMRAH_PACKAGES,
 };
 
+/** A fixed package is fully pre-filled, so every step but the first (where a
+ * traveller can pick a different package, or "Build your own" to unlock the
+ * rest) is closed to editing via the rail or an in-step Back button. */
+export function isPackageLocked(s: Pick<BookingState, "packageTier">): boolean {
+  return s.packageTier !== null && s.packageTier !== "custom";
+}
+
 export const STEPS: { id: StepId; label: string }[] = [
   { id: "landing", label: "Package" },
   { id: "category", label: "Category" },
@@ -155,10 +162,18 @@ const INITIAL: BookingState = {
 export const useBookingStore = create<BookingState & BookingActions>()((set, get) => ({
   ...INITIAL,
 
-  goTo: (currentStep) =>
-    set({ currentStep: Math.max(0, Math.min(STEPS.length - 1, currentStep)) }),
+  goTo: (step) =>
+    set((s) => {
+      // Locked: only the landing step (to swap packages, or go custom) and
+      // the current step itself (a no-op) are reachable.
+      if (isPackageLocked(s) && step !== 0) return {};
+      return { currentStep: Math.max(0, Math.min(STEPS.length - 1, step)) };
+    }),
   next: () => set((s) => ({ currentStep: Math.min(STEPS.length - 1, s.currentStep + 1) })),
-  back: () => set((s) => ({ currentStep: Math.max(0, s.currentStep - 1) })),
+  back: () =>
+    set((s) => ({
+      currentStep: isPackageLocked(s) ? 0 : Math.max(0, s.currentStep - 1),
+    })),
 
   pickPackage: (tier) => {
     set((s) => {
