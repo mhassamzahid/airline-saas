@@ -18,7 +18,7 @@ export function ProgressRail() {
           const active = i === current;
           const clickable = locked ? i === 0 : i <= current;
           return (
-            <li key={step.id} className="flex flex-1 items-center gap-1 last:flex-none">
+            <li key={step.id} className="flex min-w-0 flex-1 items-center gap-1">
               <button
                 disabled={!clickable}
                 onClick={() => goTo(i)}

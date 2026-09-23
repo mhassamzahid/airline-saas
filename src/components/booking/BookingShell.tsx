@@ -74,12 +74,14 @@ export function BookingShell({ catalog }: { catalog: UmrahCatalog }) {
       };
 
   return (
-    <div className="mx-auto max-w-[1180px] px-5 pt-8 pb-32 sm:px-8 lg:pb-16">
-      <div className="mb-8 overflow-x-auto no-scrollbar">
-        <div className="min-w-[720px] sm:min-w-0">
-          <ProgressRail />
+    <div className={isIntro ? "mx-auto max-w-[1180px] px-5 pb-32 sm:px-8 lg:pb-16" : "mx-auto max-w-[1180px] px-5 pt-8 pb-32 sm:px-8 lg:pb-16"}>
+      {!isIntro && (
+        <div className="mb-8 overflow-x-auto no-scrollbar">
+          <div className="min-w-[720px] sm:min-w-0">
+            <ProgressRail />
+          </div>
         </div>
-      </div>
+      )}
 
       <div
         className={

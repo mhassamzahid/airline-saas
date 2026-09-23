@@ -46,7 +46,7 @@ export default async function AirTicketingPage() {
       title={title}
       lede={lede}
       heroImage={{
-        src: heroImageUrl || stock("photo-1517479149777-5f3b1511d5ad", 900, 1125),
+        src: heroImageUrl || stock("photo-1517479149777-5f3b1511d5ad", 2000, 800),
         alt: cms?.hero_image?.alt || "An aircraft wing catching the light at sunset",
         unoptimized: Boolean(heroImageUrl),
       }}

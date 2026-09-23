@@ -87,7 +87,7 @@ export default async function HelpPage() {
         eyebrow="Help"
         title="Answers, and a person when you need one"
         lede={lede}
-        className="mb-12"
+        className="-mt-16 mb-12 sm:-mt-20"
       />
 
       {/* Channels */}

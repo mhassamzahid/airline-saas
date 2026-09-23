@@ -55,35 +55,19 @@ const Container = ({ children }: { children: React.ReactNode }) => (
 );
 
 function HeroBlock({ value }: Extract<FlexBlock, { type: "hero" }>) {
-  const img = cmsImageUrl(value.image);
+  const img = cmsImageUrl(value.image) ?? stock("photo-1436491865332-7a61a109cc05", 2000, 800);
   const cta = value.cta?.label ? value.cta : null;
   return (
-    <section className="relative overflow-hidden border-b border-hairline">
-      {img && (
-        <Photo src={img} alt="" priority className="absolute inset-0 h-full w-full">
-          <div className="absolute inset-0 bg-gradient-to-t from-dark/80 via-dark/30 to-transparent" />
-        </Photo>
-      )}
+    <section className="relative flex min-h-[340px] items-center justify-center overflow-hidden bg-dark py-16 text-center sm:min-h-[416px] sm:py-20">
+      {img && <Photo src={img} alt="" priority className="absolute inset-0 h-full w-full" />}
+      <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,18,32,.72),rgba(8,18,32,.46),rgba(8,18,32,.7))]" />
       <Container>
-        <div
-          className={`relative py-16 sm:py-24 ${img ? "text-on-dark" : ""}`}
-        >
-          {value.eyebrow && (
-            <p className={`overline mb-3 ${img ? "text-on-dark/70" : ""}`}>{value.eyebrow}</p>
-          )}
-          <h1 className="max-w-[20ch] text-[38px] leading-[1.05] sm:text-[54px]">
-            {value.heading}
-          </h1>
-          {value.subheading && (
-            <p className={`mt-4 max-w-[56ch] text-[16px] leading-relaxed ${img ? "text-on-dark/85" : "text-body"}`}>
-              {value.subheading}
-            </p>
-          )}
-          {cta && (
-            <div className="mt-7">
-              <CtaButton cta={cta} tone={img ? "on-dark" : "solid"} />
-            </div>
-          )}
+        <div className="relative mx-auto max-w-[900px] text-on-dark">
+          {value.eyebrow && <p className="mb-3 text-[11px] font-semibold uppercase tracking-[.22em] text-white/75">{value.eyebrow}</p>}
+          <h1 className="text-[34px] font-semibold leading-[1.1] text-white sm:text-[48px]">{value.heading}</h1>
+          {value.subheading && <p className="mx-auto mt-4 max-w-[58ch] text-[15px] leading-relaxed text-white/85">{value.subheading}</p>}
+          <p className="mt-5 text-[11px] font-medium uppercase tracking-[.18em] text-white/80">Home <span className="mx-2 text-white/55">/</span> Pages</p>
+          {cta && <div className="mt-7"><CtaButton cta={cta} tone="on-dark" /></div>}
         </div>
       </Container>
     </section>

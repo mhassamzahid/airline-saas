@@ -22,7 +22,7 @@ export default async function PakistanToursPage() {
         eyebrow="Tours"
         title="Pakistan Tour Packages"
         lede="From Hunza's glacial lakes to a family weekend in Murree. Filter by region, duration, price, group type or season, then open a package for the full itinerary."
-        image={{ src: stock("photo-1603491656337-3b491147917c", 900, 1125), alt: "A Pakistan tour destination in the northern valleys" }}
+        image={{ src: stock("photo-1603491656337-3b491147917c", 2000, 800), alt: "A Pakistan tour destination in the northern valleys" }}
         heroVariant="pakistan-tours"
         facts={[
           { value: String(regions), label: "Regions" },

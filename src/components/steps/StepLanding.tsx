@@ -12,17 +12,13 @@ import {
   type PackageTierDef,
 } from "@/data/umrah";
 import { Photo } from "@/components/ui/Photo";
-import { HeroAbstract } from "@/components/ui/HeroAbstract";
 import { Button } from "@/components/ui/Button";
 import { stock } from "@/lib/img";
+import { ProgressRail } from "@/components/booking/ProgressRail";
 import { formatGBP, cn } from "@/lib/utils";
 
-// Same image used as the Umrah category card on the homepage, cropped for
-// a hero -- matches the split-photo hero every other listing page runs
-// (Hajj, Tours, Pakistan Tours), including the abstract backdrop (see
-// PageIntro, which this hand-rolls since it also carries the wizard's own
-// motion/stagger, not PageIntro's plain markup).
-const HERO_IMAGE = stock("photo-1513072064285-240f87fa81e8", 900, 1125);
+// Relevant pilgrimage photography, cropped for the wide page banner.
+const HERO_IMAGE = stock("photo-1513072064285-240f87fa81e8", 2000, 800);
 
 interface Band {
   label: string;
@@ -233,64 +229,38 @@ export function StepLanding() {
 
   return (
     <div>
-      {/* Fills what's left of the screen below the navbar + progress rail on
-          first load, same "full screen hero" treatment as every other
-          section's page hero -- filters/results sit below the fold.
-          Breaks out of BookingShell's max-w-[1180px] column (left-1/2 +
-          -translate-x-1/2 + w-screen, the standard full-bleed trick) so
-          HeroAbstract has the same open margin beyond the photo that every
-          other page's hero gets from PageIntro's own full-bleed wrapper --
-          without this, the shape has nowhere to sit but behind the photo. */}
-      <div className="relative left-1/2 w-screen -translate-x-1/2 flex min-h-[calc(100dvh-160px)] items-center overflow-hidden sm:min-h-[calc(100dvh-190px)]">
-        <HeroAbstract variant="umrah" />
-        <div className="relative mx-auto grid w-full max-w-[1180px] items-center gap-8 px-5 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
-          <motion.div variants={container} initial="hidden" animate="show">
-            <motion.p variants={item} className="overline mb-3 text-muted">
-              Umrah
-            </motion.p>
-            <motion.h1 variants={item} className="max-w-[22ch] text-[38px] leading-[1.05] text-ink sm:text-[48px]">
-              Find your Umrah package
-            </motion.h1>
-            <motion.p variants={item} className="mt-3 max-w-[56ch] text-[16px] leading-relaxed text-body">
-              Filter by duration, category, hotel and price to browse ready-made packages, or
-              build your own from scratch if nothing here is an exact match. All prices are
-              estimated until confirmed by our sales team.
-            </motion.p>
-            <motion.dl
-              variants={item}
-              className="mt-8 flex flex-wrap gap-x-8 gap-y-4 border-t border-hairline pt-6"
-            >
-              <div>
-                <dd data-numeric className="text-[22px] font-semibold text-ink">
-                  {catalog.packages.length}
-                </dd>
-                <dt className="mt-0.5 text-[12px] text-muted">Ready-made packages</dt>
-              </div>
-              <div>
-                <dd data-numeric className="text-[22px] font-semibold text-ink">
-                  {catalog.categories.length}
-                </dd>
-                <dt className="mt-0.5 text-[12px] text-muted">Categories</dt>
-              </div>
-              {catalog.packages.length > 0 && (
-                <div>
-                  <dd data-numeric className="text-[22px] font-semibold text-ink">
-                    {formatGBP(Math.min(...catalog.packages.map((p) => p.fromPriceGBP)))}
-                  </dd>
-                  <dt className="mt-0.5 text-[12px] text-muted">From</dt>
-                </div>
-              )}
-            </motion.dl>
-          </motion.div>
-          <Photo
-            src={HERO_IMAGE}
-            alt="Pilgrims performing Umrah at the Grand Mosque"
-            priority
-            sizes="(min-width: 1024px) 38vw, 100vw"
-            className="order-first aspect-[16/10] w-full rounded-[12px] border border-hairline lg:order-last lg:aspect-[4/5]"
-          />
-        </div>
+      {/* Full-width Umrah banner, matching the other inner-page heroes. */}
+      <div className="relative left-1/2 flex min-h-[340px] w-screen -translate-x-1/2 items-center justify-center overflow-hidden bg-dark px-5 py-16 text-center sm:min-h-[416px] sm:px-8">
+        <Photo
+          src={HERO_IMAGE}
+          alt="Pilgrims performing Umrah at the Grand Mosque"
+          priority
+          sizes="100vw"
+          className="absolute inset-0 h-full w-full"
+        />
+        <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,18,32,.72),rgba(8,18,32,.46),rgba(8,18,32,.7))]" />
+        <motion.header variants={container} initial="hidden" animate="show" className="relative z-10 mx-auto w-full max-w-[900px] text-on-dark">
+          <motion.p variants={item} className="mb-3 text-[11px] font-semibold uppercase tracking-[.22em] text-white/75">Umrah</motion.p>
+          <motion.h1 variants={item} className="text-[34px] font-semibold leading-[1.1] text-white sm:text-[48px]">Find your Umrah package</motion.h1>
+          <motion.p variants={item} className="mx-auto mt-4 max-w-[58ch] text-[15px] leading-relaxed text-white/85">
+            Filter by duration, category, hotel and price to browse ready-made packages, or build your own from scratch. Prices are estimates until confirmed by our team.
+          </motion.p>
+          <motion.nav variants={item} aria-label="Breadcrumb" className="mt-5 text-[11px] font-medium uppercase tracking-[.18em] text-white/80">
+            <span>Home</span><span className="mx-2 text-white/55">/</span><span>Umrah</span>
+          </motion.nav>
+          <motion.dl variants={item} className="mt-6 flex flex-wrap justify-center gap-x-8 gap-y-4">
+            <div><dd data-numeric className="text-[20px] font-semibold text-white">{catalog.packages.length}</dd><dt className="mt-0.5 text-[12px] text-white/70">Ready-made packages</dt></div>
+            <div><dd data-numeric className="text-[20px] font-semibold text-white">{catalog.categories.length}</dd><dt className="mt-0.5 text-[12px] text-white/70">Categories</dt></div>
+            {catalog.packages.length > 0 && <div><dd data-numeric className="text-[20px] font-semibold text-white">{formatGBP(Math.min(...catalog.packages.map((p) => p.fromPriceGBP)))}</dd><dt className="mt-0.5 text-[12px] text-white/70">From</dt></div>}
+          </motion.dl>
+        </motion.header>
       </div>
+
+      <section className="relative left-1/2 w-screen -translate-x-1/2 border-b border-hairline bg-canvas">
+        <div className="mx-auto max-w-[1180px] overflow-x-auto px-5 py-4 no-scrollbar sm:px-8">
+          <div className="min-w-[720px] sm:min-w-0"><ProgressRail /></div>
+        </div>
+      </section>
 
       <div className="mt-8">
         <div className="flex flex-wrap items-center gap-2">

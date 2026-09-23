@@ -79,7 +79,7 @@ export default async function VisaConsultationPage() {
       title={title}
       lede={lede}
       heroImage={{
-        src: heroImageUrl || stock("photo-1524661135-423995f22d0b", 900, 1125),
+        src: heroImageUrl || stock("photo-1524661135-423995f22d0b", 2000, 800),
         alt: cms?.hero_image?.alt || "A world map laid out on a table",
         unoptimized: Boolean(heroImageUrl),
       }}

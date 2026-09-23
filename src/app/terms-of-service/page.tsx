@@ -25,7 +25,7 @@ export default async function TermsOfServicePage() {
         eyebrow="Legal"
         title="Terms of Service"
         lede={`Last updated ${LAST_UPDATED}. These terms apply whenever you use this site or ask ${site_title} to arrange a package or service.`}
-        className="mb-4"
+        className="-mt-16 mb-4 sm:-mt-20"
       />
       <p className="mb-12 max-w-[68ch] text-[13px] italic text-muted">
         {site_title} is a design prototype, not a real travel agency or travel agency. This page is sample

@@ -19,7 +19,7 @@ export default async function ManagePage() {
         eyebrow="Manage your trip"
         title="Pick up where you left off"
         lede="Enter your reference and surname to change seats, add baggage, or move a flight. Changes follow your fare conditions."
-        className="mb-10"
+        className="-mt-16 mb-10 sm:-mt-20"
       />
       <ManageTripForm siteTitle={site_title} />
     </PageContainer>

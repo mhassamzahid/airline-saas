@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, CalendarBlank, MapPinLine, Star, Users } from "@phosphor-icons/react/dist/ssr";
+import { CalendarBlank, MapPinLine, Star, Users } from "@phosphor-icons/react/dist/ssr";
 import { getPakistanTourPackages } from "@/lib/packages";
-import { PageContainer } from "@/components/site/PageIntro";
+import { PageContainer, PageIntro } from "@/components/site/PageIntro";
 import { ServiceChecklist } from "@/components/site/ServicePage";
 import { PakistanTourCard } from "@/components/site/PakistanTourCard";
 import { Photo } from "@/components/ui/Photo";
@@ -31,14 +30,9 @@ export default async function PakistanTourPackageDetailPage({ params }: { params
   const more = packages.filter((x) => x.slug !== p.slug).slice(0, 3);
 
   return (
-    <PageContainer>
-      <Link
-        href="/pakistan-tours"
-        className="mb-6 inline-flex items-center gap-1.5 text-[13px] font-medium text-muted hover:text-ink"
-      >
-        <ArrowLeft size={13} /> Pakistan Tours
-      </Link>
-
+    <>
+      <PageIntro eyebrow="Pakistan Tours" title={p.name} lede={p.blurb} image={{ src: p.image, alt: p.name }} />
+      <PageContainer>
       <div className="grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:gap-14">
         <div>
           <div className="mb-3 flex flex-wrap gap-1.5">
@@ -51,8 +45,6 @@ export default async function PakistanTourPackageDetailPage({ params }: { params
               </span>
             )}
           </div>
-          <h1 className="text-[32px] leading-[1.05] text-ink sm:text-[42px]">{p.name}</h1>
-          <p className="mt-3 max-w-[52ch] text-[16px] text-body">{p.blurb}</p>
 
           <div className="mt-6 flex flex-wrap items-baseline gap-x-8 gap-y-3 border-y border-hairline-firm py-4">
             <span className="flex items-baseline gap-1.5 text-[13px] text-body">
@@ -74,13 +66,6 @@ export default async function PakistanTourPackageDetailPage({ params }: { params
               <Users size={14} className="text-muted" /> {p.groupTypes.join(" · ")}
             </span>
           </div>
-
-          <Photo
-            src={p.image}
-            alt={p.name}
-            sizes="(min-width: 1024px) 55vw, 100vw"
-            className="mt-8 aspect-[16/10] w-full rounded-[10px] border border-hairline"
-          />
 
           <h2 className="mt-10 text-[18px] font-semibold text-ink">Itinerary</h2>
           <ol className="mt-5 space-y-5">
@@ -155,5 +140,6 @@ export default async function PakistanTourPackageDetailPage({ params }: { params
         </div>
       </div>
     </PageContainer>
+    </>
   );
 }

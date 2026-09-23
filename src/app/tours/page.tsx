@@ -22,7 +22,7 @@ export default async function ToursPage() {
         eyebrow="Tours"
         title="International Tour Packages"
         lede="Guided tours across Turkey, Thailand, Dubai, Malaysia, Europe and more. Filter by country, duration, price, group type or season, then open a package for the full itinerary."
-        image={{ src: stock("photo-1512453979798-5ea266f8880c", 900, 1125), alt: "A guided international tour destination" }}
+        image={{ src: stock("photo-1512453979798-5ea266f8880c", 2000, 800), alt: "A guided international tour destination" }}
         heroVariant="tours"
         facts={[
           { value: String(countries), label: "Countries" },

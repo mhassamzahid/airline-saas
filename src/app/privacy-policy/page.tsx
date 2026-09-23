@@ -25,7 +25,7 @@ export default async function PrivacyPolicyPage() {
         eyebrow="Legal"
         title="Privacy Policy"
         lede={`Last updated ${LAST_UPDATED}. This explains what information ${site_title} collects when you use this site, and how it's used.`}
-        className="mb-4"
+        className="-mt-16 mb-4 sm:-mt-20"
       />
       <p className="mb-12 max-w-[68ch] text-[13px] italic text-muted">
         {site_title} is a design prototype, not a real travel agency or travel agency. This page is sample

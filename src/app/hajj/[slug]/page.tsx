@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, CheckCircle, Clock, MapPinLine } from "@phosphor-icons/react/dist/ssr";
+import { CheckCircle, Clock, MapPinLine } from "@phosphor-icons/react/dist/ssr";
 import { getHajjPackages } from "@/lib/packages";
-import { PageContainer } from "@/components/site/PageIntro";
+import { PageContainer, PageIntro } from "@/components/site/PageIntro";
 import { ServiceSteps } from "@/components/site/ServicePage";
 import { Photo } from "@/components/ui/Photo";
 import { InquiryForm } from "@/components/site/InquiryForm";
@@ -32,22 +31,14 @@ export default async function HajjPackageDetailPage({
   if (!p) notFound();
 
   return (
-    <PageContainer>
-      <Link
-        href="/hajj"
-        className="mb-6 inline-flex items-center gap-1.5 text-[13px] font-medium text-muted hover:text-ink"
-      >
-        <ArrowLeft size={13} />
-        Hajj
-      </Link>
-
+    <>
+      <PageIntro eyebrow="Hajj" title={p.name} lede={p.blurb} image={{ src: p.image, alt: p.name }} />
+      <PageContainer>
       <div className="grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:gap-14">
         <div>
           <span className="mb-3 inline-block rounded-full border border-hairline-firm bg-canvas-soft px-2.5 py-1 text-[12px] font-medium text-body">
             {p.type}
           </span>
-          <h1 className="text-[32px] leading-[1.05] text-ink sm:text-[42px]">{p.name}</h1>
-          <p className="mt-3 max-w-[52ch] text-[16px] text-body">{p.blurb}</p>
 
           <div className="mt-6 flex flex-wrap items-baseline gap-x-8 gap-y-3 border-y border-hairline-firm py-4">
             <span className="flex items-baseline gap-1.5 text-[13px] text-body">
@@ -71,13 +62,6 @@ export default async function HajjPackageDetailPage({
               allocated in the order applications arrive.
             </p>
           </div>
-
-          <Photo
-            src={p.image}
-            alt={p.name}
-            sizes="(min-width: 1024px) 55vw, 100vw"
-            className="mt-8 aspect-[16/10] w-full rounded-[10px] border border-hairline"
-          />
 
           <h2 className="mt-10 text-[18px] font-semibold text-ink">Accommodation</h2>
           <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -136,5 +120,6 @@ export default async function HajjPackageDetailPage({
         </div>
       </div>
     </PageContainer>
+    </>
   );
 }

@@ -3,9 +3,8 @@ import { ArrowRight, WifiHigh, ForkKnife, Leaf, Waveform } from "@phosphor-icons
 import { CABINS } from "@/data/cabins";
 import { DESTINATIONS, ORIGINS } from "@/data/airports";
 import { FLEET, FLEET_STATS } from "@/data/fleet";
-import { PageContainer } from "@/components/site/PageIntro";
+import { PageContainer, PageIntro } from "@/components/site/PageIntro";
 import { Photo } from "@/components/ui/Photo";
-import { RouteArc } from "@/components/ui/RouteArc";
 import { stock } from "@/lib/img";
 import { formatGBP } from "@/lib/utils";
 import { getSiteSettings } from "@/lib/cms";
@@ -21,42 +20,20 @@ export async function generateMetadata() {
 export default function ExperiencePage() {
   return (
     <>
-      {/* Hero */}
-      <PageContainer className="relative pb-10 sm:pb-12">
-        <RouteArc
-          from="LGW"
-          to="SYD"
-          className="pointer-events-none absolute -top-8 right-[-24px] hidden h-[260px] w-[640px] lg:block"
-        />
-        <div className="relative grid items-center gap-10 lg:grid-cols-[1fr_0.8fr] lg:gap-16">
-          <div>
-            <p className="overline mb-4">The experience</p>
-            <h1 className="text-[38px] leading-[1.05] text-ink sm:text-[52px]">
-              Long-haul that does not
-              <br />
-              cost you the next day.
-            </h1>
-            <p className="mt-4 max-w-[46ch] text-[16px] text-body">
-              We fly one aircraft family, keep the cabins dark and quiet, and let you
-              eat and sleep on your own clock. The point is to land ready.
-            </p>
-            <Link
-              href="/umrah"
-              className="mt-7 inline-flex h-11 items-center gap-2 rounded-[10px] bg-rust-700 px-5 text-[15px] font-medium text-on-rust transition-colors hover:bg-rust-600"
-            >
-              Plan a trip
-              <ArrowRight size={16} />
-            </Link>
-          </div>
-          <Photo
-            src={stock("photo-1540339832862-474599807836", 900, 1125)}
-            alt="A darkened wide-body cabin at cruise, reading lights low"
-            priority
-            sizes="(min-width: 1024px) 38vw, 0px"
-            className="hidden aspect-[4/5] rounded-[10px] border border-hairline lg:block"
-          />
-        </div>
-      </PageContainer>
+      <PageIntro
+        eyebrow="The experience"
+        title="Long-haul that does not cost you the next day."
+        lede="We fly one aircraft family, keep the cabins dark and quiet, and let you eat and sleep on your own clock. The point is to land ready."
+        image={{ src: stock("photo-1540339832862-474599807836", 2000, 800), alt: "A darkened wide-body cabin at cruise, reading lights low" }}
+      >
+        <Link
+          href="/umrah"
+          className="mt-7 inline-flex h-11 items-center gap-2 rounded-[10px] bg-rust-700 px-5 text-[15px] font-medium text-on-rust transition-colors hover:bg-rust-600"
+        >
+          Plan a trip
+          <ArrowRight size={16} />
+        </Link>
+      </PageIntro>
 
       {/* Cabins: editorial list */}
       <section className="border-t border-hairline bg-canvas">

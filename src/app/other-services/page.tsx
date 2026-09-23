@@ -50,7 +50,7 @@ export default async function OtherServicesPage() {
       title={title}
       lede={lede}
       heroImage={{
-        src: heroImageUrl || stock("photo-1600880292203-757bb62b4baf", 900, 1125),
+        src: heroImageUrl || stock("photo-1600880292203-757bb62b4baf", 2000, 800),
         alt: cms?.hero_image?.alt || "Two colleagues at a desk, working through a service request",
         unoptimized: Boolean(heroImageUrl),
       }}
