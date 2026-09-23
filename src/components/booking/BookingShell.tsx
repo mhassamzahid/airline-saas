@@ -64,8 +64,6 @@ export function BookingShell({ catalog, landingContent }: { catalog: UmrahCatalo
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const Step = STEP_COMPONENTS[stepId];
-
   const variants = reduce
     ? { enter: { opacity: 0 }, center: { opacity: 1 }, exit: { opacity: 0 } }
     : {
@@ -104,7 +102,12 @@ export function BookingShell({ catalog, landingContent }: { catalog: UmrahCatalo
                   : "rounded-[16px] border border-hairline bg-canvas p-5 h-shadow-raised sm:p-8"
               }
             >
-              {isIntro ? <StepLanding landingContent={landingContent} /> : <Step />}
+              {stepId === "landing" ? (
+                <StepLanding landingContent={landingContent} />
+              ) : (() => {
+                const Step = STEP_COMPONENTS[stepId];
+                return <Step />;
+              })()}
             </motion.div>
           </AnimatePresence>
         </div>
