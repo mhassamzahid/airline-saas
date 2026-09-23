@@ -13,6 +13,7 @@ from wagtail.models import Site
 from search import views as search_views
 from home.models import FooterSettings, HeaderSettings, SiteSettings
 from packages import views as package_views
+from flexpages.models import CatalogueLandingContent
 
 # Read-only content API for the Next.js frontend to consume.
 # Package listings (Umrah/Hajj/Tours/Pakistan Tours) live in the `packages`
@@ -59,6 +60,46 @@ def header_settings_api(request):
     })
 
 
+def catalogue_landing_content_api(request, page_key):
+    """Read-only editorial content for catalogue routes; package data stays separate."""
+    content = CatalogueLandingContent.objects.filter(page_key=page_key).first()
+    if not content:
+        return JsonResponse({"detail": "Not found"}, status=404)
+
+    image = content.hero_image
+    hero_image = None
+    if image:
+        rendition = image.get_rendition("width-2000")
+        hero_image = {
+            "url": request.build_absolute_uri(rendition.url),
+            "alt": content.hero_image_alt or image.title,
+        }
+
+    sections = []
+    for block in content.sections:
+        value = block.value
+        if block.block_type == "copy":
+            sections.append({"type": "copy", "value": {
+                "slot": value["slot"], "eyebrow": value["eyebrow"],
+                "heading": value["heading"], "body": value["body"],
+            }})
+        elif block.block_type == "faq":
+            sections.append({"type": "faq", "value": {
+                "heading": value["heading"],
+                "items": [{"question": item["question"], "answer": item["answer"]}
+                          for item in value["items"]],
+            }})
+
+    return JsonResponse({
+        "page_key": content.page_key,
+        "hero_eyebrow": content.hero_eyebrow,
+        "hero_heading": content.hero_heading,
+        "hero_subheading": content.hero_subheading,
+        "hero_image": hero_image,
+        "sections": sections,
+    })
+
+
 def site_settings_api(request):
     site = Site.find_for_request(request)
     s = SiteSettings.for_site(site)
@@ -85,6 +126,7 @@ urlpatterns = [
     path("api/v2/header-settings/", header_settings_api),
     path("api/v2/footer-settings/", footer_settings_api),
     path("api/v2/site-settings/", site_settings_api),
+    path("api/v2/catalogue-landing/<str:page_key>/", catalogue_landing_content_api),
     path("api/packages/umrah/", package_views.umrah_catalog_api),
     path("api/packages/hajj/", package_views.hajj_packages_api),
     path("api/packages/tours/", package_views.tour_packages_api),

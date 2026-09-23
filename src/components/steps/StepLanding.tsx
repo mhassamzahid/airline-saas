@@ -15,7 +15,10 @@ import { Photo } from "@/components/ui/Photo";
 import { Button } from "@/components/ui/Button";
 import { stock } from "@/lib/img";
 import { ProgressRail } from "@/components/booking/ProgressRail";
+import { ServiceCta } from "@/components/site/ServicePage";
+import { FaqAccordion } from "@/components/site/FaqAccordion";
 import { formatGBP, cn } from "@/lib/utils";
+import type { CmsCatalogueLandingContent } from "@/lib/cms";
 
 // Relevant pilgrimage photography, cropped for the wide page banner.
 const HERO_IMAGE = stock("photo-1513072064285-240f87fa81e8", 2000, 800);
@@ -166,9 +169,30 @@ function BuildOwnCard({ onSelect }: { onSelect: () => void }) {
   );
 }
 
-export function StepLanding() {
+export function StepLanding({ landingContent }: { landingContent: CmsCatalogueLandingContent | null }) {
   const { pickPackage, catalog } = useBookingStore();
   const reduce = useReducedMotion();
+  const copy = (slot: string, fallback: { eyebrow: string; heading: string; body: string }) => {
+    const section = landingContent?.sections.find(
+      (item): item is Extract<CmsCatalogueLandingContent["sections"][number], { type: "copy" }> =>
+        item.type === "copy" && item.value.slot === slot,
+    );
+    return section?.value ?? { slot, ...fallback };
+  };
+  const builderCopy = copy("builder_intro", {
+    eyebrow: "Build your package",
+    heading: "Choose a starting point",
+    body: "Filter ready-made options or build your own Umrah package step by step.",
+  });
+  const processCopy = copy("process_intro", {
+    eyebrow: "How it works",
+    heading: "From package choice to a clear quote",
+    body: "The builder keeps your choices together and shows the estimate as you go.",
+  });
+  const faqSection = landingContent?.sections.find(
+    (item): item is Extract<CmsCatalogueLandingContent["sections"][number], { type: "faq" }> =>
+      item.type === "faq",
+  );
 
   const [duration, setDuration] = useState<number | "all">("all");
   const [category, setCategory] = useState<string>("all");
@@ -232,18 +256,19 @@ export function StepLanding() {
       {/* Full-width Umrah banner, matching the other inner-page heroes. */}
       <div className="relative left-1/2 flex min-h-[340px] w-screen -translate-x-1/2 items-center justify-center overflow-hidden bg-dark px-5 py-16 text-center sm:min-h-[416px] sm:px-8">
         <Photo
-          src={HERO_IMAGE}
-          alt="Pilgrims performing Umrah at the Grand Mosque"
+          src={landingContent?.hero_image?.url || HERO_IMAGE}
+          alt={landingContent?.hero_image?.alt || "Pilgrims performing Umrah at the Grand Mosque"}
+          unoptimized={Boolean(landingContent?.hero_image?.url)}
           priority
           sizes="100vw"
           className="absolute inset-0 h-full w-full"
         />
         <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,18,32,.72),rgba(8,18,32,.46),rgba(8,18,32,.7))]" />
         <motion.header variants={container} initial="hidden" animate="show" className="relative z-10 mx-auto w-full max-w-[900px] text-on-dark">
-          <motion.p variants={item} className="mb-3 text-[11px] font-semibold uppercase tracking-[.22em] text-white/75">Umrah</motion.p>
-          <motion.h1 variants={item} className="text-[34px] font-semibold leading-[1.1] text-white sm:text-[48px]">Find your Umrah package</motion.h1>
+          <motion.p variants={item} className="mb-3 text-[11px] font-semibold uppercase tracking-[.22em] text-white/75">{landingContent?.hero_eyebrow || "Umrah"}</motion.p>
+          <motion.h1 variants={item} className="text-[34px] font-semibold leading-[1.1] text-white sm:text-[48px]">{landingContent?.hero_heading || "Find your Umrah package"}</motion.h1>
           <motion.p variants={item} className="mx-auto mt-4 max-w-[58ch] text-[15px] leading-relaxed text-white/85">
-            Filter by duration, category, hotel and price to browse ready-made packages, or build your own from scratch. Prices are estimates until confirmed by our team.
+            {landingContent?.hero_subheading || "Filter by duration, category, hotel and price to browse ready-made packages, or build your own from scratch. Prices are estimates until confirmed by our team."}
           </motion.p>
           <motion.nav variants={item} aria-label="Breadcrumb" className="mt-5 text-[11px] font-medium uppercase tracking-[.18em] text-white/80">
             <span>Home</span><span className="mx-2 text-white/55">/</span><span>Umrah</span>
@@ -393,6 +418,60 @@ export function StepLanding() {
           <BuildOwnCard onSelect={() => pickPackage("custom")} />
         </div>
       </div>
+
+      <section className="relative left-1/2 mt-16 w-screen -translate-x-1/2 border-t border-hairline bg-canvas">
+        <div className="mx-auto max-w-[1180px] px-5 py-14 sm:px-8 sm:py-16">
+          <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:gap-16">
+            <div>
+              <p className="overline mb-3">{builderCopy.eyebrow}</p>
+              <h2 className="max-w-[18ch] text-[26px] font-semibold leading-tight text-ink">{builderCopy.heading}</h2>
+              <p className="mt-3 max-w-[42ch] text-[15px] leading-relaxed text-body">{builderCopy.body}</p>
+            </div>
+            <dl className="divide-y divide-hairline border-y border-hairline">
+              <div className="grid gap-1 py-4 sm:grid-cols-[170px_1fr] sm:gap-5"><dt className="text-[14px] font-medium text-ink">Categories</dt><dd className="text-[13px] leading-relaxed text-body">{catalog.categories.map((c) => c.name).join(" · ")}</dd></div>
+              <div className="grid gap-1 py-4 sm:grid-cols-[170px_1fr] sm:gap-5"><dt className="text-[14px] font-medium text-ink">Hotels</dt><dd className="text-[13px] leading-relaxed text-body">{catalog.hotels.length} options in Makkah and Madinah, with the listed rating and distance shown for each.</dd></div>
+              <div className="grid gap-1 py-4 sm:grid-cols-[170px_1fr] sm:gap-5"><dt className="text-[14px] font-medium text-ink">Room sharing</dt><dd className="text-[13px] leading-relaxed text-body">{catalog.roomSharingOptions.map((r) => r.label).join(" · ")}</dd></div>
+              <div className="grid gap-1 py-4 sm:grid-cols-[170px_1fr] sm:gap-5"><dt className="text-[14px] font-medium text-ink">Transport</dt><dd className="text-[13px] leading-relaxed text-body">{catalog.transportTiers.map((t) => t.label).join(" · ")}</dd></div>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <section className="relative left-1/2 w-screen -translate-x-1/2 border-t border-hairline bg-canvas-soft">
+        <div className="mx-auto max-w-[1180px] px-5 py-14 sm:px-8 sm:py-16">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div><p className="overline mb-3">{processCopy.eyebrow}</p><h2 className="text-[24px] font-semibold text-ink">{processCopy.heading}</h2></div>
+            <p className="max-w-[40ch] text-[13px] leading-relaxed text-body">{processCopy.body}</p>
+          </div>
+          <ol className="mt-8 grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { title: "Choose a starting point", body: "Select a ready-made package or begin with Build your own." },
+              { title: "Set dates and travellers", body: "Choose your duration, travel dates and party details." },
+              { title: "Select the stay", body: "Choose hotels, room sharing and transport for your trip." },
+              { title: "Review your estimate", body: "Check services and the itemised quote before submitting an enquiry." },
+            ].map((step, i) => <li key={step.title} className="border-t border-hairline-firm pt-3"><span data-numeric className="text-[12px] font-semibold text-rust-700">{String(i + 1).padStart(2, "0")}</span><h3 className="mt-2 text-[15px] font-semibold text-ink">{step.title}</h3><p className="mt-1.5 text-[13px] leading-relaxed text-body">{step.body}</p></li>)}
+          </ol>
+        </div>
+      </section>
+
+      <section className="relative left-1/2 w-screen -translate-x-1/2 border-t border-hairline bg-canvas">
+        <div className="mx-auto grid max-w-[1180px] gap-8 px-5 py-14 sm:px-8 sm:py-16 lg:grid-cols-[0.75fr_1.25fr] lg:gap-16">
+          <div><p className="overline mb-3">Questions</p><h2 className="text-[24px] font-semibold text-ink">{faqSection?.value.heading || "Umrah package questions"}</h2></div>
+          <FaqAccordion faqs={faqSection?.value.items || [
+            { question: "How is the estimate calculated?", answer: "It updates with your selected category, duration, hotels, room sharing, transport and any additional services. The review step shows the itemised estimate before you submit." },
+            { question: "Can I change a ready-made package?", answer: "Yes. Selecting a package fills in its defaults, and you can continue through the builder to review or change the available choices." },
+            { question: "Can I choose my own hotels?", answer: "Yes. The hotel step lists the available Makkah and Madinah options with their star rating and distance." },
+            { question: "Does this builder book flights?", answer: "No. This builder estimates the Umrah ground-service package: hotels, visa processing, transport and optional services." },
+          ]} />
+        </div>
+      </section>
+
+      <ServiceCta
+        heading="Can't find the right fit?"
+        body="Tell us what you're after and we'll help you put together a package that matches it."
+        label="Get in touch"
+        href="/contact"
+      />
     </div>
   );
 }

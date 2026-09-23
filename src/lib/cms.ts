@@ -85,6 +85,57 @@ export function cmsRenditionUrl(image: CmsRenditionImage | null): string | null 
   return image.url.startsWith("http") ? image.url : `${CMS_API_URL.replace(/\/api\/v2$/, "")}${image.url}`;
 }
 
+export interface CmsLandingCopy {
+  slot: string;
+  eyebrow: string;
+  heading: string;
+  body: string;
+}
+
+export interface CmsLandingFaqSection {
+  heading: string;
+  items: CmsFaq[];
+}
+
+export interface CmsCatalogueLandingContent {
+  page_key: "umrah" | "hajj" | "tours" | "pakistan-tours";
+  hero_eyebrow: string;
+  hero_heading: string;
+  hero_subheading: string;
+  hero_image: { url: string; alt: string } | null;
+  sections: (
+    | { type: "copy"; value: CmsLandingCopy }
+    | { type: "faq"; value: CmsLandingFaqSection }
+  )[];
+}
+
+export async function getCatalogueLandingContent(
+  pageKey: CmsCatalogueLandingContent["page_key"],
+): Promise<CmsCatalogueLandingContent | null> {
+  return fetchCms<CmsCatalogueLandingContent>(`/catalogue-landing/${pageKey}/`);
+}
+
+export function getLandingCopy(
+  content: CmsCatalogueLandingContent | null,
+  slot: string,
+  fallback: CmsLandingCopy,
+): CmsLandingCopy {
+  return content?.sections.find(
+    (section): section is Extract<CmsCatalogueLandingContent["sections"][number], { type: "copy" }> =>
+      section.type === "copy" && section.value.slot === slot,
+  )?.value ?? fallback;
+}
+
+export function getLandingFaqSection(
+  content: CmsCatalogueLandingContent | null,
+  fallback: CmsLandingFaqSection,
+): CmsLandingFaqSection {
+  return content?.sections.find(
+    (section): section is Extract<CmsCatalogueLandingContent["sections"][number], { type: "faq" }> =>
+      section.type === "faq",
+  )?.value ?? fallback;
+}
+
 export interface CmsServicePage {
   title: string;
   eyebrow: string;

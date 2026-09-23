@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { STEPS, useBookingStore } from "@/store/useBookingStore";
 import type { UmrahCatalog } from "@/lib/packages";
+import type { CmsCatalogueLandingContent } from "@/lib/cms";
 import { useStepDirection } from "@/lib/hooks";
 import { ProgressRail } from "./ProgressRail";
 import { FareSummary } from "./FareSummary";
@@ -33,7 +34,7 @@ const STEP_COMPONENTS = {
   submit: StepSubmit,
 } as const;
 
-export function BookingShell({ catalog }: { catalog: UmrahCatalog }) {
+export function BookingShell({ catalog, landingContent }: { catalog: UmrahCatalog; landingContent: CmsCatalogueLandingContent | null }) {
   // Hydrate the store from the server-fetched catalog before the first paint
   // (not in a useEffect, which would flash the hardcoded fallback first).
   const hydrated = useRef(false);
@@ -103,7 +104,7 @@ export function BookingShell({ catalog }: { catalog: UmrahCatalog }) {
                   : "rounded-[16px] border border-hairline bg-canvas p-5 h-shadow-raised sm:p-8"
               }
             >
-              <Step />
+              {isIntro ? <StepLanding landingContent={landingContent} /> : <Step />}
             </motion.div>
           </AnimatePresence>
         </div>

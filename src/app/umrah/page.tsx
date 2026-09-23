@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { BookingShell } from "@/components/booking/BookingShell";
 import { getUmrahCatalog } from "@/lib/packages";
+import { getCatalogueLandingContent } from "@/lib/cms";
 
 export const metadata = {
   title: "Build your Umrah package",
@@ -9,11 +10,14 @@ export const metadata = {
 };
 
 export default async function UmrahPage() {
-  const catalog = await getUmrahCatalog();
+  const [catalog, landingContent] = await Promise.all([
+    getUmrahCatalog(),
+    getCatalogueLandingContent("umrah"),
+  ]);
 
   return (
     <Suspense fallback={null}>
-      <BookingShell catalog={catalog} />
+      <BookingShell catalog={catalog} landingContent={landingContent} />
     </Suspense>
   );
 }

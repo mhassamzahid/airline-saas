@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
-import { ArrowRight, CheckCircle } from "@phosphor-icons/react/dist/ssr";
+import { motion, useReducedMotion } from "motion/react";
+import { ArrowRight, CheckCircle } from "@phosphor-icons/react";
 import { PageContainer, PageIntro } from "@/components/site/PageIntro";
 import type { HeroAbstractVariant } from "@/components/ui/HeroAbstract";
 import { cn } from "@/lib/utils";
@@ -39,27 +42,49 @@ export function ServicePage({ eyebrow, title, lede, heroImage, heroVariant, hero
         </PageContainer>
       </section>
 
-      {cta && (
-        <section className="bg-dark text-on-dark">
-          <PageContainer className="flex flex-col items-start gap-5 py-14 sm:flex-row sm:items-center sm:justify-between sm:py-16">
-            <div>
-              <h2 className="text-[24px] font-semibold">{cta.heading}</h2>
-              <p className="mt-1.5 text-[14px] text-on-dark-mut">{cta.body}</p>
-            </div>
-            <Link
-              href={cta.href}
-              className="inline-flex h-11 shrink-0 items-center gap-2 rounded-[10px] bg-on-dark px-5 text-[15px] font-medium text-dark transition-opacity hover:opacity-90"
-            >
-              {cta.label}
-              <ArrowRight size={16} />
-            </Link>
-          </PageContainer>
-        </section>
-      )}
+      {cta && <ServiceCta {...cta} />}
     </>
   );
 }
 
+export function ServiceCta({
+  heading,
+  body,
+  label,
+  href,
+}: {
+  heading: string;
+  body: string;
+  label: string;
+  href: string;
+}) {
+  return (
+    <section className="bg-dark text-on-dark">
+      <PageContainer className="flex flex-col items-start gap-5 py-14 sm:flex-row sm:items-center sm:justify-between sm:py-16">
+        <div>
+          <h2 className="text-[24px] font-semibold">{heading}</h2>
+          <p className="mt-1.5 text-[14px] text-on-dark-mut">{body}</p>
+        </div>
+        <Link
+          href={href}
+          className="inline-flex h-11 shrink-0 items-center gap-2 rounded-[10px] bg-on-dark px-5 text-[15px] font-medium text-dark transition-opacity hover:opacity-90"
+        >
+          {label}
+          <ArrowRight size={16} />
+        </Link>
+      </PageContainer>
+    </section>
+  );
+}
+
+/**
+ * Editorial two-column layout on larger screens (label-width heading beside
+ * the content, GOV.UK/Stripe-docs style) instead of a stacked h2 -- six of
+ * these in a row down a page reads as one long list of headings when
+ * stacked; splitting the heading into its own column gives each section a
+ * fixed anchor point and breaks that rhythm. Reveals on scroll, once, like
+ * every other first-mount reveal in the app (DESIGN.md §5).
+ */
 export function ServiceSection({
   title,
   children,
@@ -67,11 +92,18 @@ export function ServiceSection({
   title: string;
   children: React.ReactNode;
 }) {
+  const reduce = useReducedMotion();
   return (
-    <section>
-      <h2 className="text-[22px] text-ink">{title}</h2>
-      <div className="mt-4">{children}</div>
-    </section>
+    <motion.section
+      initial={reduce ? false : { opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="sm:grid sm:grid-cols-[220px_1fr] sm:gap-10"
+    >
+      <h2 className="text-[20px] font-semibold leading-snug text-ink">{title}</h2>
+      <div className="mt-4 sm:mt-0">{children}</div>
+    </motion.section>
   );
 }
 
@@ -95,6 +127,38 @@ export function ServiceSteps({
   );
 }
 
+/**
+ * A 3-tier comparison (e.g. Government Scheme / Private Economy / Private
+ * Premium) -- for the "Choosing the right package" SEO sections. Bordered
+ * cards, not the plain checklist treatment, because comparing tiers side by
+ * side is exactly the kind of real hierarchy a card's elevation should
+ * communicate.
+ */
+export function ServiceTiers({
+  tiers,
+}: {
+  tiers: { name: string; body: string; items: string[] }[];
+}) {
+  return (
+    <div className="grid gap-5 sm:grid-cols-3">
+      {tiers.map((t) => (
+        <div key={t.name} className="rounded-[12px] border border-hairline p-5">
+          <p className="text-[15px] font-semibold text-ink">{t.name}</p>
+          <p className="mt-1.5 text-[13px] leading-relaxed text-body">{t.body}</p>
+          <ul className="mt-4 space-y-2">
+            {t.items.map((item) => (
+              <li key={item} className="flex items-start gap-2 text-[13px] text-body">
+                <CheckCircle size={14} weight="fill" className="mt-0.5 shrink-0 text-rust-700" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function ServiceChecklist({
   title,
   items,
@@ -107,7 +171,7 @@ export function ServiceChecklist({
   return (
     <div className={className}>
       {title && <h3 className="text-[16px] font-semibold text-ink">{title}</h3>}
-      <ul className={cn("space-y-2.5", title && "mt-4")}>
+      <ul className={cn("grid gap-x-8 gap-y-2.5 sm:grid-cols-2", title && "mt-4")}>
         {items.map((item) => (
           <li key={item} className="flex items-start gap-2.5 text-[14px] text-body">
             <CheckCircle size={16} weight="fill" className="mt-0.5 shrink-0 text-rust-700" />

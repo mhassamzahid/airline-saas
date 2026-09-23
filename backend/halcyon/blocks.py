@@ -17,6 +17,19 @@ class FAQBlock(blocks.StructBlock):
         label = "FAQ item"
 
 
+class LandingCopyBlock(blocks.StructBlock):
+    """Editable copy for a named editorial section on a catalogue landing page."""
+
+    slot = blocks.CharBlock(max_length=60, help_text="Stable section key used by the frontend, e.g. season_intro")
+    eyebrow = blocks.CharBlock(max_length=80, required=False)
+    heading = blocks.CharBlock(max_length=160)
+    body = blocks.TextBlock(required=False)
+
+    class Meta:
+        icon = "doc-full"
+        label = "Landing section copy"
+
+
 class TestimonialBlock(blocks.StructBlock):
     quote = blocks.TextBlock()
     name = blocks.CharBlock(max_length=80)
