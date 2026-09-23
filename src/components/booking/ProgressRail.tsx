@@ -12,13 +12,19 @@ export function ProgressRail() {
 
   return (
     <nav aria-label="Booking progress" className="w-full">
-      <ol className="grid grid-cols-10 items-center">
+      <ol className="flex w-full items-center">
         {STEPS.map((step, i) => {
           const done = i < current;
           const active = i === current;
           const clickable = locked ? i === 0 : i <= current;
           return (
-            <li key={step.id} className="flex min-w-0 items-center gap-1">
+            // `contents` lifts the button + connector out of their own flex
+            // box and into the <ol>'s -- so every connector line shares one
+            // flex-grow pool and comes out an equal length, regardless of
+            // how wide each step's label is (grid-cols-10 gave each step an
+            // equal-width *cell*, but the connector only got what was left
+            // over after that step's own label, which varies).
+            <li key={step.id} className="contents">
               <button
                 disabled={!clickable}
                 onClick={() => goTo(i)}
@@ -47,7 +53,7 @@ export function ProgressRail() {
                 </span>
               </button>
               {i < STEPS.length - 1 && (
-                <span className="relative h-px min-w-0 flex-1 bg-hairline-firm">
+                <span className="relative mx-1 h-px min-w-0 flex-1 bg-hairline-firm">
                   <motion.span
                     className="absolute inset-y-0 left-0 bg-rust-500"
                     initial={false}
