@@ -3,7 +3,7 @@ import type { PakistanTourPackage } from "@/data/pakistan-tours";
 import { Photo } from "@/components/ui/Photo";
 import { formatGBP } from "@/lib/utils";
 
-/** Same two-CTA shape as `TourCard` (International Tours), plus an optional Family/Honeymoon/Group marketing tag next to the region badge. */
+/** Same combined package action as `TourCard`, plus an optional Family/Honeymoon/Group tag. */
 export function PakistanTourCard({ p }: { p: PakistanTourPackage }) {
   return (
     <div className="group overflow-hidden rounded-[12px] border border-hairline bg-canvas transition-all hover:-translate-y-1 hover:h-shadow-md">
@@ -43,18 +43,12 @@ export function PakistanTourCard({ p }: { p: PakistanTourPackage }) {
             </p>
           </div>
         </div>
-        <div className="mt-3 grid grid-cols-2 gap-2 border-t border-hairline pt-3">
+        <div className="mt-3 border-t border-hairline pt-3">
           <Link
             href={`/pakistan-tours/${p.slug}`}
-            className="inline-flex h-9 items-center justify-center rounded-[10px] border border-hairline-firm bg-canvas px-3 text-[13px] font-medium text-ink transition-colors hover:bg-canvas-soft"
+            className="inline-flex h-9 w-full items-center justify-center rounded-[10px] bg-rust-700 px-3 text-[13px] font-medium text-on-rust transition-colors hover:bg-rust-600"
           >
-            View details
-          </Link>
-          <Link
-            href={`/pakistan-tours/${p.slug}#inquire`}
-            className="inline-flex h-9 items-center justify-center rounded-[10px] bg-rust-700 px-3 text-[13px] font-medium text-on-rust transition-colors hover:bg-rust-600"
-          >
-            Book now
+            View package &amp; book
           </Link>
         </div>
       </div>
