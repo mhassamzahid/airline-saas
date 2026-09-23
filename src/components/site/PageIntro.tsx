@@ -61,7 +61,7 @@ export function PageIntro({ eyebrow, title, lede, image, facts, className, child
   );
 }
 
-function getPageHero(pathname: string): { src: string; alt: string } {
+function getPageHero(pathname: string): { src: string; alt: string; unoptimized?: boolean } {
   const route = pathname.split("/").filter(Boolean)[0] || "";
   const heroes: Record<string, { id: string; alt: string }> = {
     manage: { id: "photo-1436491865332-7a61a109cc05", alt: "Passenger aircraft flying above the clouds" },
