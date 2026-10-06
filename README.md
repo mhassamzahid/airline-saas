@@ -136,6 +136,16 @@ fallback content, just without live package/CMS edits.
 
 Navbar + Footer live in `src/app/layout.tsx`; every page renders inside them.
 
+## Dashboards
+
+Staff-only, served by the Django backend — all gated by `@staff_member_required`/Django auth, so you need a staff account to reach them (`python manage.py createsuperuser` locally; see `backend/README.md`).
+
+| Route | What |
+|---|---|
+| `/django-admin/` | Django admin — packages, hotels, bookings and all other model data |
+| `/admin/` | Wagtail CMS admin — page content, the static service pages, nav/footer settings, media |
+| `/packages/import/` | CSV bulk-import tool for package pricing/availability (Hajj, Tours, Pakistan Tours, Umrah) — upload → diff preview → confirm, plus template/current-content downloads and import history. Also reachable via an "Import / export CSV" button on each archetype's `/django-admin/` changelist page |
+
 ## Layout
 
 ```
