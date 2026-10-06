@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { STEPS, useBookingStore } from "@/store/useBookingStore";
@@ -72,6 +72,21 @@ export function BookingShell({ catalog, landingContent }: { catalog: UmrahCatalo
         exit: { opacity: 0, x: -16 * direction },
       };
 
+  const stepContainerRef = useRef<HTMLDivElement>(null);
+  // Motion leaves a lingering `transform: translateX(0px)` inline style on
+  // this div even once the slide-in has fully settled at x:0 -- and a
+  // transformed ancestor, even at zero, creates a new containing block that
+  // mobile Safari/Chrome mishandle for native <select> elements nested
+  // inside it (the option picker silently fails to open). Stripping the
+  // transform once the "center" animation completes removes that
+  // containing block without touching the transition itself, which has
+  // already finished by then.
+  const handleAnimationComplete = useCallback((definition: string) => {
+    if (definition === "center" && stepContainerRef.current) {
+      stepContainerRef.current.style.transform = "";
+    }
+  }, []);
+
   return (
     <div className={isIntro ? "mx-auto max-w-[1180px] px-5 pb-32 sm:px-8 lg:pb-16" : "mx-auto max-w-[1180px] px-5 pt-8 pb-32 sm:px-8 lg:pb-16"}>
       {!isIntro && (
@@ -90,12 +105,14 @@ export function BookingShell({ catalog, landingContent }: { catalog: UmrahCatalo
         <div className="min-w-0 lg:w-full">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
+              ref={stepContainerRef}
               key={stepId}
               variants={variants}
               initial="enter"
               animate="center"
               exit="exit"
               transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
+              onAnimationComplete={handleAnimationComplete}
               className={
                 isIntro
                   ? undefined
