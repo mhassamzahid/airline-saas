@@ -53,6 +53,7 @@ THEME_CHOICES = [
     ("ocean", "Ocean"),
     ("forest", "Forest"),
     ("midnight", "Midnight"),
+    ("travocom", "Travocom"),
 ]
 
 COLOR_MODE_CHOICES = [

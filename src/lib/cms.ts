@@ -279,7 +279,7 @@ export async function getFooterSettings(): Promise<CmsFooterSettings | null> {
 // Keep in sync with THEME_CHOICES / COLOR_MODE_CHOICES in
 // backend/home/models.py and the [data-theme=...] / [data-mode=...] blocks
 // in src/app/globals.css.
-export const SITE_THEMES = ["rust", "ocean", "forest", "midnight"] as const;
+export const SITE_THEMES = ["rust", "ocean", "forest", "midnight", "travocom"] as const;
 export type SiteTheme = (typeof SITE_THEMES)[number];
 
 export const COLOR_MODES = ["light", "dark", "system"] as const;

@@ -93,6 +93,21 @@
   --color-on-dark-mut: #9195a3;
 }
 
+/* Sampled from the real travocom.com (deep teal + amber), not invented --
+   700 is deepened past their actual button amber (#ec9a01) so white button
+   text stays readable on it; 600 is their real brand amber; the dark-surface
+   trio uses their actual page/footer teal and pale cyan link colour. */
+[data-theme="travocom"] {
+  --color-rust-700: #b87200;
+  --color-rust-600: #ec9a01;
+  --color-rust-500: #f3b23a;
+  --color-rust-100: #fbedd2;
+
+  --color-dark: #04404d;
+  --color-on-dark: #eaf3f3;
+  --color-on-dark-mut: #9dc8d1;
+}
+
 /* ─────────────────────────────────────────────────────────────
    Dark mode -- set via <html data-mode="dark">, or applied from the
    visitor's OS setting when SiteSettings.color_mode is "system" (in
@@ -153,6 +168,12 @@
   --color-rust-500: #8aa5ee;
   --color-rust-100: #161b2e;
 }
+[data-theme="travocom"][data-mode="dark"] {
+  --color-rust-700: #ec9a01;
+  --color-rust-600: #f3b23a;
+  --color-rust-500: #f7c669;
+  --color-rust-100: #2b1d05;
+}
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-mode="light"]) {
@@ -196,6 +217,12 @@
     --color-rust-600: #5b7fe8;
     --color-rust-500: #8aa5ee;
     --color-rust-100: #161b2e;
+  }
+  [data-theme="travocom"]:not([data-mode="light"]) {
+    --color-rust-700: #ec9a01;
+    --color-rust-600: #f3b23a;
+    --color-rust-500: #f7c669;
+    --color-rust-100: #2b1d05;
   }
 }
 
