@@ -71,7 +71,7 @@ class Command(BaseCommand):
             self.stderr.write(self.style.ERROR("No Wagtail Site found -- run migrations first."))
             return
 
-        site_title = SiteSettings.for_site(site).site_title or "Halcyon"
+        site_title = SiteSettings.for_site(site).site_title or "Travocom"
 
         header = HeaderSettings.for_site(site)
         changed = []

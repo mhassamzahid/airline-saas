@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             name='ServicePage',
             fields=[
                 ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.page')),
-                ('eyebrow', models.CharField(blank=True, default='Halcyon services', max_length=80)),
+                ('eyebrow', models.CharField(blank=True, default='Travocom services', max_length=80)),
                 ('lede', models.TextField(blank=True)),
                 ('sections', wagtail.fields.StreamField([('checklist', 3), ('steps', 7), ('paragraph', 10)], blank=True, block_lookup={0: ('wagtail.blocks.CharBlock', (), {'max_length': 120}), 1: ('wagtail.blocks.CharBlock', (), {'max_length': 300}), 2: ('wagtail.blocks.ListBlock', (1,), {}), 3: ('wagtail.blocks.StructBlock', [[('title', 0), ('items', 2)]], {}), 4: ('wagtail.blocks.TextBlock', (), {}), 5: ('wagtail.blocks.StructBlock', [[('title', 0), ('body', 4)]], {}), 6: ('wagtail.blocks.ListBlock', (5,), {}), 7: ('wagtail.blocks.StructBlock', [[('title', 0), ('steps', 6)]], {}), 8: ('wagtail.blocks.CharBlock', (), {'max_length': 120, 'required': False}), 9: ('wagtail.blocks.RichTextBlock', (), {}), 10: ('wagtail.blocks.StructBlock', [[('title', 8), ('text', 9)]], {'icon': 'pilcrow'})})),
                 ('hero_image', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='wagtailimages.image')),

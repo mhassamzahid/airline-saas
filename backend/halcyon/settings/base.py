@@ -224,7 +224,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Wagtail settings
 
-WAGTAIL_SITE_NAME = "halcyon"
+WAGTAIL_SITE_NAME = "travocom"
 
 # Search
 # https://docs.wagtail.org/en/stable/topics/search/backends.html

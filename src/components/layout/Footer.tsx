@@ -50,7 +50,7 @@ const FALLBACK_TAGLINE =
   "An independent long-haul airline flying from London Gatwick, Manchester and Edinburgh. Quiet cabins, honest fares, and a plan you can see the whole way through.";
 
 export async function Footer({
-  siteTitle = "Halcyon",
+  siteTitle = "Travocom",
   logoUrl = null,
 }: {
   siteTitle?: string;

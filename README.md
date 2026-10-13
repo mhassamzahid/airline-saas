@@ -1,6 +1,6 @@
-# Halcyon
+# Travocom
 
-**Halcyon** is a design prototype for an invented independent long-haul
+**Travocom** is a design prototype for an invented independent long-haul
 airline / travel agency, built as a **portal with four booking archetypes**
 plus a set of static service pages, all sharing one design system:
 

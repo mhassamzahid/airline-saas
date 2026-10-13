@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name='SiteSettings',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('site_title', models.CharField(default='Halcyon', help_text='Shown in the browser tab and the header/footer wordmark.', max_length=60)),
+                ('site_title', models.CharField(default='Travocom', help_text='Shown in the browser tab and the header/footer wordmark.', max_length=60)),
                 ('theme', models.CharField(choices=[('rust', 'Rust (default)'), ('ocean', 'Ocean'), ('forest', 'Forest'), ('midnight', 'Midnight')], default='rust', max_length=20)),
                 ('site', models.OneToOneField(editable=False, on_delete=django.db.models.deletion.CASCADE, to='wagtailcore.site')),
             ],

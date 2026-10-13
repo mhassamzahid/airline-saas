@@ -22,7 +22,7 @@ const FALLBACK_TAGLINE = "Flying from London Gatwick, Manchester & Edinburgh";
 const FALLBACK_PHONE = "+44 20 7946 0192";
 
 export function Navbar({
-  siteTitle = "Halcyon",
+  siteTitle = "Travocom",
   logoUrl = null,
   navLinks,
   cta,

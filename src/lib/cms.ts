@@ -294,7 +294,7 @@ export interface CmsSiteSettings {
 }
 
 const DEFAULT_SITE_SETTINGS: CmsSiteSettings = {
-  site_title: "Halcyon",
+  site_title: "Travocom",
   theme: "rust",
   color_mode: "light",
   logo_url: null,

@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Halcyon wordmark. The mark is a single geometric glyph: a kingfisher's dive
+ * Travocom wordmark. The mark is a single geometric glyph: a kingfisher's dive
  * abstracted to a downward chevron inside a ring (the only hand-drawn SVG on the
  * site, per the design contract).
  */
@@ -9,7 +9,7 @@ export function Wordmark({
   className,
   showText = true,
   tone = "ink",
-  text = "Halcyon",
+  text = "Travocom",
   logoUrl,
 }: {
   className?: string;

@@ -1,10 +1,10 @@
 ---
 version: 1
 name: halcyon-design
-description: "Design contract for Halcyon — an independent long-haul airline. The site is built around six core sections — Umrah (build a package), Hajj (fixed quota'd packages), International Tour Packages and Pakistan Tour Packages (each its own filtered browsing page), and Visa Consultation / Air Ticketing (static pages) — plus Other Services, Manage trip and Help as secondary utilities. The Umrah flow is a ground-services package builder (category, dates, travellers, visa, hotels, transport, add-ons), not a flight booking: pick a fixed tier (skips straight to review) or build custom, with a live quote and a running 'trip ready' bar. Restrained chrome (kingfisher-rust + Geist), the photography carries the warmth."
+description: "Design contract for Travocom — an independent long-haul airline. The site is built around six core sections — Umrah (build a package), Hajj (fixed quota'd packages), International Tour Packages and Pakistan Tour Packages (each its own filtered browsing page), and Visa Consultation / Air Ticketing (static pages) — plus Other Services, Manage trip and Help as secondary utilities. The Umrah flow is a ground-services package builder (category, dates, travellers, visa, hotels, transport, add-ons), not a flight booking: pick a fixed tier (skips straight to review) or build custom, with a live quote and a running 'trip ready' bar. Restrained chrome (kingfisher-rust + Geist), the photography carries the warmth."
 ---
 
-# Halcyon — Design Contract
+# Travocom — Design Contract
 
 Single source of truth for all UI.
 
@@ -13,7 +13,7 @@ portal with four entry points (Umrah, Hajj, International Tours, Pakistan
 Tours) plus static service pages, all sharing one design system. The
 categories and their archetypes were given as a brief to follow exactly (a
 generalized category-portal pattern, with real-brand examples per archetype)
-rather than invented; Halcyon's own brand voice, palette and photography
+rather than invented; Travocom's own brand voice, palette and photography
 style carry the execution. The Umrah flow lives at `/umrah`: a landing screen
 that filters an 11-package catalog (Duration, Category, hotel rating,
 distance, room type, price and month, all AND-combined and instant) down to
@@ -251,7 +251,7 @@ A recognisable physical object, used where the screen is about **one specific tr
 - Clicking a completed step returns to it. Upcoming steps are not clickable.
 
 ### Icons
-`@phosphor-icons/react`, `weight="regular"` default, `weight="fill"` only for selected/success marks. Size 18 in rows, 20 in headers, 24 in empty states. One family, no hand-rolled SVG except the Halcyon wordmark mark (a single geometric glyph).
+`@phosphor-icons/react`, `weight="regular"` default, `weight="fill"` only for selected/success marks. Size 18 in rows, 20 in headers, 24 in empty states. One family, no hand-rolled SVG except the Travocom wordmark mark (a single geometric glyph).
 
 ### Photo grids
 Two sizes, matched to the archetype:
@@ -460,7 +460,7 @@ buckets.
 - Plain, concrete, quietly confident. "Choose your cabin", not "Elevate your journey".
 - Fares shown as `£1,240` style, Geist Mono, tabular. Currency GBP, `en-GB` formatting.
 - Times 24h `14:05`, durations `7h 40m`, all mono.
-- Invented but realistic: airline **Halcyon**, IATA-style code **HN**, flying from three UK bases
+- Invented but realistic: airline **Travocom**, IATA-style code **HN**, flying from three UK bases
   (primary: **London Gatwick / LGW**; also Manchester / MAN, Edinburgh / EDI — short list, growing).
   Flight numbers `HN 218`. Booking reference format `HN-4K2QXP` (client-generated, clearly a demo hold).
 - No fake precision in marketing copy. No "trusted by 2.4m flyers" unless labelled mock.

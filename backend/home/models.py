@@ -73,7 +73,7 @@ class SiteSettings(BaseSiteSetting):
 
     site_title = models.CharField(
         max_length=60,
-        default="Halcyon",
+        default="Travocom",
         help_text="Shown in the browser tab and the header/footer wordmark.",
     )
     logo = models.ForeignKey(

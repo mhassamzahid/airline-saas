@@ -1,4 +1,4 @@
-# Halcyon CMS (Wagtail)
+# Travocom CMS (Wagtail)
 
 The static-content half of the [CMS Architecture Plan](../design/DESIGN.md) --
 Django + Wagtail, managing the site's editable copy (homepage sections, the

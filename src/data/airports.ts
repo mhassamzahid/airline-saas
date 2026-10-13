@@ -8,7 +8,7 @@ export interface Origin extends Airport {
 }
 
 /**
- * Where Halcyon flies from. A short list for now, growing as we add bases.
+ * Where Travocom flies from. A short list for now, growing as we add bases.
  * The first entry is the primary base and the default selection.
  */
 export const ORIGINS: Origin[] = [
@@ -58,7 +58,7 @@ export interface Destination extends Airport {
   airportCity?: string;
 }
 
-/** Destinations Halcyon serves. baseFareGBP = one-way economy from the primary base (LGW), per adult. */
+/** Destinations Travocom serves. baseFareGBP = one-way economy from the primary base (LGW), per adult. */
 export const DESTINATIONS: Destination[] = [
   {
     code: "JFK", city: "New York", name: "John F. Kennedy Intl", country: "United States",
